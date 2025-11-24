@@ -395,122 +395,180 @@ export default function Home() {
           <p className="text-center text-slate-600 mt-3">Escolha um módulo individual ou contrate o ecossistema completo com ancoragem de preço.</p>
 
           {/* Linha superior: 3 módulos */}
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              {
-                titulo: "Condições de Pagamento",
-                setup: "Entrada + Parcelamento",
-                mensal: "Boleto / PIX",
-                itens: ["Setup: 50% ato + 50% entrega", "Recorrência: Início após Go-Live"],
-                tag: null,
-              },
-              {
-                titulo: "Solução Full — Pacote Completo",
-                setup: "De R$ 80.000 → R$ 60.000",
-                mensal: "De R$ 11.000 → R$ 7.000/mês",
-                itens: ["SDR + FAQ + No-Show", "CRM + Dashboard", "Agente de Pesquisa", "Integração ERP"],
-                tag: "Core / Principal",
-              },
-              {
-                titulo: "Bonificação",
-                setup: "Descontos Aplicados",
-                mensal: "Condições Especiais",
-                itens: ["R$ 20.000 OFF no Setup", "R$ 4.000 OFF na Mensalidade", "Pagamento Facilitado"],
-                tag: null,
-              },
-            ].map((card) => (
-              <div key={card.titulo} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col">
-                {card.tag && (
-                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-prime text-white px-3 py-1 text-xs font-semibold mb-3">
-                    {card.tag}
-                  </span>
-                )}
-                <h3 className="text-xl font-bold text-slate-900">{card.titulo}</h3>
-                <div className="mt-4 space-y-1 text-sm text-slate-600">
-                  <div className="font-semibold text-slate-800">Investimento Único (Setup): <span className="text-prime">{card.setup}</span></div>
-                  <div className="font-semibold text-slate-800">Mensalidade: <span className="text-prime">{card.mensal}</span></div>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                  {card.itens.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          {/* Linha 1: 3 Cards Modulares */}
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Agente FAQ */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:border-prime-accent/50 transition-colors">
+              <h3 className="text-lg font-bold text-prime mb-2">Agente FAQ + Informações Gerais</h3>
+              <div className="text-xs text-slate-500 mb-4">Implementação</div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">R$ 10.000,00</div>
+              <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
 
-          {/* Linha inferior: pacote full + condições */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div className="md:col-span-3 bg-white rounded-2xl border-2 border-prime-accent shadow-lg shadow-prime/10 p-6 relative overflow-hidden">
-              <div className="absolute top-4 right-4 inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-100">
-                Melhor Custo-Benefício
-              </div>
-              <p className="text-sm font-semibold text-prime uppercase">Ecossistema Full (Projeto Completo)</p>
-              <h3 className="text-2xl font-extrabold text-slate-900 mt-1">Todos os módulos + Gestão Unificada</h3>
-              <div className="mt-4">
-                <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <span className="line-through">R$ 40.000</span>
-                  <span className="text-emerald-700 font-bold">-37% OFF</span>
-                </div>
-                <div className="text-4xl font-extrabold text-slate-900">R$ 25.000</div>
-                <p className="text-sm text-slate-600">Investimento Único (Setup)</p>
-              </div>
-              <div className="mt-4">
-                <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <span className="line-through">R$ 4.000/mês</span>
-                </div>
-                <div className="text-2xl font-bold text-prime">R$ 2.500<span className="text-sm font-normal text-slate-500">/mês</span></div>
-                <p className="text-sm text-slate-600">Manutenção e servidores</p>
-              </div>
+              <div className="text-xs text-slate-500 mb-1">Recorrência</div>
+              <div className="text-lg font-bold text-slate-900 mb-4">R$ 2.000,00/mês</div>
 
-              <div className="mt-5 border-t border-slate-200 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  "Agente SDR + Agendamento",
-                  "Agente FAQ Inteligente",
-                  "Agente Anti No-Show",
-                  "Integração ERP Completa",
-                  "CRM + Dashboard Executivo",
-                  "Treinamento + 30 dias assistidos",
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm text-slate-700">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6">
-                <a
-                  href="#cta"
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-prime-accent px-5 py-3 text-prime-dark font-semibold shadow-md shadow-prime/15 hover:bg-sky-400 transition-colors"
-                >
-                  Selecionar Pacote Completo
-                </a>
-              </div>
+              <ul className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Desenvolvimento e Suporte
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Implementação sistema de OCR (extrai dados de documentos)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Acesso ao Banco de Conhecimento personalizado
+                </li>
+              </ul>
             </div>
 
-            <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h3 className="text-lg font-bold text-slate-900">Condições de Pagamento</h3>
-              <div className="mt-4">
-                <p className="text-sm font-semibold text-slate-800">Investimento Único (Setup)</p>
-                <ul className="mt-2 space-y-2 text-sm text-slate-700">
-                  <li>Opção A: À vista (5% de desconto no PIX/TED)</li>
-                  <li>Opção B: Entrada + 4 parcelas (Boleto Bancário)</li>
-                  <li>Opção C: Até 3x sem juros (Cartão Corporativo)</li>
+            {/* Card 2: Agendamento Inteligente (Destaque) */}
+            <div className="bg-white rounded-2xl border-2 border-prime shadow-lg p-6 flex flex-col relative transform md:-translate-y-2">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-prime text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                Mais Popular
+              </div>
+              <h3 className="text-lg font-bold text-prime mb-2">Agendamento Inteligente</h3>
+              <div className="text-xs text-slate-500 mb-4">Implementação</div>
+              <div className="text-3xl font-extrabold text-slate-900 mb-1">R$ 45.000,00</div>
+              <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
+
+              <div className="text-xs text-slate-500 mb-1">Recorrência</div>
+              <div className="text-xl font-bold text-slate-900 mb-4">R$ 5.000,00/mês</div>
+
+              <ul className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Qualificação e Agendamento
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Desenvolvimento Personalizado
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Implementação e Treinamentos
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Suporte + Otimizações
+                </li>
+              </ul>
+            </div>
+
+            {/* Card 3: Pré-triagem */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:border-prime-accent/50 transition-colors">
+              <h3 className="text-lg font-bold text-prime mb-2">Agente Pré-triagem + Anti No-Show</h3>
+              <div className="text-xs text-slate-500 mb-4">Implementação</div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">R$ 15.000,00</div>
+              <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
+
+              <div className="text-xs text-slate-500 mb-1">Recorrência</div>
+              <div className="text-lg font-bold text-slate-900 mb-4">R$ 2.000,00/mês</div>
+
+              <ul className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Desenvolvimento e Suporte
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Acesso ao Banco de Conhecimento
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-prime">•</span> Agente ativo (inicia as conversas)
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Linha 2: Card Pós-venda */}
+          <div className="mt-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 hover:border-prime-accent/50 transition-colors">
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-prime mb-2">Agente Pós-venda</h3>
+                <div className="grid grid-cols-2 gap-8 mt-4">
+                  <div>
+                    <div className="text-xs text-slate-500 mb-1">Implementação</div>
+                    <div className="text-2xl font-bold text-slate-900">R$ 10.000,00</div>
+                    <div className="text-xs text-slate-500">Pagamento único</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-500 mb-1">Recorrência</div>
+                    <div className="text-lg font-bold text-slate-900">R$ 2.000,00/mês</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 border-l border-slate-100 pl-6">
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-prime">•</span> Entra em contato com os pacientes e realiza pesquisa de satisfação
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-prime">•</span> Leitura e Análise de Sentimentos
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-prime">•</span> Sentimento positivo → envia link do Google
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-prime">•</span> Sentimento negativo → rapport + insight interno
+                  </li>
                 </ul>
               </div>
-              <div className="mt-4">
-                <p className="text-sm font-semibold text-slate-800">Mensalidade (Recorrência)</p>
-                <ul className="mt-2 space-y-2 text-sm text-slate-700">
-                  <li>Vencimento inicia apenas 30 dias após o Go-Live.</li>
-                  <li>Formato: Boleto mensal ou PIX recorrente.</li>
-                </ul>
+            </div>
+          </div>
+
+          {/* Linha 3: Ecossistema Full */}
+          <div className="mt-12 bg-slate-900 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-prime-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-prime-accent/20 transition-all duration-700"></div>
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-prime-accent/20 border border-prime-accent/30 px-3 py-1 text-xs font-bold text-prime-accent uppercase tracking-wider mb-6">
+                  <Sparkles className="h-3 w-3" />
+                  Oferta Especial
+                </div>
+                <h3 className="text-3xl md:text-4xl font-extrabold mb-4">Ecossistema Full</h3>
+                <p className="text-slate-300 text-lg mb-8">
+                  Contrate todos os 4 agentes integrados + CRM + Dashboard e economize significativamente no setup e na recorrência.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    "SDR + Agendamento",
+                    "FAQ Inteligente",
+                    "Pré-triagem + Anti No-Show",
+                    "Pós-venda + Pesquisa",
+                    "CRM + Dashboard Executivo",
+                    "Integração ERP Completa"
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                      </div>
+                      <span className="text-sm font-medium text-slate-200">{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-3 text-xs text-slate-600">
-                “O valor mensal já contempla: Custos de servidor, Banco de Dados, Suporte Técnico (SLA 24h úteis), Backups diários e Manutenção evolutiva.”
+
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                <div className="flex flex-col gap-6">
+                  <div>
+                    <div className="text-sm text-slate-400 mb-1">Investimento Total (Setup)</div>
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-lg text-slate-500 line-through">R$ 80.000</span>
+                      <span className="text-4xl font-extrabold text-white">R$ 60.000</span>
+                    </div>
+                    <div className="text-emerald-400 text-sm font-bold mt-1">Economia de R$ 20.000 no setup</div>
+                  </div>
+
+                  <div className="w-full h-px bg-white/10"></div>
+
+                  <div>
+                    <div className="text-sm text-slate-400 mb-1">Mensalidade (Recorrência)</div>
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-lg text-slate-500 line-through">R$ 11.000/mês</span>
+                      <span className="text-3xl font-bold text-white">R$ 7.000<span className="text-lg font-normal text-slate-400">/mês</span></span>
+                    </div>
+                    <div className="text-emerald-400 text-sm font-bold mt-1">Economia de R$ 4.000/mês</div>
+                  </div>
+
+                  <button className="w-full mt-4 bg-prime-accent hover:bg-sky-400 text-prime-dark font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg shadow-prime-accent/20">
+                    Garantir Ecossistema Completo
+                  </button>
+                </div>
               </div>
             </div>
           </div>
