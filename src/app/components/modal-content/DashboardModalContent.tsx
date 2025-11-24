@@ -27,12 +27,12 @@ export default function DashboardModalContent() {
   };
 
   const kpisOverview = [
-    { label: "Leads/dia", value: "150", change: "+24%", meta: "Meta: 140", fill: 1.07, tone: "positive" },
+    { label: "Leads/dia", value: "500", change: "+24%", meta: "Meta: 480", fill: 1.04, tone: "positive" },
     { label: "Conversão", value: "39%", change: "+160%", meta: "Meta: 32%", fill: 1.22, tone: "positive" },
     { label: "No-show", value: "10%", change: "-60%", meta: "Meta: <=15%", fill: 0.67, tone: "positive" },
-    { label: "Consultas/mês", value: "1.750", change: "+42%", meta: "Meta: 1.600", fill: 1.09, tone: "positive" },
-    { label: "Receita", value: "R$ 700k", change: "+42%", meta: "Meta: R$ 600k", fill: 1.16, tone: "positive" },
-    { label: "Pipeline", value: "R$ 1,305M", change: "novo", meta: "Próx. 30 dias", fill: 1, tone: "neutral" },
+    { label: "Consultas/mês", value: "5.800", change: "+42%", meta: "Meta: 5.500", fill: 1.05, tone: "positive" },
+    { label: "Receita", value: "R$ 2.3M", change: "+42%", meta: "Meta: R$ 2.0M", fill: 1.15, tone: "positive" },
+    { label: "Pipeline", value: "R$ 4.3M", change: "novo", meta: "Próx. 30 dias", fill: 1, tone: "neutral" },
     { label: "Qualificação", value: "60%", change: "estável", meta: "Meta: 60%", fill: 1, tone: "positive" },
     { label: "Show Rate", value: "90%", change: "+7%", meta: "Meta: 85%", fill: 1.06, tone: "positive" },
   ];
@@ -90,7 +90,7 @@ export default function DashboardModalContent() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-prime">Dashboard de Gestão</p>
             <div className="text-sm text-slate-600">
-              Dr. Maurício Ernesto — {faixaTempo[range]} • Integração CRM + Agenda Unificada em tempo real
+              {faixaTempo[range]} • Integração CRM + Agenda Unificada em tempo real
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -99,8 +99,8 @@ export default function DashboardModalContent() {
                 key={r}
                 onClick={() => setRange(r)}
                 className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${range === r
-                    ? "bg-prime text-white shadow-sm"
-                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                  ? "bg-prime text-white shadow-sm"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
                   }`}
               >
                 <Clock3 size={14} />
@@ -138,8 +138,8 @@ export default function DashboardModalContent() {
               key={i.k}
               onClick={() => setTab(i.k as Tab)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${tab === i.k
-                  ? "bg-prime text-white shadow-sm"
-                  : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
+                ? "bg-prime text-white shadow-sm"
+                : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
                 }`}
             >
               {i.t}
@@ -199,7 +199,7 @@ export default function DashboardModalContent() {
                   <div>
                     <div className="flex items-center justify-between text-sm">
                       <div className="font-semibold text-slate-700">Particular</div>
-                      <div className="text-slate-600">58% • 2.610</div>
+                      <div className="text-slate-600">58% • 8.700</div>
                     </div>
                     <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
                       <div className="h-full bg-prime-accent" style={{ width: "58%" }} />
@@ -208,7 +208,7 @@ export default function DashboardModalContent() {
                   <div>
                     <div className="flex items-center justify-between text-sm">
                       <div className="font-semibold text-slate-700">Convênio</div>
-                      <div className="text-slate-600">42% • 1.890</div>
+                      <div className="text-slate-600">42% • 6.300</div>
                     </div>
                     <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
                       <div className="h-full bg-prime" style={{ width: "42%" }} />
@@ -224,10 +224,10 @@ export default function DashboardModalContent() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { nome: "Artroscopia", pct: 38, leads: 1710 },
-                    { nome: "Tratamento Artrose", pct: 32, leads: 1440 },
-                    { nome: "Artroplastia", pct: 18, leads: 810 },
-                    { nome: "Células-Tronco", pct: 12, leads: 540 },
+                    { nome: "Artroscopia", pct: 38, leads: 5700 },
+                    { nome: "Tratamento Artrose", pct: 32, leads: 4800 },
+                    { nome: "Artroplastia", pct: 18, leads: 2700 },
+                    { nome: "Células-Tronco", pct: 12, leads: 1800 },
                   ].map((p) => (
                     <div key={p.nome}>
                       <div className="flex items-center justify-between text-sm">
@@ -250,11 +250,11 @@ export default function DashboardModalContent() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { label: "Leads/mês", value: "4.500" },
+                { label: "Leads/mês", value: "15.000" },
                 { label: "Qualificados", value: "60%" },
-                { label: "Agendados", value: "~2.100" },
-                { label: "Confirmados", value: "~1.940" },
-                { label: "Realizados", value: "1.750" },
+                { label: "Agendados", value: "~7.000" },
+                { label: "Confirmados", value: "~6.450" },
+                { label: "Realizados", value: "5.800" },
                 { label: "No-show", value: "10%" },
               ].map((kpi) => (
                 <div key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -271,11 +271,11 @@ export default function DashboardModalContent() {
               </div>
               <div className="space-y-4">
                 {[
-                  { etapa: "Leads", valor: 4500, percentual: 100, cor: "bg-prime-accent" },
-                  { etapa: "Qualificados", valor: 2700, percentual: 60, cor: "bg-indigo-600" },
-                  { etapa: "Agendados", valor: 2100, percentual: 46.7, cor: "bg-emerald-600" },
-                  { etapa: "Confirmados", valor: 1940, percentual: 43.1, cor: "bg-sky-700" },
-                  { etapa: "Realizados", valor: 1750, percentual: 38.9, cor: "bg-prime" },
+                  { etapa: "Leads", valor: 15000, percentual: 100, cor: "bg-prime-accent" },
+                  { etapa: "Qualificados", valor: 9000, percentual: 60, cor: "bg-indigo-600" },
+                  { etapa: "Agendados", valor: 7000, percentual: 46.7, cor: "bg-emerald-600" },
+                  { etapa: "Confirmados", valor: 6450, percentual: 43.1, cor: "bg-sky-700" },
+                  { etapa: "Realizados", valor: 5800, percentual: 38.9, cor: "bg-prime" },
                 ].map((item, idx) => (
                   <div key={item.etapa} className="relative">
                     <div className="flex items-center gap-4">
@@ -324,10 +324,10 @@ export default function DashboardModalContent() {
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "Realizados (mês)", value: "1.750", status: "positive" },
+                { label: "Realizados (mês)", value: "5.800", status: "positive" },
                 { label: "No-show", value: "10%", status: "positive" },
                 { label: "Show Rate", value: "90%", status: "positive" },
-                { label: "Pipeline", value: "R$ 1,305M", status: "positive" },
+                { label: "Pipeline", value: "R$ 4.3M", status: "positive" },
               ].map((kpi) => (
                 <div key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                   <div className="text-xs font-medium text-slate-600 uppercase tracking-wide">{kpi.label}</div>
@@ -379,7 +379,7 @@ export default function DashboardModalContent() {
                   <div>
                     <div className="flex items-center justify-between text-sm">
                       <div className="font-semibold text-slate-700">Particular</div>
-                      <div className="text-slate-600">58% • 2.610</div>
+                      <div className="text-slate-600">58% • 8.700</div>
                     </div>
                     <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
                       <div className="h-full bg-prime-accent" style={{ width: "58%" }} />
@@ -388,7 +388,7 @@ export default function DashboardModalContent() {
                   <div>
                     <div className="flex items-center justify-between text-sm">
                       <div className="font-semibold text-slate-700">Convênio</div>
-                      <div className="text-slate-600">42% • 1.890</div>
+                      <div className="text-slate-600">42% • 6.300</div>
                     </div>
                     <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
                       <div className="h-full bg-prime" style={{ width: "42%" }} />
@@ -398,9 +398,9 @@ export default function DashboardModalContent() {
                 <div className="mt-4">
                   <div className="text-sm font-semibold text-slate-800 mb-2">Top 3 Convênios</div>
                   <ul className="text-sm text-slate-700 space-y-1">
-                    <li>1. Unimed — 820 leads</li>
-                    <li>2. Bradesco — 567 leads</li>
-                    <li>3. Servir — 378 leads</li>
+                    <li>1. Unimed — 2.730 leads</li>
+                    <li>2. Bradesco — 1.890 leads</li>
+                    <li>3. Servir — 1.260 leads</li>
                   </ul>
                 </div>
               </div>
@@ -451,7 +451,7 @@ export default function DashboardModalContent() {
                   <h4 className="font-bold text-orange-900 text-lg mb-1">Oportunidade crítica do dia</h4>
                   <p className="text-slate-700 mb-3">
                     Ortopedia tem 47 pacientes em fila de espera e 12 horários vagos na próxima semana. Potencial de{" "}
-                    <span className="font-bold text-orange-700">+R$ 5.640</span> em receita.
+                    <span className="font-bold text-orange-700">+R$ 18.800</span> em receita.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button className="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors">
@@ -477,7 +477,7 @@ export default function DashboardModalContent() {
                 <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-lg">
                   <div className="font-semibold text-emerald-900 text-sm">💡 Ação sugerida:</div>
                   <p className="text-sm text-emerald-800 mt-1">Ativar bot com senso de urgência nos fins de semana</p>
-                  <div className="text-emerald-700 font-bold mt-2">Ganho potencial: +R$ 25.200/mês</div>
+                  <div className="text-emerald-700 font-bold mt-2">Ganho potencial: +R$ 84.000/mês</div>
                 </div>
               </div>
 
@@ -492,7 +492,7 @@ export default function DashboardModalContent() {
                 <div className="bg-sky-50 border border-sky-200 p-3 rounded-lg">
                   <div className="font-semibold text-sky-900 text-sm">💡 Ação sugerida:</div>
                   <p className="text-sm text-sky-800 mt-1">Oferecer parcelamento 6x antes da objeção</p>
-                  <div className="text-sky-700 font-bold mt-2">Ganho potencial: +R$ 18.000/mês</div>
+                  <div className="text-sky-700 font-bold mt-2">Ganho potencial: +R$ 60.000/mês</div>
                 </div>
               </div>
 
@@ -507,7 +507,7 @@ export default function DashboardModalContent() {
                 <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
                   <div className="font-semibold text-purple-900 text-sm">💡 Ação sugerida:</div>
                   <p className="text-sm text-purple-800 mt-1">Criar programa de indicação com R$ 200 de incentivo</p>
-                  <div className="text-purple-700 font-bold mt-2">Meta: Dobrar indicações = +R$ 196k/mês</div>
+                  <div className="text-purple-700 font-bold mt-2">Meta: Dobrar indicações = +R$ 650k/mês</div>
                 </div>
               </div>
 

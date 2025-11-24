@@ -166,7 +166,7 @@ export default function CRMModalContent() {
           valor: 750,
           origem: "WhatsApp",
           tempo: "3d",
-          proximoPasso: "Nurturing + depoimento Dr. Maurício",
+          proximoPasso: "Nurturing + depoimento de sucesso",
           prioridade: "media",
           tag: "Consulta",
         },
@@ -393,7 +393,7 @@ export default function CRMModalContent() {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-prime">CRM Comercial • Visão executiva</p>
-            <div className="text-sm text-slate-600">Dr. Maurício Ernesto — Atualizado há 2 min • Integração ERP + Particular ativa</div>
+            <div className="text-sm text-slate-600">Atualizado há 2 min • Integração ERP + Particular ativa</div>
           </div>
           <div className="flex flex-wrap gap-2">
             <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-100">
@@ -404,10 +404,7 @@ export default function CRMModalContent() {
               <Filter size={16} />
               Filtro: alto valor
             </button>
-            <button className="inline-flex items-center gap-2 rounded-lg bg-prime px-4 py-2 text-sm font-semibold text-white shadow-sm">
-              <Sparkles size={16} />
-              Autopiloto IA ligado
-            </button>
+
           </div>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
@@ -437,8 +434,8 @@ export default function CRMModalContent() {
                 key={item.key}
                 onClick={() => setFunil(item.key as "principal" | "followup" | "agendados")}
                 className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-3 ${funil === item.key
-                    ? "bg-prime text-white shadow-md"
-                    : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+                  ? "bg-prime text-white shadow-md"
+                  : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
                   }`}
               >
                 <span className="text-lg">{item.icon}</span>
@@ -548,10 +545,10 @@ export default function CRMModalContent() {
                           {lead.status && (
                             <span
                               className={`rounded-full px-2 py-1 font-semibold ${lead.status === "Confirmado"
-                                  ? "bg-emerald-100 text-emerald-800"
-                                  : lead.status === "Pendente"
-                                    ? "bg-amber-100 text-amber-800"
-                                    : "bg-orange-100 text-orange-800"
+                                ? "bg-emerald-100 text-emerald-800"
+                                : lead.status === "Pendente"
+                                  ? "bg-amber-100 text-amber-800"
+                                  : "bg-orange-100 text-orange-800"
                                 }`}
                             >
                               {lead.status}

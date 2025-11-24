@@ -102,7 +102,7 @@ export default function Home() {
               Agentes Inteligentes & <span className="text-prime-accent">Gestão Unificada</span>
             </h1>
             <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
-              Solução tecnológica para centralizar o atendimento, qualificar os 150 leads diários e integrar a agenda ERP ao fluxo particular.
+              Transforme 35.000 interações mensais em resultados. Nossa IA centraliza o atendimento, qualifica 15.000 leads/mês e integra sua agenda ERP para máxima conversão.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
