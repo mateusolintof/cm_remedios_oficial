@@ -17,7 +17,7 @@ export default function PhaseDetailModalContent({ phase }: { phase: 1 | 2 | 3 | 
       focus: "Construção dos agentes e conexão com sistemas.",
       deliverables: [
         "Agente SDR e FAQ operacionais em ambiente de homologação",
-        "Módulo de integração com Tasy (Leitura/Escrita)",
+        "Módulo de integração com ERP (Leitura/Escrita)",
         "Setup do CRM com funil personalizado",
         "Configuração das réguas de No-Show (D-2, D-1)"
       ]
@@ -51,18 +51,18 @@ export default function PhaseDetailModalContent({ phase }: { phase: 1 | 2 | 3 | 
       <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
         <p className="text-slate-600 text-sm font-medium">{data.focus}</p>
       </div>
-      
+
       <div>
         <h4 className="font-bold text-prime mb-4 flex items-center gap-2">
-            📋 Entregáveis da Fase
+          📋 Entregáveis da Fase
         </h4>
         <ul className="space-y-3">
-            {data.deliverables.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-sm text-slate-700 bg-white p-3 rounded border border-slate-100">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
-                    {item}
-                </li>
-            ))}
+          {data.deliverables.map((item, idx) => (
+            <li key={idx} className="flex items-start gap-3 text-sm text-slate-700 bg-white p-3 rounded border border-slate-100">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+              {item}
+            </li>
+          ))}
         </ul>
       </div>
     </div>

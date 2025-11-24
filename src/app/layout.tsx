@@ -19,9 +19,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "CM Remedios Oficial — Agentes de IA para Atendimento Comercial",
+  title: "CM Remédios — Agentes de IA para Atendimento Comercial",
   description:
-    "Projeto CM Remedios Oficial com agentes de IA para atendimento comercial, automação de agendamentos, FAQ inteligente, anti no‑show, CRM e painel executivo.",
+    "Projeto CM Remédios com agentes de IA para atendimento comercial, automação de agendamentos, FAQ inteligente, anti no‑show, CRM e painel executivo.",
   themeColor: "#ffffff",
   icons: { icon: "/favicon.ico" },
 };

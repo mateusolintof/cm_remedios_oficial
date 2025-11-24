@@ -49,7 +49,7 @@ export default function CRMModalContent() {
           valor: 380,
           origem: "Instagram",
           tempo: "5h",
-          proximoPasso: "Validar convênio no Tasy",
+          proximoPasso: "Validar convênio no ERP",
           prioridade: "media",
           tag: "Consulta",
         },
@@ -378,7 +378,7 @@ export default function CRMModalContent() {
     {
       titulo: "Cirurgias de alto valor",
       detalhe: "3 casos aguardam validação de convênio hoje.",
-      acao: "Priorizar no Tasy às 14h",
+      acao: "Priorizar no ERP às 14h",
     },
     {
       titulo: "No-show em risco",
@@ -393,7 +393,7 @@ export default function CRMModalContent() {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-prime">CRM Comercial • Visão executiva</p>
-            <div className="text-sm text-slate-600">Dr. Maurício Ernesto — Atualizado há 2 min • Integração Tasy + Particular ativa</div>
+            <div className="text-sm text-slate-600">Dr. Maurício Ernesto — Atualizado há 2 min • Integração ERP + Particular ativa</div>
           </div>
           <div className="flex flex-wrap gap-2">
             <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-100">
@@ -436,11 +436,10 @@ export default function CRMModalContent() {
               <button
                 key={item.key}
                 onClick={() => setFunil(item.key as "principal" | "followup" | "agendados")}
-                className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-3 ${
-                  funil === item.key
+                className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-3 ${funil === item.key
                     ? "bg-prime text-white shadow-md"
                     : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
-                }`}
+                  }`}
               >
                 <span className="text-lg">{item.icon}</span>
                 <span className="text-sm">{item.label}</span>
@@ -490,7 +489,7 @@ export default function CRMModalContent() {
             <div>
               <h3 className="text-lg font-bold text-slate-900">Pipeline ativo por estágio</h3>
               <p className="text-sm text-slate-600">
-                Próximo passo claro para cada lead, follow-up automático e agenda unificada (Tasy + particular).
+                Próximo passo claro para cada lead, follow-up automático e agenda unificada (ERP + particular).
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -548,13 +547,12 @@ export default function CRMModalContent() {
                           {lead.horario && <span className="rounded-full bg-slate-100 px-2 py-1">Horário: {lead.horario}</span>}
                           {lead.status && (
                             <span
-                              className={`rounded-full px-2 py-1 font-semibold ${
-                                lead.status === "Confirmado"
+                              className={`rounded-full px-2 py-1 font-semibold ${lead.status === "Confirmado"
                                   ? "bg-emerald-100 text-emerald-800"
                                   : lead.status === "Pendente"
                                     ? "bg-amber-100 text-amber-800"
                                     : "bg-orange-100 text-orange-800"
-                              }`}
+                                }`}
                             >
                               {lead.status}
                             </span>

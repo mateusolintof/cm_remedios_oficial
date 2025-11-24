@@ -31,7 +31,7 @@ function nodesAndEdges(kind: FlowKind): { nodes: Node[]; edges: Edge[] } {
         { id: "plano", position: { x: 1040, y: 80 }, data: { label: "Plano de Saúde" }, className: "flow-node", ...common },
         { id: "particular", position: { x: 1040, y: 220 }, data: { label: "Particular" }, className: "flow-node", ...common },
         { id: "qualif", position: { x: 1300, y: 150 }, data: { label: "Qualificação" }, className: "flow-node", ...common },
-        { id: "disp", position: { x: 1560, y: 150 }, data: { label: "Agenda Unificada (Tasy + Particular)" }, className: "flow-node", ...common },
+        { id: "disp", position: { x: 1560, y: 150 }, data: { label: "Agenda Unificada (ERP + Particular)" }, className: "flow-node", ...common },
         { id: "agend", position: { x: 1820, y: 150 }, data: { label: "Agendamento + Registro no CRM" }, type: "output", className: "flow-node flow-node--output", ...common },
         { id: "hitl", position: { x: 1820, y: 60 }, data: { label: "Aciona humano para confirmar" }, type: "output", className: "flow-node flow-node--output", ...common },
       ];

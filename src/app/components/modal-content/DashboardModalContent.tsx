@@ -72,7 +72,7 @@ export default function DashboardModalContent() {
     {
       titulo: "Consulta para Cirurgia",
       detalhe: "24 pacientes aguardando retorno do convênio.",
-      acao: "Trigger de validação Tasy + call back dedicado.",
+      acao: "Trigger de validação ERP + call back dedicado.",
     },
   ];
 
@@ -98,11 +98,10 @@ export default function DashboardModalContent() {
               <button
                 key={r}
                 onClick={() => setRange(r)}
-                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                  range === r
+                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${range === r
                     ? "bg-prime text-white shadow-sm"
                     : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
-                }`}
+                  }`}
               >
                 <Clock3 size={14} />
                 {faixaTempo[r]}
@@ -138,11 +137,10 @@ export default function DashboardModalContent() {
             <button
               key={i.k}
               onClick={() => setTab(i.k as Tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                tab === i.k
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${tab === i.k
                   ? "bg-prime text-white shadow-sm"
                   : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
-              }`}
+                }`}
             >
               {i.t}
             </button>
@@ -179,9 +177,8 @@ export default function DashboardModalContent() {
               {statusOperacao.map((item) => (
                 <div
                   key={item.title}
-                  className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm ${
-                    item.tone === "emerald" ? "ring-1 ring-emerald-50" : item.tone === "blue" ? "ring-1 ring-sky-50" : "ring-1 ring-slate-100"
-                  }`}
+                  className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm ${item.tone === "emerald" ? "ring-1 ring-emerald-50" : item.tone === "blue" ? "ring-1 ring-sky-50" : "ring-1 ring-slate-100"
+                    }`}
                 >
                   <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                     {item.icon}
