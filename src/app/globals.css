@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Theme tokens (genéricos) — ajuste para o novo cliente */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a; /* slate-900 */
+  color-scheme: light; /* força tema claro */
+  /* Dr. Maurício — identidade (navy + azul claro) */
+  --prime-primary: #041e42; /* navy escuro */
+  --prime-accent: #41b6e6;  /* azul claro */
+  --prime-dark: #041e42;    /* para texto em botões/acento */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-prime: var(--prime-primary);
+  --color-prime-accent: var(--prime-accent);
+  --color-prime-dark: var(--prime-dark);
+
+  --font-sans: var(--font-montserrat);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-montserrat);
+}
+
+/* Base styles */
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Helpers for slide-like spacing in a continuous page */
+.section {
+  @apply py-12 md:py-16; /* menor espaçamento para página contínua */
+}
+
+.section-title { @apply text-3xl md:text-5xl font-bold text-prime; }
+
+.subtitle {
+  @apply text-base md:text-lg text-slate-600;
+}
+
+.btn-primary {
+  @apply inline-flex items-center gap-2 rounded-lg bg-prime-accent px-5 py-3 text-prime-dark font-semibold hover:bg-sky-400 transition-colors;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-xs md:text-sm text-slate-600 bg-white shadow-sm;
+}
+
+.card {
+  @apply rounded-2xl border border-slate-200 bg-white/80 backdrop-blur shadow-sm p-6;
+}
+
+.kicker {
+  @apply uppercase tracking-widest text-xs font-semibold text-prime;
+}
+
+.hero-kicker {
+  @apply uppercase tracking-widest text-lg md:text-xl font-extrabold text-prime;
+}
+
+/* React Flow — estilos de nós temáticos (cores do tema) */
+.flow-node {
+  border: 1.5px solid color-mix(in oklab, var(--color-prime) 40%, white);
+  background: color-mix(in oklab, var(--color-prime) 6%, white);
+  border-radius: 12px;
+}
+.flow-node--primary {
+  border-color: var(--color-prime);
+  background: color-mix(in oklab, var(--color-prime) 14%, white);
+}
+.flow-node--decision {
+  border-color: var(--color-prime-accent);
+  background: color-mix(in oklab, var(--color-prime-accent) 18%, white);
+}
+.flow-node--output {
+  border-color: color-mix(in oklab, var(--color-prime) 60%, white);
+  background: color-mix(in oklab, var(--color-prime) 4%, white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04);
+}
