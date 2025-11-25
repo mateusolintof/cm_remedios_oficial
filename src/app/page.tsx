@@ -92,7 +92,6 @@ export default function Home() {
             <a className="hover:text-prime transition-colors" href="#solucoes">Soluções</a>
             <a className="hover:text-prime transition-colors" href="#entregaveis">Entregáveis</a>
             <a className="hover:text-prime transition-colors" href="#investimento">Investimento</a>
-            <a className="btn-primary py-2 px-4 text-xs" href="#cta">Aprovar Proposta</a>
           </nav>
         </div>
       </header>
@@ -640,10 +639,7 @@ export default function Home() {
           </div>
 
           <div className="mt-16">
-            <button className="btn-primary text-lg px-10 py-4">
-              Formalizar Contratação
-            </button>
-            <p className="mt-4 text-sm text-slate-400">Dúvidas técnicas? <a href="#" className="text-prime underline">Fale com o especialista</a>.</p>
+            <p className="mt-4 text-sm text-slate-500">Dúvidas técnicas? <a href="#" className="text-prime underline">Fale com o especialista</a>.</p>
           </div>
         </div>
       </section>
