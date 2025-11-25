@@ -15,7 +15,7 @@ const assumptions = {
   leadsMensais: 10000,
   conversaoAtual: 15, // %
   conversaoIA: 40, // %
-  ticketMedio: 400, // R$
+  ticketMedio: 80, // R$
   margemContribuicao: 15, // %
   colaboradoresSubstituidos: 5,
   salarioMedio: 2000, // R$
@@ -78,7 +78,7 @@ export default function PaybackModalContent() {
               o ecossistema cobre todo o custo anual (setup + 12x mensal) e começa a gerar caixa já no primeiro ciclo.
             </p>
 
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-3">
+              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-3">
               <div className="flex items-start gap-3">
                 <ArrowUpRight className="h-5 w-5 text-emerald-600" />
                 <div>
@@ -90,9 +90,11 @@ export default function PaybackModalContent() {
               <div className="flex items-start gap-3">
                 <PiggyBank className="h-5 w-5 text-prime" />
                 <div>
-                  <div className="text-xs uppercase font-bold text-slate-500">Ganho mensal estimado</div>
-                  <div className="text-xl font-bold text-emerald-700">+{formatCurrency(calculo.ganhoMensalTotal)}</div>
-                  <div className="text-xs text-slate-500">Margem de contribuição considerada: {margemContribuicao}%</div>
+                  <div className="text-xs uppercase font-bold text-slate-500">Ganho total 12 meses</div>
+                  <div className="text-xl font-bold text-emerald-700">+{formatCurrency(calculo.ganhoAnualTotal)}</div>
+                  <div className="text-xs text-slate-500">
+                    Inclui margem de contribuição de {margemContribuicao}% e redução de custos de equipe.
+                  </div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -112,13 +114,16 @@ export default function PaybackModalContent() {
           </div>
 
           <div className="p-8 space-y-6 bg-gradient-to-b from-white to-slate-50">
-            <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-3">Premissas</div>
+              <div className="grid grid-cols-2 gap-4">
               <Assumption label="Leads/mês" value={assumptions.leadsMensais.toLocaleString("pt-BR")} />
               <Assumption label="Ticket médio" value={formatCurrency(assumptions.ticketMedio)} />
               <Assumption label="Conversão atual" value={`${assumptions.conversaoAtual}%`} />
               <Assumption label="Conversão com IA" value={`${assumptions.conversaoIA}%`} highlight />
               <Assumption label="Equipe substituída" value={`${assumptions.colaboradoresSubstituidos} pessoas`} />
               <Assumption label="Salário médio" value={formatCurrency(assumptions.salarioMedio)} />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
