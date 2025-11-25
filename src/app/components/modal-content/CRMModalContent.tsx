@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, CheckCircle2, Clock3, Filter, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock3, Filter, ShieldCheck, Zap } from "lucide-react";
 
 type Lead = {
   id: number;

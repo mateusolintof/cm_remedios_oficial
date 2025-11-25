@@ -12,10 +12,11 @@ type FaturamentoInputs = {
 
 type Props = {
   preparedFor: string;
+  onFinish?: () => void;
 };
 
-const investimento = 30000; // Setup único
-const mensalidade = 2500;   // Mensalidade recorrente
+const investimento = 60000; // Setup único (Ecossistema Full)
+const mensalidade = 7000;   // Mensalidade recorrente (Ecossistema Full)
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -26,13 +27,13 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 const formatCurrency = (value: number) => currencyFormatter.format(value);
 
 const defaultFaturamento: FaturamentoInputs = {
-  leadsMes: 4500, // Baseado em 150/dia
+  leadsMes: 15000, // Baseado em 500/dia
   taxaConversaoAtual: 15,
   taxaConversaoNova: 35, // Meta conservadora
   ticketMedio: 400,
 };
 
-export default function RoiModalContent({ preparedFor }: Props) {
+export default function RoiModalContent({ preparedFor, onFinish }: Props) {
   const [inputs, setInputs] = useState<FaturamentoInputs>(defaultFaturamento);
 
   // Cálculos
@@ -149,7 +150,10 @@ export default function RoiModalContent({ preparedFor }: Props) {
                     O ROI indica quantas vezes o lucro cobre o custo total no primeiro ano.
                 </div>
 
-                <button className="w-full py-4 bg-prime hover:bg-prime-dark text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-prime/20">
+                <button 
+                    onClick={onFinish}
+                    className="w-full py-4 bg-prime hover:bg-prime-dark text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-prime/20"
+                >
                     Validar Viabilidade Financeira <ArrowRight className="h-5 w-5" />
                 </button>
              </div>

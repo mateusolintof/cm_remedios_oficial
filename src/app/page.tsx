@@ -12,7 +12,8 @@ import {
   Sparkles,
   Target,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  ArrowRight
 } from "lucide-react";
 import Modal from "./components/Modal";
 import { type FlowKind } from "./components/FlowDiagram";
@@ -40,7 +41,7 @@ const ModalContentFallback = () => (
 );
 
 // Lazy Imports dos Modais
-const RoiModalLazy = dynamic<{ preparedFor: string }>(() => import("./components/modal-content/RoiModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
+const RoiModalLazy = dynamic<{ preparedFor: string; onFinish?: () => void }>(() => import("./components/modal-content/RoiModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const CRMModalLazy = dynamic(() => import("./components/modal-content/CRMModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const DashboardModalLazy = dynamic(() => import("./components/modal-content/DashboardModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const PhaseDetailModalLazy = dynamic<{ phase: 1 | 2 | 3 | 4 }>(() => import("./components/modal-content/PhaseDetailModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
@@ -48,6 +49,7 @@ const ConquistasModalLazy = dynamic(() => import("./components/modal-content/Con
 const InteligenciaModalLazy = dynamic(() => import("./components/modal-content/InteligenciaModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const InsightsModalLazy = dynamic(() => import("./components/modal-content/InsightsModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const RelatoriosModalLazy = dynamic(() => import("./components/modal-content/RelatoriosModalContentDoc"), { ssr: false, loading: () => <ModalContentFallback /> });
+const SolutionBenefitsModalLazy = dynamic<{ solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }>(() => import("./components/modal-content/SolutionBenefitsModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const EtapaModalLazy = dynamic<{ etapa: 1 | 2 | 3 | 4 }>(() => import("./components/modal-content/EtapaModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 
 const getEtapaTitle = (etapa: 1 | 2 | 3 | 4) => {
@@ -67,6 +69,7 @@ type ModalKind =
   | { type: "relatorios" }
   | { type: "etapa"; etapa: 1 | 2 | 3 | 4 }
   | { type: "roi" }
+  | { type: "benefits"; solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }
   | null;
 
 export default function Home() {
@@ -226,7 +229,13 @@ export default function Home() {
                 <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span>
               </div>
               <h3 className="font-bold text-lg text-slate-900">1. SDR & Agendamento</h3>
-              <p className="text-sm text-slate-600 mt-2">Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado.</p>
+              <p className="text-sm text-slate-600 mt-2 mb-4">Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado.</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "agendamento" }); }}
+                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
 
             {/* Card 2 */}
@@ -238,7 +247,13 @@ export default function Home() {
                 <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span>
               </div>
               <h3 className="font-bold text-lg text-slate-900">2. FAQ Inteligente</h3>
-              <p className="text-sm text-slate-600 mt-2">Base de conhecimento treinada para tirar dúvidas de preparo, valores e localização instantaneamente.</p>
+              <p className="text-sm text-slate-600 mt-2 mb-4">Base de conhecimento treinada para tirar dúvidas de preparo, valores e localização instantaneamente.</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "faq" }); }}
+                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
 
             {/* Card 3 */}
@@ -250,7 +265,13 @@ export default function Home() {
                 <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span>
               </div>
               <h3 className="font-bold text-lg text-slate-900">3. Gestão de No-Show</h3>
-              <p className="text-sm text-slate-600 mt-2">Automação de confirmações (D-2, D-1) e gestão ativa de fila de espera para preencher lacunas.</p>
+              <p className="text-sm text-slate-600 mt-2 mb-4">Automação de confirmações (D-2, D-1) e gestão ativa de fila de espera para preencher lacunas.</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "triagem-noshow" }); }}
+                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
 
             {/* Card 4 */}
@@ -262,7 +283,13 @@ export default function Home() {
                 {/* <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span> */}
               </div>
               <h3 className="font-bold text-lg text-slate-900">4. Pesquisa & Satisfação</h3>
-              <p className="text-sm text-slate-600 mt-2">Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.</p>
+              <p className="text-sm text-slate-600 mt-2 mb-4">Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "pesquisa" }); }}
+                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
           </div>
 
@@ -617,7 +644,15 @@ export default function Home() {
       <Modal open={modal?.type === "solution"} onClose={() => setModal(null)} title={(modal && modal.type === "solution" && modal.title) || "Fluxo"} scrollContent={false}>
         <div className="h-full">{modal && modal.type === "solution" ? <FlowDiagramLazy kind={modal.kind} /> : null}</div>
       </Modal>
-      <Modal open={modal?.type === "roi"} onClose={() => setModal(null)} title="Simulador de ROI" titleAlign="center" closeLabel="Fechar"> <RoiModalLazy preparedFor={preparedFor} /> </Modal>
+      <Modal open={modal?.type === "roi"} onClose={() => setModal(null)} title="Simulador de ROI" titleAlign="center" closeLabel="Fechar">
+        <RoiModalLazy
+          preparedFor={preparedFor}
+          onFinish={() => {
+            setModal(null);
+            document.getElementById("investimento")?.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
+      </Modal>
       <Modal open={modal?.type === "crm"} onClose={() => setModal(null)} title="CRM Integrado"> <CRMModalLazy /> </Modal>
       <Modal open={modal?.type === "dashboard"} onClose={() => setModal(null)} title="Painel Executivo"> <DashboardModalLazy /> </Modal>
       <Modal open={modal?.type === "phases"} onClose={() => setModal(null)} title={`Fase ${modal?.type === "phases" ? modal.phase : 1}: Detalhamento`} size="md"> <PhaseDetailModalLazy phase={modal?.type === "phases" ? modal.phase : 1} /> </Modal>
@@ -626,6 +661,7 @@ export default function Home() {
       <Modal open={modal?.type === "insights"} onClose={() => setModal(null)} title="Insights de Negócio"> <InsightsModalLazy /> </Modal>
       <Modal open={modal?.type === "relatorios"} onClose={() => setModal(null)} title="Relatórios Gerenciais"> <RelatoriosModalLazy /> </Modal>
       <Modal open={modal?.type === "etapa"} onClose={() => setModal(null)} title={modal?.type === "etapa" ? `Etapa ${modal.etapa} - ${getEtapaTitle(modal.etapa)}` : "Etapa"} size="md"> <EtapaModalLazy etapa={modal?.type === "etapa" ? modal.etapa : 1} /> </Modal>
+      <Modal open={modal?.type === "benefits"} onClose={() => setModal(null)} title="Benefícios Tangíveis"> <SolutionBenefitsModalLazy solution={modal?.type === "benefits" ? modal.solution : "agendamento"} /> </Modal>
     </div>
   );
 }
