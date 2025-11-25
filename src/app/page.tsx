@@ -423,9 +423,9 @@ export default function Home() {
               </ul>
               <button
                 onClick={() => setModal({ type: "benefits", solution: "faq" })}
-                className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+                className="btn-benefits mt-4"
               >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+                Ver Benefícios Tangíveis <ArrowRight />
               </button>
             </div>
 
@@ -458,9 +458,9 @@ export default function Home() {
               </ul>
               <button
                 onClick={() => setModal({ type: "benefits", solution: "agendamento" })}
-                className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+                className="btn-benefits mt-4"
               >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+                Ver Benefícios Tangíveis <ArrowRight />
               </button>
             </div>
 
@@ -487,9 +487,9 @@ export default function Home() {
               </ul>
               <button
                 onClick={() => setModal({ type: "benefits", solution: "triagem-noshow" })}
-                className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+                className="btn-benefits mt-4"
               >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+                Ver Benefícios Tangíveis <ArrowRight />
               </button>
             </div>
           </div>
@@ -528,9 +528,9 @@ export default function Home() {
                 </ul>
                 <button
                   onClick={() => setModal({ type: "benefits", solution: "pesquisa" })}
-                  className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+                  className="btn-benefits mt-4"
                 >
-                  Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+                  Ver Benefícios Tangíveis <ArrowRight />
                 </button>
               </div>
             </div>

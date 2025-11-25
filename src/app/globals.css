@@ -64,6 +64,65 @@ body {
   @apply uppercase tracking-widest text-lg md:text-xl font-extrabold text-prime;
 }
 
+.btn-benefits {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.95rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--prime-primary);
+  background: #f8fafc;
+  border: 1px solid color-mix(in oklab, var(--prime-accent) 35%, white);
+  box-shadow: 0 12px 35px rgba(4, 30, 66, 0.08);
+  transition: transform 180ms ease, box-shadow 200ms ease, border-color 160ms ease, color 160ms ease;
+}
+.btn-benefits::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(120deg, color-mix(in oklab, var(--prime-primary) 75%, white), var(--prime-accent), color-mix(in oklab, var(--prime-primary) 75%, white));
+  background-size: 220% 220%;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 180ms ease, transform 200ms ease;
+}
+.btn-benefits::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: #ffffff;
+  z-index: -1;
+}
+.btn-benefits:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 14px 40px rgba(4, 30, 66, 0.12);
+  border-color: color-mix(in oklab, var(--prime-accent) 70%, white);
+}
+.btn-benefits:hover::before {
+  opacity: 0.8;
+  animation: benefits-glow 1.4s ease infinite;
+}
+.btn-benefits:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--prime-accent) 80%, white);
+  outline-offset: 3px;
+}
+.btn-benefits svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+@keyframes benefits-glow {
+  0% { transform: translateX(-4%); background-position: 0% 50%; }
+  50% { transform: translateX(4%); background-position: 100% 50%; }
+  100% { transform: translateX(-4%); background-position: 0% 50%; }
+}
+
 /* React Flow — estilos de nós temáticos (cores do tema) */
 .flow-node {
   border: 1.5px solid color-mix(in oklab, var(--color-prime) 40%, white);
