@@ -51,6 +51,7 @@ const InsightsModalLazy = dynamic(() => import("./components/modal-content/Insig
 const RelatoriosModalLazy = dynamic(() => import("./components/modal-content/RelatoriosModalContentDoc"), { ssr: false, loading: () => <ModalContentFallback /> });
 const SolutionBenefitsModalLazy = dynamic<{ solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }>(() => import("./components/modal-content/SolutionBenefitsModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const EtapaModalLazy = dynamic<{ etapa: 1 | 2 | 3 | 4 }>(() => import("./components/modal-content/EtapaModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
+const CostReductionModalLazy = dynamic(() => import("./components/modal-content/CostReductionModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 
 const getEtapaTitle = (etapa: 1 | 2 | 3 | 4) => {
   const titles = { 1: "Recepção", 2: "Agente SDR", 3: "Triagem", 4: "Atendimento" };
@@ -69,6 +70,7 @@ type ModalKind =
   | { type: "relatorios" }
   | { type: "etapa"; etapa: 1 | 2 | 3 | 4 }
   | { type: "roi" }
+  | { type: "costs" }
   | { type: "benefits"; solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }
   | null;
 
@@ -381,12 +383,20 @@ export default function Home() {
             Utilize nossa calculadora para projetar o retorno sobre o investimento com base na recuperação de leads e redução de custos operacionais.
           </p>
           <div className="mt-8">
-            <button
-              onClick={() => setModal({ type: "roi" })}
-              className="btn-primary px-8 py-3 shadow-lg shadow-prime/20"
-            >
-              Abrir Calculadora de ROI
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => setModal({ type: "roi" })}
+                className="btn-primary px-8 py-3 shadow-lg shadow-prime/20"
+              >
+                Abrir Calculadora de ROI
+              </button>
+              <button
+                onClick={() => setModal({ type: "costs" })}
+                className="btn-secondary px-8 py-3"
+              >
+                Calcule a Redução de Custos
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -662,6 +672,7 @@ export default function Home() {
       <Modal open={modal?.type === "relatorios"} onClose={() => setModal(null)} title="Relatórios Gerenciais"> <RelatoriosModalLazy /> </Modal>
       <Modal open={modal?.type === "etapa"} onClose={() => setModal(null)} title={modal?.type === "etapa" ? `Etapa ${modal.etapa} - ${getEtapaTitle(modal.etapa)}` : "Etapa"} size="md"> <EtapaModalLazy etapa={modal?.type === "etapa" ? modal.etapa : 1} /> </Modal>
       <Modal open={modal?.type === "benefits"} onClose={() => setModal(null)} title="Benefícios Tangíveis"> <SolutionBenefitsModalLazy solution={modal?.type === "benefits" ? modal.solution : "agendamento"} /> </Modal>
+      <Modal open={modal?.type === "costs"} onClose={() => setModal(null)} title="Redução de Custos" titleAlign="center"> <CostReductionModalLazy /> </Modal>
     </div>
   );
 }

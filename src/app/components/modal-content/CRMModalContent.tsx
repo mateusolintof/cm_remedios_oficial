@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, CheckCircle2, Clock3, Filter, ShieldCheck, Zap } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock3, Filter } from "lucide-react";
 
 type Lead = {
   id: number;
@@ -444,27 +444,6 @@ export default function CRMModalContent() {
             ))}
           </div>
 
-          <div className="mt-6 space-y-3">
-            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="flex items-center justify-between text-xs font-semibold uppercase text-slate-600">
-                Total Leads
-                <ShieldCheck size={16} className="text-emerald-600" />
-              </div>
-              <div className="text-2xl font-bold text-prime mt-1">142</div>
-              <div className="text-xs text-slate-500">Registro automático • LGPD em dia</div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="text-xs font-semibold uppercase text-slate-600">Taxa de Conversão</div>
-              <div className="text-2xl font-bold text-emerald-600 mt-1">67,7%</div>
-              <div className="text-xs text-slate-500">Meta: 60% qualificação para 45% consulta</div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="text-xs font-semibold uppercase text-slate-600">Ticket Médio</div>
-              <div className="text-2xl font-bold text-slate-900 mt-1">R$ 768</div>
-              <div className="text-xs text-slate-500">Cirurgias elevam pipeline</div>
-            </div>
-          </div>
-
           <div className="mt-6 space-y-2">
             {alertas.map((alerta) => (
               <div key={alerta.titulo} className="rounded-lg border border-amber-200 bg-amber-50 p-3">
@@ -482,30 +461,7 @@ export default function CRMModalContent() {
         </aside>
 
         <div className="flex-1 overflow-x-auto p-6">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">Pipeline ativo por estágio</h3>
-              <p className="text-sm text-slate-600">
-                Próximo passo claro para cada lead, follow-up automático e agenda unificada (ERP + particular).
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                <Zap size={14} />
-                SLA &lt; 10 min
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                <ShieldCheck size={14} />
-                Fila de espera ativa
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                <Clock3 size={14} />
-                Reagendamentos monitorados
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-4 flex gap-4 min-w-max">
+          <div className="flex gap-4 min-w-max">
             {colunas[funil].map((coluna) => {
               const leadsDaColuna: Lead[] = (pacientes as Record<string, Record<string, Lead[]>>)[funil][coluna.key] ?? [];
               return (
