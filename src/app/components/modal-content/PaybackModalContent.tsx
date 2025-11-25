@@ -113,19 +113,19 @@ export default function PaybackModalContent() {
 
           <div className="p-8 space-y-6 bg-gradient-to-b from-white to-slate-50">
             <div className="grid grid-cols-2 gap-4">
-              <Assumption label=\"Leads/mês\" value={assumptions.leadsMensais.toLocaleString(\"pt-BR\")} />
-              <Assumption label=\"Ticket médio\" value={formatCurrency(assumptions.ticketMedio)} />
-              <Assumption label=\"Conversão atual\" value={`${assumptions.conversaoAtual}%`} />
-              <Assumption label=\"Conversão com IA\" value={`${assumptions.conversaoIA}%`} highlight />
-              <Assumption label=\"Equipe substituída\" value={`${assumptions.colaboradoresSubstituidos} pessoas`} />
-              <Assumption label=\"Salário médio\" value={formatCurrency(assumptions.salarioMedio)} />
+              <Assumption label="Leads/mês" value={assumptions.leadsMensais.toLocaleString("pt-BR")} />
+              <Assumption label="Ticket médio" value={formatCurrency(assumptions.ticketMedio)} />
+              <Assumption label="Conversão atual" value={`${assumptions.conversaoAtual}%`} />
+              <Assumption label="Conversão com IA" value={`${assumptions.conversaoIA}%`} highlight />
+              <Assumption label="Equipe substituída" value={`${assumptions.colaboradoresSubstituidos} pessoas`} />
+              <Assumption label="Salário médio" value={formatCurrency(assumptions.salarioMedio)} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <KpiCard title=\"Ganho em receita (mês)\" value={`+${formatCurrency(calculo.ganhoConversaoMensalLiquido)}`} caption=\"Já descontada a margem de contribuição\" />
-              <KpiCard title=\"Redução de custos (mês)\" value={`+${formatCurrency(calculo.reducaoCustosMensal)}`} caption=\"Substituição de 5 atendentes\" />
-              <KpiCard title=\"Ganho anual\" value={`+${formatCurrency(calculo.ganhoAnualTotal)}`} caption=\"Receita incremental + economia\" />
-              <KpiCard title=\"Payback\" value={paybackLabel} caption=\"Custo total dividido pelo ganho mensal\" highlight />
+              <KpiCard title="Ganho em receita (mês)" value={`+${formatCurrency(calculo.ganhoConversaoMensalLiquido)}`} caption="Já descontada a margem de contribuição" />
+              <KpiCard title="Redução de custos (mês)" value={`+${formatCurrency(calculo.reducaoCustosMensal)}`} caption="Substituição de 5 atendentes" />
+              <KpiCard title="Ganho anual" value={`+${formatCurrency(calculo.ganhoAnualTotal)}`} caption="Receita incremental + economia" />
+              <KpiCard title="Payback" value={paybackLabel} caption="Custo total dividido pelo ganho mensal" highlight />
             </div>
 
             <div className="text-xs text-slate-500 leading-relaxed">
@@ -139,26 +139,26 @@ export default function PaybackModalContent() {
 }
 
 function paybackMesesLabel(payback: number) {
-  if (payback < 1) return \"<1 mês\";
-  if (payback < 1.5) return \"≈1 mês\";
+  if (payback < 1) return "<1 mês";
+  if (payback < 1.5) return "≈1 mês";
   return `${payback.toFixed(1)} meses`;
 }
 
 function Assumption({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className={`rounded-lg border ${highlight ? \"border-prime/60 bg-prime-accent/10\" : \"border-slate-200 bg-white\"} p-3`}>
-      <div className=\"text-[11px] uppercase font-bold text-slate-500\">{label}</div>
-      <div className={`text-sm font-semibold ${highlight ? \"text-prime\" : \"text-slate-800\"}`}>{value}</div>
+    <div className={`rounded-lg border ${highlight ? "border-prime/60 bg-prime-accent/10" : "border-slate-200 bg-white"} p-3`}>
+      <div className="text-[11px] uppercase font-bold text-slate-500">{label}</div>
+      <div className={`text-sm font-semibold ${highlight ? "text-prime" : "text-slate-800"}`}>{value}</div>
     </div>
   );
 }
 
 function KpiCard({ title, value, caption, highlight = false }: { title: string; value: string; caption: string; highlight?: boolean }) {
   return (
-    <div className={`rounded-xl border ${highlight ? \"border-emerald-200 bg-emerald-50\" : \"border-slate-200 bg-white\"} p-4 shadow-sm`}>
-      <div className=\"text-xs uppercase font-bold text-slate-500\">{title}</div>
-      <div className={`text-lg font-extrabold ${highlight ? \"text-emerald-700\" : \"text-slate-900\"}`}>{value}</div>
-      <div className=\"text-[11px] text-slate-500 mt-1\">{caption}</div>
+    <div className={`rounded-xl border ${highlight ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-white"} p-4 shadow-sm`}>
+      <div className="text-xs uppercase font-bold text-slate-500">{title}</div>
+      <div className={`text-lg font-extrabold ${highlight ? "text-emerald-700" : "text-slate-900"}`}>{value}</div>
+      <div className="text-[11px] text-slate-500 mt-1">{caption}</div>
     </div>
   );
 }
