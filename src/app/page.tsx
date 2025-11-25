@@ -217,7 +217,7 @@ export default function Home() {
       <section className="section bg-white" id="solucoes">
         <div className="mx-auto max-w-7xl px-4">
           <h2 className="section-title">Arquitetura da Solução</h2>
-          <p className="subtitle mt-2">Implementação de 3 Agentes Especializados + Ecossistema de Gestão.</p>
+          <p className="subtitle mt-2">Implementação de 4 Agentes Especializados + Ecossistema de Gestão.</p>
 
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Card 1 */}
@@ -230,12 +230,6 @@ export default function Home() {
               </div>
               <h3 className="font-bold text-lg text-slate-900">1. SDR & Agendamento</h3>
               <p className="text-sm text-slate-600 mt-2 mb-4">Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado.</p>
-              <button
-                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "agendamento" }); }}
-                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
-              >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
-              </button>
             </div>
 
             {/* Card 2 */}
@@ -248,12 +242,6 @@ export default function Home() {
               </div>
               <h3 className="font-bold text-lg text-slate-900">2. FAQ Inteligente</h3>
               <p className="text-sm text-slate-600 mt-2 mb-4">Base de conhecimento treinada para tirar dúvidas de preparo, valores e localização instantaneamente.</p>
-              <button
-                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "faq" }); }}
-                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
-              >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
-              </button>
             </div>
 
             {/* Card 3 */}
@@ -266,12 +254,6 @@ export default function Home() {
               </div>
               <h3 className="font-bold text-lg text-slate-900">3. Gestão de No-Show</h3>
               <p className="text-sm text-slate-600 mt-2 mb-4">Automação de confirmações (D-2, D-1) e gestão ativa de fila de espera para preencher lacunas.</p>
-              <button
-                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "triagem-noshow" }); }}
-                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
-              >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
-              </button>
             </div>
 
             {/* Card 4 */}
@@ -284,12 +266,6 @@ export default function Home() {
               </div>
               <h3 className="font-bold text-lg text-slate-900">4. Pesquisa & Satisfação</h3>
               <p className="text-sm text-slate-600 mt-2 mb-4">Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.</p>
-              <button
-                onClick={(e) => { e.stopPropagation(); setModal({ type: "benefits", solution: "pesquisa" }); }}
-                className="text-xs font-bold text-prime hover:underline flex items-center gap-1"
-              >
-                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
-              </button>
             </div>
           </div>
 
@@ -445,6 +421,12 @@ export default function Home() {
                   <span className="text-prime">•</span> Acesso ao Banco de Conhecimento personalizado
                 </li>
               </ul>
+              <button
+                onClick={() => setModal({ type: "benefits", solution: "faq" })}
+                className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
 
             {/* Card 2: Agendamento Inteligente (Destaque) */}
@@ -474,6 +456,12 @@ export default function Home() {
                   <span className="text-prime">•</span> Suporte + Otimizações
                 </li>
               </ul>
+              <button
+                onClick={() => setModal({ type: "benefits", solution: "agendamento" })}
+                className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
 
             {/* Card 3: Pré-triagem */}
@@ -497,6 +485,12 @@ export default function Home() {
                   <span className="text-prime">•</span> Agente ativo (inicia as conversas)
                 </li>
               </ul>
+              <button
+                onClick={() => setModal({ type: "benefits", solution: "triagem-noshow" })}
+                className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+              >
+                Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
           </div>
 
@@ -532,6 +526,12 @@ export default function Home() {
                     <span className="text-prime">•</span> Sentimento negativo → rapport + insight interno
                   </li>
                 </ul>
+                <button
+                  onClick={() => setModal({ type: "benefits", solution: "pesquisa" })}
+                  className="mt-4 text-sm font-bold text-prime hover:underline flex items-center gap-1"
+                >
+                  Ver Benefícios Tangíveis <ArrowRight className="h-3 w-3" />
+                </button>
               </div>
             </div>
           </div>
