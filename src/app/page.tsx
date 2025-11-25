@@ -52,6 +52,7 @@ const RelatoriosModalLazy = dynamic(() => import("./components/modal-content/Rel
 const SolutionBenefitsModalLazy = dynamic<{ solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }>(() => import("./components/modal-content/SolutionBenefitsModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const EtapaModalLazy = dynamic<{ etapa: 1 | 2 | 3 | 4 }>(() => import("./components/modal-content/EtapaModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 const CostReductionModalLazy = dynamic(() => import("./components/modal-content/CostReductionModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
+const PaybackModalLazy = dynamic(() => import("./components/modal-content/PaybackModalContent"), { ssr: false, loading: () => <ModalContentFallback /> });
 
 const getEtapaTitle = (etapa: 1 | 2 | 3 | 4) => {
   const titles = { 1: "Recepção", 2: "Agente SDR", 3: "Triagem", 4: "Atendimento" };
@@ -71,6 +72,7 @@ type ModalKind =
   | { type: "etapa"; etapa: 1 | 2 | 3 | 4 }
   | { type: "roi" }
   | { type: "costs" }
+  | { type: "payback" }
   | { type: "benefits"; solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }
   | null;
 
@@ -602,8 +604,11 @@ export default function Home() {
                     <div className="text-emerald-400 text-sm font-bold mt-1">Economia de R$ 4.000/mês</div>
                   </div>
 
-                  <button className="w-full mt-4 bg-prime-accent hover:bg-sky-400 text-prime-dark font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg shadow-prime-accent/20">
-                    Garantir Ecossistema Completo
+                  <button
+                    className="w-full mt-4 bg-prime-accent hover:bg-sky-400 text-prime-dark font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg shadow-prime-accent/20"
+                    onClick={() => setModal({ type: "payback" })}
+                  >
+                    Projeto com payback em ~1 mês
                   </button>
                 </div>
               </div>
@@ -673,6 +678,7 @@ export default function Home() {
       <Modal open={modal?.type === "etapa"} onClose={() => setModal(null)} title={modal?.type === "etapa" ? `Etapa ${modal.etapa} - ${getEtapaTitle(modal.etapa)}` : "Etapa"} size="md"> <EtapaModalLazy etapa={modal?.type === "etapa" ? modal.etapa : 1} /> </Modal>
       <Modal open={modal?.type === "benefits"} onClose={() => setModal(null)} title="Benefícios Tangíveis"> <SolutionBenefitsModalLazy solution={modal?.type === "benefits" ? modal.solution : "agendamento"} /> </Modal>
       <Modal open={modal?.type === "costs"} onClose={() => setModal(null)} title="Redução de Custos" titleAlign="center"> <CostReductionModalLazy /> </Modal>
+      <Modal open={modal?.type === "payback"} onClose={() => setModal(null)} title="Viabilidade do Ecossistema" titleAlign="center"> <PaybackModalLazy /> </Modal>
     </div>
   );
 }
