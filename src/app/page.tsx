@@ -323,8 +323,8 @@ export default function Home() {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <button onClick={() => setModal({ type: "conquistas" })} className="btn-secondary text-sm">Detalhar Ganhos Operacionais</button>
-            <button onClick={() => setModal({ type: "inteligencia" })} className="btn-secondary text-sm">Ver Inteligência de Dados</button>
+            <button onClick={() => setModal({ type: "conquistas" })} className="btn-benefits text-sm">Detalhar Ganhos Operacionais</button>
+            <button onClick={() => setModal({ type: "inteligencia" })} className="btn-benefits text-sm">Ver Inteligência de Dados</button>
           </div>
         </div>
       </section>
@@ -393,7 +393,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setModal({ type: "costs" })}
-                className="btn-secondary px-8 py-3"
+                className="btn-primary px-8 py-3 shadow-lg shadow-prime/20"
               >
                 Calcule a Redução de Custos
               </button>

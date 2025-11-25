@@ -76,7 +76,7 @@ body {
   font-size: 0.9rem;
   color: var(--prime-primary);
   background: #f8fafc;
-  border: 1px solid color-mix(in oklab, var(--prime-accent) 35%, white);
+  border: 1.5px solid color-mix(in oklab, var(--prime-accent) 35%, white);
   box-shadow: 0 12px 35px rgba(4, 30, 66, 0.08);
   transition: transform 180ms ease, box-shadow 200ms ease, border-color 160ms ease, color 160ms ease;
 }
