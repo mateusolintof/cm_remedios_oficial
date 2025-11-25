@@ -338,11 +338,11 @@ export default function Home() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
                   <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Configuração dos Agentes:</strong> Desenvolvimento e treino dos 3 fluxos (SDR, FAQ, No-Show) com a base de conhecimento do Dr.</div>
+                  <div className="text-sm text-slate-700"><strong>Configuração dos Agentes:</strong> Desenvolvimento e treino dos 4 fluxos (SDR, FAQ, No-Show, Pós-venda) com a base de conhecimento da Clínica</div>
                 </li>
                 <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
                   <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Integração ERP:</strong> Conector seguro para leitura e escrita na agenda oficial do hospital/clínica.</div>
+                  <div className="text-sm text-slate-700"><strong>Integração ERP:</strong> Conector seguro para deixar tudo integrado.</div>
                 </li>
                 <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
                   <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
@@ -502,7 +502,7 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-8 mt-4">
                   <div>
                     <div className="text-xs text-slate-500 mb-1">Implementação</div>
-                    <div className="text-2xl font-bold text-slate-900">R$ 10.000,00</div>
+                    <div className="text-2xl font-bold text-slate-900">R$ 15.000,00</div>
                     <div className="text-xs text-slate-500">Pagamento único</div>
                   </div>
                   <div>
@@ -575,8 +575,8 @@ export default function Home() {
                   <div>
                     <div className="text-sm text-slate-400 mb-1">Investimento Total (Setup)</div>
                     <div className="flex items-baseline gap-3">
-                      <span className="text-lg text-slate-500 line-through">R$ 80.000</span>
-                      <span className="text-4xl font-extrabold text-white">R$ 60.000</span>
+                      <span className="text-lg text-slate-500 line-through">R$ 90.000</span>
+                      <span className="text-4xl font-extrabold text-white">R$ 70.000</span>
                     </div>
                     <div className="text-emerald-400 text-sm font-bold mt-1">Economia de R$ 20.000 no setup</div>
                   </div>
