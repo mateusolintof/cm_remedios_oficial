@@ -415,7 +415,7 @@ export default function Home() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:border-prime-accent/50 transition-colors">
               <h3 className="text-lg font-bold text-prime mb-2">Agente FAQ + Informações Gerais</h3>
               <div className="text-xs text-slate-500 mb-4">Implementação</div>
-              <div className="text-2xl font-bold text-slate-900 mb-1">R$ 10.000,00</div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">R$ 15.000,00</div>
               <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
 
               <div className="text-xs text-slate-500 mb-1">Recorrência</div>

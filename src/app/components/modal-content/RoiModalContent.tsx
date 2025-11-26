@@ -28,7 +28,7 @@ const formatCurrency = (value: number) => currencyFormatter.format(value);
 const defaultFaturamento: FaturamentoInputs = {
   leadsMes: 15000, // Baseado em 500/dia
   taxaConversaoAtual: 15,
-  ticketMedio: 400,
+  ticketMedio: 100,
 };
 
 export default function RoiModalContent({ preparedFor, onFinish }: Props) {
@@ -95,17 +95,17 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-500 uppercase">Ticket Médio (R$)</label>
-                  <span className="text-xs text-slate-400">R$ 200 → R$ 1.500</span>
+                  <span className="text-xs text-slate-400">R$ 70 → R$ 1.000</span>
                 </div>
                 <input
                   type="range"
-                  min={200}
-                  max={1500}
-                  step={50}
+                  min={70}
+                  max={1000}
+                  step={10}
                   value={inputs.ticketMedio}
                   onChange={(e) => handleChange("ticketMedio", Number(e.target.value))}
                   className="w-full h-2 rounded-full appearance-none focus:outline-none focus:ring-2 focus:ring-prime/20"
-                  style={{ accentColor: "var(--prime-primary)", background: sliderFill(inputs.ticketMedio, 200, 1500) }}
+                  style={{ accentColor: "var(--prime-primary)", background: sliderFill(inputs.ticketMedio, 70, 1000) }}
                 />
                 <div className="mt-3 text-2xl font-extrabold text-prime">{formatCurrency(inputs.ticketMedio)}</div>
               </div>
