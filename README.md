@@ -3,14 +3,14 @@ Proposta — Dr. Maurício Ernesto • Agentes de IA para Atendimento Comercial
 Este repositório é uma instância do template de propostas interativas da Convert.AI, adaptado para o projeto do **Dr. Maurício Ernesto** com foco em **Agentes de IA para Atendimento Comercial** (SDR, FAQ, Anti No‑Show, CRM + Agenda Unificada + Dashboard + Fluxos/ROI).
 
 Stack
-- Next.js 15 (App Router) + React 19
+- Next.js 16 (App Router) + React 19.2
 - Tailwind v4 com `@theme inline`
 - Framer Motion (animações)
 - Lucide (ícones)
 - React Flow (fluxogramas interativos)
 
 Execução (porta 3001)
-- Requisitos: Node 18+
+- Requisitos: Node >= 20.9.0
 - Instalação: `npm install`
 - Desenvolvimento: `npm run dev` → http://localhost:3001
 - Build: `npm run build`

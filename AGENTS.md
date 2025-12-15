@@ -6,12 +6,12 @@ Visão Geral
 - Documento-base de negócio: `public/docs/arquitetura.md` (gargalos, soluções, métricas, fluxos, investimentos).
 
 Stack
-- Next.js 15 (App Router) + React 19 (sem SSR nos fluxos via dynamic).
+- Next.js 16 (App Router) + React 19.2 (sem SSR nos fluxos via dynamic).
 - Tailwind v4 com `@theme inline`.
 - Framer Motion (animações), Lucide (ícones), React Flow (fluxos).
 
 Execução
-- Requisitos: Node 18+.
+- Requisitos: Node >= 20.9.0.
 - Scripts: `npm run dev` (http://localhost:3001), `npm run build` (Turbopack), `npm start` (produção).
 
 Arquivos-Chave
