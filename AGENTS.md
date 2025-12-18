@@ -2,7 +2,6 @@ Template de Propostas — Guia do Projeto
 
 Visão Geral
 - Proposta interativa (landing + modais) com conteúdo adaptável por cliente.
-- Instância do template Convert.AI para **Dr. Maurício Ernesto — Agentes de IA para Atendimento Comercial**.
 - Documento-base de negócio: `public/docs/arquitetura.md` (gargalos, soluções, métricas, fluxos, investimentos).
 
 Stack
