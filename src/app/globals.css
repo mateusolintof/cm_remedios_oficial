@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "../../hero.ts";
 @source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 @custom-variant dark (&:is(.dark *));
 
@@ -13,6 +12,46 @@
   --prime-primary: #041e42;
   --prime-accent: #41b6e6;
   --prime-dark: #041e42;
+
+  /* Typography Scale */
+  --text-hero: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  --text-section: clamp(2rem, 4vw + 0.5rem, 3.5rem);
+  --text-subsection: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
+  --text-body: clamp(1rem, 1.5vw + 0.5rem, 1.125rem);
+}
+
+/* Hero Gradient Mesh Background */
+.hero-gradient-mesh {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(65, 182, 230, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(65, 182, 230, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 80% at 50% 80%, rgba(4, 30, 66, 0.3) 0%, transparent 50%),
+    linear-gradient(180deg, #041e42 0%, #0a2851 50%, #041e42 100%);
+  background-size: 100% 100%;
+  animation: hero-gradient-shift 12s ease-in-out infinite;
+}
+
+@keyframes hero-gradient-shift {
+  0%, 100% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+  }
+  50% {
+    background-position: 100% 50%, 0% 100%, 50% 0%, 0% 0%;
+  }
+}
+
+/* Pricing Card Glow Animation */
+@keyframes pricing-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(65, 182, 230, 0.2), 0 25px 50px -12px rgba(4, 30, 66, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(65, 182, 230, 0.35), 0 25px 50px -12px rgba(4, 30, 66, 0.3);
+  }
+}
+
+.pricing-card-featured {
+  animation: pricing-glow 3s ease-in-out infinite;
 }
 
 @theme inline {

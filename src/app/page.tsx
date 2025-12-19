@@ -33,6 +33,8 @@ import {
 } from "lucide-react";
 import Modal from "./components/Modal";
 import { type FlowKind } from "./components/FlowDiagram";
+import CountUp, { CountUpPercent, CountUpHours } from "./components/CountUp";
+import SectionProgress from "./components/SectionProgress";
 
 // Configurações da Proposta
 const preparedFor = "CM Remédios";
@@ -163,13 +165,29 @@ export default function Home() {
         </NavbarContent>
       </Navbar>
 
+      {/* Section Progress Indicator */}
+      <SectionProgress />
+
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-[#041e42] text-white py-20 md:py-28" id="hero">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-10"></div>
+      <section className="relative overflow-hidden hero-gradient-mesh text-white py-28 md:py-36" id="hero">
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-5"></div>
+        {/* Primary blob - enhanced */}
         <motion.div
-          className="absolute top-20 right-20 w-96 h-96 bg-prime-accent/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
+          className="absolute top-10 right-10 md:top-20 md:right-20 w-72 md:w-[500px] h-72 md:h-[500px] bg-prime-accent/25 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.4, 1], opacity: [0.25, 0.45, 0.25] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {/* Secondary blob - offset timing */}
+        <motion.div
+          className="absolute -bottom-20 -left-20 w-64 md:w-96 h-64 md:h-96 bg-prime-accent/15 rounded-full blur-3xl"
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.15, 0.3, 0.15] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
+        {/* Tertiary accent blob */}
+        <motion.div
+          className="absolute top-1/2 left-1/3 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl"
+          animate={{ y: [-20, 20, -20], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         />
         <div className="mx-auto max-w-7xl px-4 relative z-10 grid md:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -465,22 +483,53 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
           >
-            {[
-              { value: "+40%", label: "Conversão de Leads", desc: "Resposta imediata aumenta drásticamente o aproveitamento.", color: "emerald" },
-              { value: "-60%", label: "Taxa de No-Show", desc: "Confirmações multicanal e fila de espera ativa.", color: "blue" },
-              { value: "24h", label: "Operação Comercial", desc: "Captura de pacientes noturnos e finais de semana.", color: "indigo" },
-              { value: "100%", label: "Visibilidade", desc: "Dados estruturados para tomada de decisão.", color: "slate" },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                variants={scaleIn}
-                className={`p-6 bg-${item.color}-50 rounded-2xl border border-${item.color}-100 hover:shadow-lg transition-shadow`}
-              >
-                <div className={`text-4xl font-bold text-${item.color}-600 mb-2`}>{item.value}</div>
-                <div className={`font-semibold text-${item.color}-900`}>{item.label}</div>
-                <p className={`text-xs text-${item.color}-800 mt-2`}>{item.desc}</p>
-              </motion.div>
-            ))}
+            {/* +40% Conversão */}
+            <motion.div
+              variants={scaleIn}
+              className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="text-4xl md:text-5xl font-bold text-emerald-600 mb-2">
+                <CountUpPercent value={40} className="tabular-nums" />
+              </div>
+              <div className="font-semibold text-emerald-900">Conversão de Leads</div>
+              <p className="text-xs text-emerald-800 mt-2">Resposta imediata aumenta drásticamente o aproveitamento.</p>
+            </motion.div>
+
+            {/* -60% No-Show */}
+            <motion.div
+              variants={scaleIn}
+              className="p-6 bg-blue-50 rounded-2xl border border-blue-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
+                <CountUpPercent value={60} positive={false} className="tabular-nums" />
+              </div>
+              <div className="font-semibold text-blue-900">Taxa de No-Show</div>
+              <p className="text-xs text-blue-800 mt-2">Confirmações multicanal e fila de espera ativa.</p>
+            </motion.div>
+
+            {/* 24h Operação */}
+            <motion.div
+              variants={scaleIn}
+              className="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="text-4xl md:text-5xl font-bold text-indigo-600 mb-2">
+                <CountUpHours value={24} className="tabular-nums" />
+              </div>
+              <div className="font-semibold text-indigo-900">Operação Comercial</div>
+              <p className="text-xs text-indigo-800 mt-2">Captura de pacientes noturnos e finais de semana.</p>
+            </motion.div>
+
+            {/* 100% Visibilidade */}
+            <motion.div
+              variants={scaleIn}
+              className="p-6 bg-slate-100 rounded-2xl border border-slate-200 hover:shadow-lg transition-shadow"
+            >
+              <div className="text-4xl md:text-5xl font-bold text-slate-700 mb-2">
+                <CountUp end={100} suffix="%" className="tabular-nums" />
+              </div>
+              <div className="font-semibold text-slate-900">Visibilidade</div>
+              <p className="text-xs text-slate-700 mt-2">Dados estruturados para tomada de decisão.</p>
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -686,41 +735,41 @@ export default function Home() {
             {/* Card 2: Agendamento (Destaque) */}
             <motion.div
               variants={scaleIn}
-              className="bg-white rounded-2xl border-2 border-prime shadow-xl relative flex flex-col min-h-[420px] lg:-translate-y-3"
+              className="bg-gradient-to-br from-white via-white to-prime-accent/5 rounded-2xl border-2 border-prime relative flex flex-col min-h-[420px] lg:-translate-y-6 pricing-card-featured"
             >
               <Chip
                 className="absolute -top-3 left-1/2 -translate-x-1/2 z-10"
                 color="primary"
                 variant="solid"
-                classNames={{ base: "bg-prime", content: "text-white font-bold text-[10px] uppercase tracking-wide px-3" }}
+                classNames={{ base: "bg-prime-accent", content: "text-prime-dark font-bold text-[10px] uppercase tracking-wide px-4 py-0.5" }}
               >
                 Mais Popular
               </Chip>
               <div className="p-6 pb-4 pt-8">
-                <h3 className="text-lg font-bold text-prime">Agendamento Inteligente</h3>
+                <h3 className="text-xl font-bold text-prime">Agendamento Inteligente</h3>
               </div>
               <div className="px-6 pb-4 flex-1 flex flex-col">
                 <div className="mb-4">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
-                  <div className="text-3xl font-extrabold text-slate-900">R$ 45.000</div>
+                  <div className="text-[11px] text-prime-accent uppercase tracking-wider mb-1 font-semibold">Setup</div>
+                  <div className="text-4xl font-extrabold text-slate-900">R$ 45.000</div>
                   <div className="text-xs text-slate-400">pagamento único</div>
                 </div>
-                <div className="h-px bg-slate-200 my-4" />
+                <div className="h-px bg-prime-accent/20 my-4" />
                 <div className="mb-5">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
-                  <div className="text-xl font-bold text-slate-900">R$ 5.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
+                  <div className="text-[11px] text-prime-accent uppercase tracking-wider mb-1 font-semibold">Mensalidade</div>
+                  <div className="text-2xl font-bold text-slate-900">R$ 5.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
                 </div>
                 <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Qualificação e Agendamento</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Desenvolvimento Personalizado</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Implementação e Treinamentos</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Suporte + Otimizações</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Qualificação e Agendamento</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Desenvolvimento Personalizado</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Implementação e Treinamentos</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Suporte + Otimizações</li>
                 </ul>
               </div>
               <div className="p-6 pt-4 mt-auto">
                 <Button
                   color="primary"
-                  className="w-full font-semibold bg-prime"
+                  className="w-full font-semibold bg-prime hover:bg-prime-dark"
                   onPress={() => setModal({ type: "benefits", solution: "agendamento" })}
                   endContent={<ArrowRight className="w-4 h-4" />}
                 >
@@ -910,7 +959,7 @@ export default function Home() {
       </section>
 
       {/* CTA FINAL - CRONOGRAMA */}
-      <section className="py-16 md:py-20 bg-white" id="cta">
+      <section className="py-16 md:py-20 bg-white" id="cronograma">
         <div className="mx-auto max-w-4xl px-4 text-center">
           <motion.div
             initial="hidden"
