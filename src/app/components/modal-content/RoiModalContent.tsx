@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, Calculator, DollarSign } from "lucide-react";
+import { TrendingUp, Calculator, DollarSign, BarChart3 } from "lucide-react";
+import { ComparisonChart, DonutChart } from "../MiniChart";
 
 type FaturamentoInputs = {
   leadsMes: number;
@@ -144,7 +145,7 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
                 <DollarSign size={120} />
              </div>
 
-             <div className="relative z-10 space-y-8">
+             <div className="relative z-10 space-y-6">
                 <div>
                     <div className="text-sm text-slate-500 font-medium uppercase tracking-wide">Potencial de Receita Adicional</div>
                     <div className="flex items-baseline gap-1 mt-1">
@@ -159,27 +160,49 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 border-t border-slate-100 pt-6">
-                    <div>
-                        <div className="text-xs text-slate-400 uppercase font-bold">Acumulado em 1 Ano</div>
-                        <div className="text-xl font-bold text-slate-800 mt-1">+{formatCurrency(receitaExtraAnual)}</div>
+                {/* Visual Charts Section */}
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <div className="flex items-center gap-2 mb-4">
+                      <BarChart3 className="w-4 h-4 text-prime" />
+                      <span className="text-xs font-bold text-slate-600 uppercase">Comparativo de Receita Mensal</span>
                     </div>
-                    <div>
-                        <div className="text-xs text-slate-400 uppercase font-bold">ROI do Projeto</div>
-                        <div className="text-xl font-bold text-prime mt-1">{Math.round(roi)}%</div>
+                    <ComparisonChart
+                      before={{ label: "Atual", value: Math.round(receitaAtual) }}
+                      after={{ label: "Com IA", value: Math.round(receitaNova) }}
+                    />
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 border-t border-slate-100 pt-6">
+                    <div className="text-center">
+                        <DonutChart
+                          percentage={Math.min(100, Math.round(roi / 10))}
+                          label="ROI"
+                          sublabel={`${Math.round(roi)}%`}
+                          size={80}
+                          strokeWidth={8}
+                          color="#041e42"
+                        />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                        <div className="text-xs text-slate-400 uppercase font-bold">Acumulado 1 Ano</div>
+                        <div className="text-lg font-bold text-slate-800 mt-1">+{formatCurrency(receitaExtraAnual)}</div>
+                    </div>
+                    <div className="flex flex-col justify-center">
+                        <div className="text-xs text-slate-400 uppercase font-bold">Custo Total</div>
+                        <div className="text-lg font-bold text-slate-600 mt-1">{formatCurrency(custoPrimeiroAno)}</div>
                     </div>
                 </div>
 
-                <div className="bg-slate-50 rounded-lg p-4 text-xs text-slate-500 leading-relaxed">
-                    * Cálculo considera Investimento de Setup ({formatCurrency(investimento)}) + Mensalidade Anual ({formatCurrency(mensalidade * 12)}). 
-                    O ROI indica quantas vezes o lucro cobre o custo total no primeiro ano.
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-100">
+                    <p className="text-sm text-emerald-800 leading-relaxed">
+                      <strong>Estudos do MIT</strong> mostram que responder em até 5 minutos aumenta em <strong>10x</strong> as chances de conversão.
+                      Nossos agentes respondem em <strong>&lt;30 segundos</strong>, 24/7.
+                    </p>
                 </div>
 
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Estudos do MIT mostram que responder em até 5 minutos aumenta em 10x as chances de conversão em Clínicas Médicas.
-                  Nossos agentes de IA oferecem respostas em até 30 segundos, 24 horas por dia, gerando uma possibilidade de aumento
-                  da taxa de conversão em até 80%.
-                </p>
+                <div className="text-[10px] text-slate-400 leading-relaxed">
+                    * Cálculo considera Setup ({formatCurrency(investimento)}) + 12x Mensalidade ({formatCurrency(mensalidade)}).
+                </div>
              </div>
         </div>
       </div>

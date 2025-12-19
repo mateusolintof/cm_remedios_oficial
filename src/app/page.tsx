@@ -35,6 +35,11 @@ import Modal from "./components/Modal";
 import { type FlowKind } from "./components/FlowDiagram";
 import CountUp, { CountUpPercent, CountUpHours } from "./components/CountUp";
 import SectionProgress from "./components/SectionProgress";
+import { ProposalCountdown } from "./components/ValidityCountdown";
+import BeforeAfterSlider from "./components/BeforeAfterSlider";
+import SocialProofMarquee from "./components/SocialProofMarquee";
+import CaseStudySection from "./components/CaseStudy";
+import FAQAccordion from "./components/FAQAccordion";
 
 // Configurações da Proposta
 const preparedFor = "CM Remédios";
@@ -217,15 +222,19 @@ export default function Home() {
               Transforme 35.000 interações mensais em resultados. Nossa IA centraliza o atendimento, qualifica 15.000 leads/mês e integra sua agenda ERP para máxima conversão.
             </motion.p>
 
-            <motion.div variants={fadeInUp} className="mt-8 flex flex-wrap gap-4">
-              <div className="flex flex-col border-l-2 border-prime-accent pl-4">
-                <span className="text-xs text-slate-400 uppercase tracking-wider">Cliente</span>
-                <span className="font-semibold text-white">{preparedFor}</span>
+            <motion.div variants={fadeInUp} className="mt-8 flex flex-col gap-6">
+              <div className="flex flex-wrap gap-4">
+                <div className="flex flex-col border-l-2 border-prime-accent pl-4">
+                  <span className="text-xs text-slate-400 uppercase tracking-wider">Cliente</span>
+                  <span className="font-semibold text-white">{preparedFor}</span>
+                </div>
+                <div className="flex flex-col border-l-2 border-slate-600 pl-4">
+                  <span className="text-xs text-slate-400 uppercase tracking-wider">Data</span>
+                  <span className="font-semibold text-white">{proposalDate}</span>
+                </div>
               </div>
-              <div className="flex flex-col border-l-2 border-slate-600 pl-4">
-                <span className="text-xs text-slate-400 uppercase tracking-wider">Validade</span>
-                <span className="font-semibold text-white">{proposalDate}</span>
-              </div>
+              {/* Validity Countdown */}
+              <ProposalCountdown variant="hero" />
             </motion.div>
           </motion.div>
 
@@ -365,6 +374,107 @@ export default function Home() {
         </div>
       </section>
 
+      {/* O IMPACTO REAL - Seção narrativa */}
+      <section className="py-20 md:py-28 bg-prime text-white relative overflow-hidden" id="impacto">
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5"></div>
+        <motion.div
+          className="absolute top-0 right-0 w-96 h-96 bg-prime-accent/10 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div className="mx-auto max-w-5xl px-4 relative z-10">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <Chip
+              variant="flat"
+              classNames={{
+                base: "bg-red-500/20 border border-red-500/30",
+                content: "text-red-300 text-xs font-bold uppercase tracking-wider",
+              }}
+            >
+              O Custo da Inação
+            </Chip>
+            <h2 className="text-3xl md:text-5xl font-bold mt-6 mb-4">O Impacto Real</h2>
+            <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+              Cada dia sem uma solução automatizada representa oportunidades perdidas e receita que não volta.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid md:grid-cols-3 gap-8 mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            {/* 101 horas sem atendimento */}
+            <motion.div
+              variants={scaleIn}
+              className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
+            >
+              <div className="text-5xl md:text-6xl font-bold text-red-400 mb-2">
+                <CountUpHours value={101} className="tabular-nums" />
+              </div>
+              <div className="text-white font-semibold mb-2">por semana SEM atendimento</div>
+              <p className="text-slate-400 text-sm">
+                61% do tempo total da semana sem resposta humana. Leads chegam e não encontram ninguém.
+              </p>
+            </motion.div>
+
+            {/* 500+ pacientes perdidos */}
+            <motion.div
+              variants={scaleIn}
+              className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
+            >
+              <div className="text-5xl md:text-6xl font-bold text-amber-400 mb-2">
+                <CountUp end={500} suffix="+" className="tabular-nums" />
+              </div>
+              <div className="text-white font-semibold mb-2">conversões perdidas/mês</div>
+              <p className="text-slate-400 text-sm">
+                Estudos mostram que 50-70% dos leads que não recebem resposta imediata desistem.
+              </p>
+            </motion.div>
+
+            {/* R$ 175k em receita */}
+            <motion.div
+              variants={scaleIn}
+              className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
+            >
+              <div className="text-5xl md:text-6xl font-bold text-prime-accent mb-2">
+                R$ <CountUp end={175} className="tabular-nums" />k
+              </div>
+              <div className="text-white font-semibold mb-2">receita não capturada/mês</div>
+              <p className="text-slate-400 text-sm">
+                Cada paciente perdido = R$ 350 em ticket médio. 500 pacientes = R$ 175.000/mês.
+              </p>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="text-center"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <div className="inline-flex items-center gap-3 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-6 py-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <span className="text-emerald-300 font-semibold">
+                A solução? Automatizar com IA e recuperar cada lead.
+              </span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* SOCIAL PROOF MARQUEE */}
+      <SocialProofMarquee />
+
       {/* SOLUÇÕES */}
       <section className="py-16 md:py-20 bg-white" id="solucoes">
         <div className="mx-auto max-w-7xl px-4">
@@ -378,42 +488,110 @@ export default function Home() {
             <p className="subtitle mt-2">Implementação de 4 Agentes Especializados + Ecossistema de Gestão.</p>
           </motion.div>
 
+          {/* Bento Grid Layout */}
           <motion.div
-            className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
           >
-            {[
-              { icon: Sparkles, color: "blue", title: "1. SDR & Agendamento", desc: "Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado.", kind: "agendamento" as FlowKind, flowTitle: "SDR & Agendamento" },
-              { icon: MessageSquare, color: "emerald", title: "2. FAQ Inteligente", desc: "Base de conhecimento treinada para tirar dúvidas de preparo, valores e localização instantaneamente.", kind: "faq" as FlowKind, flowTitle: "FAQ Educacional" },
-              { icon: BellRing, color: "purple", title: "3. Gestão de No-Show", desc: "Automação de confirmações (D-2, D-1) e gestão ativa de fila de espera para preencher lacunas.", kind: "triagem-noshow" as FlowKind, flowTitle: "Anti No-Show" },
-              { icon: FileBarChart, color: "amber", title: "4. Pesquisa & Satisfação", desc: "Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.", kind: null, flowTitle: "" },
-            ].map((item, idx) => (
-              <MotionCard
-                key={idx}
-                variants={fadeInUp}
-                isPressable={!!item.kind}
-                className="bg-white shadow-sm border border-slate-200 hover:border-prime hover:shadow-lg transition-all cursor-pointer group"
-                onPress={item.kind ? () => setModal({ type: "solution", kind: item.kind!, title: item.flowTitle }) : undefined}
-              >
-                <CardHeader className="flex justify-between items-start pb-2">
-                  <div className={`w-10 h-10 bg-${item.color}-50 text-${item.color}-600 rounded-xl flex items-center justify-center`}>
-                    <item.icon className="h-5 w-5" />
+            {/* SDR & Agendamento - Large Card (2x2) */}
+            <motion.div
+              variants={scaleIn}
+              className="md:col-span-2 md:row-span-2 bg-gradient-to-br from-blue-50 via-white to-prime-accent/5 rounded-2xl border border-blue-200 p-6 md:p-8 cursor-pointer group hover:border-prime hover:shadow-xl transition-all relative overflow-hidden"
+              onClick={() => setModal({ type: "solution", kind: "agendamento", title: "SDR & Agendamento" })}
+            >
+              {/* Decorative blob */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-100/50 rounded-full blur-3xl" />
+
+              <div className="relative z-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                    <Sparkles className="h-7 w-7" />
                   </div>
-                  {item.kind && (
-                    <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline flex items-center gap-1">
-                      Ver Fluxo <ChevronRight className="w-3 h-3" />
-                    </span>
-                  )}
-                </CardHeader>
-                <CardBody className="pt-2">
-                  <h3 className="font-bold text-lg text-slate-900">{item.title}</h3>
-                  <p className="text-sm text-slate-600 mt-2">{item.desc}</p>
-                </CardBody>
-              </MotionCard>
-            ))}
+                  <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline flex items-center gap-1">
+                    Ver Fluxo <ChevronRight className="w-3 h-3" />
+                  </span>
+                </div>
+
+                <h3 className="font-bold text-2xl md:text-3xl text-slate-900 mb-3">1. SDR & Agendamento</h3>
+                <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-6">
+                  Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado com seu sistema ERP.
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-blue-100">
+                  <div>
+                    <div className="text-2xl font-bold text-blue-600">24/7</div>
+                    <div className="text-xs text-slate-500">Atendimento</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-blue-600">&lt;1min</div>
+                    <div className="text-xs text-slate-500">Tempo resposta</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* FAQ Inteligente - Small Card (1x1) */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-emerald-50 rounded-2xl border border-emerald-200 p-5 cursor-pointer group hover:border-emerald-400 hover:shadow-lg transition-all"
+              onClick={() => setModal({ type: "solution", kind: "faq", title: "FAQ Educacional" })}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
+                  <MessageSquare className="h-5 w-5" />
+                </div>
+                <ChevronRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="font-bold text-lg text-slate-900">2. FAQ Inteligente</h3>
+              <p className="text-sm text-slate-600 mt-2">Base de conhecimento treinada para tirar dúvidas instantaneamente.</p>
+            </motion.div>
+
+            {/* Gestão No-Show - Small Card (1x1) */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-purple-50 rounded-2xl border border-purple-200 p-5 cursor-pointer group hover:border-purple-400 hover:shadow-lg transition-all"
+              onClick={() => setModal({ type: "solution", kind: "triagem-noshow", title: "Anti No-Show" })}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+                  <BellRing className="h-5 w-5" />
+                </div>
+                <ChevronRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="font-bold text-lg text-slate-900">3. Gestão de No-Show</h3>
+              <p className="text-sm text-slate-600 mt-2">Automação de confirmações e gestão ativa de fila de espera.</p>
+            </motion.div>
+
+            {/* Pesquisa & Satisfação - Wide Card (3x1) */}
+            <motion.div
+              variants={fadeInUp}
+              className="md:col-span-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 md:p-6 group hover:border-amber-300 hover:shadow-lg transition-all"
+            >
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+                    <FileBarChart className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-slate-900">4. Pesquisa & Satisfação</h3>
+                    <p className="text-sm text-slate-600">Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.</p>
+                  </div>
+                </div>
+                <div className="md:ml-auto flex items-center gap-6 text-center">
+                  <div className="px-4 py-2 bg-white/60 rounded-lg">
+                    <div className="text-lg font-bold text-amber-600">NPS</div>
+                    <div className="text-xs text-slate-500">Automático</div>
+                  </div>
+                  <div className="px-4 py-2 bg-white/60 rounded-lg">
+                    <div className="text-lg font-bold text-amber-600">Google</div>
+                    <div className="text-xs text-slate-500">Reviews</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
 
           {/* Ferramentas de Gestão */}
@@ -530,6 +708,20 @@ export default function Home() {
               <div className="font-semibold text-slate-900">Visibilidade</div>
               <p className="text-xs text-slate-700 mt-2">Dados estruturados para tomada de decisão.</p>
             </motion.div>
+          </motion.div>
+
+          {/* Before/After Comparison */}
+          <motion.div
+            className="mt-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <h3 className="text-xl md:text-2xl font-bold text-center text-prime mb-8">
+              Compare o Antes e Depois
+            </h3>
+            <BeforeAfterSlider />
           </motion.div>
 
           <motion.div
@@ -672,6 +864,9 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* CASE STUDIES */}
+      <CaseStudySection />
 
       {/* INVESTIMENTO */}
       <section className="py-16 md:py-20 bg-slate-50" id="investimento">
@@ -955,8 +1150,22 @@ export default function Home() {
               </CardBody>
             </Card>
           </motion.div>
+
+          {/* Validity Countdown - Pricing Section */}
+          <motion.div
+            className="mt-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <ProposalCountdown variant="pricing" />
+          </motion.div>
         </div>
       </section>
+
+      {/* FAQ ACCORDION */}
+      <FAQAccordion />
 
       {/* CTA FINAL - CRONOGRAMA */}
       <section className="py-16 md:py-20 bg-white" id="cronograma">

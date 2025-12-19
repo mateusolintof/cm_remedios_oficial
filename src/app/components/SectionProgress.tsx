@@ -12,6 +12,7 @@ const sections: Section[] = [
   { id: "hero", label: "Início" },
   { id: "diagnostico", label: "Diagnóstico" },
   { id: "desafio", label: "Desafio" },
+  { id: "impacto", label: "Impacto" },
   { id: "solucoes", label: "Soluções" },
   { id: "ganhos", label: "Ganhos" },
   { id: "entregaveis", label: "Entregáveis" },

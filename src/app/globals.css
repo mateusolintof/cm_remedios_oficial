@@ -185,3 +185,129 @@ body {
   background: color-mix(in oklab, var(--color-prime) 4%, white);
   box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04);
 }
+
+/* Print Styles */
+@media print {
+  /* Hide non-essential elements */
+  .no-print,
+  nav,
+  button,
+  .fixed,
+  .sticky,
+  [data-radix-portal],
+  .marquee-container {
+    display: none !important;
+  }
+
+  /* Reset backgrounds and colors for print */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Ensure text is readable */
+  * {
+    color: black !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Keep brand colors for headings */
+  h1, h2, h3, h4, h5, h6,
+  .section-title {
+    color: #041e42 !important;
+    page-break-after: avoid;
+  }
+
+  /* Page breaks */
+  section {
+    page-break-inside: avoid;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  /* Ensure images print correctly */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* Show URLs for links */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666 !important;
+  }
+
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  /* Cards and containers */
+  .card,
+  .rounded-2xl {
+    border: 1px solid #ddd !important;
+    border-radius: 0 !important;
+  }
+
+  /* Pricing cards */
+  .pricing-card-featured {
+    animation: none !important;
+  }
+
+  /* Hero section - simplify for print */
+  .hero-gradient-mesh {
+    background: #041e42 !important;
+    animation: none !important;
+  }
+
+  /* Reduce padding for print */
+  section {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  /* Ensure grids are readable */
+  .grid {
+    gap: 1rem !important;
+  }
+
+  /* Footer info */
+  @page {
+    margin: 2cm;
+  }
+
+  @page :first {
+    margin-top: 1cm;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero-gradient-mesh {
+    animation: none !important;
+  }
+
+  .pricing-card-featured {
+    animation: none !important;
+  }
+
+  .marquee-content {
+    animation: none !important;
+  }
+}
