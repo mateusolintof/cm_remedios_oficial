@@ -4,528 +4,726 @@ import { useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
+  Brain,
   CalendarCheck2,
   CheckCircle2,
   Clock3,
   Gauge,
+  Lightbulb,
+  MessageSquare,
   ShieldCheck,
   Sparkles,
   Target,
-  TrendingUp,
+  Trophy,
+  UserRound,
 } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Funnel,
+  FunnelChart,
+  LabelList,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 
-type Tab = "overview" | "funil" | "agendamentos" | "insights";
+type TabKey = "geral" | "ia" | "vendedores" | "clientes" | "insights";
+
+type Client = {
+  id: number;
+  nome: string;
+  etapa: string;
+  temperatura: "Quente" | "Morno" | "Frio";
+  score: number;
+  tags: string[];
+  canal: string;
+  ticket: string;
+  ultimaAcao: string;
+  analise: {
+    resumo: string;
+    sinais: string[];
+    riscos: string[];
+    proximaAcao: string;
+  };
+};
+
+const rangeOptions = {
+  "7d": "Ultimos 7 dias",
+  "30d": "Ultimos 30 dias",
+  "90d": "Ultimos 90 dias",
+} as const;
+
+const tabItems: { key: TabKey; label: string; icon: JSX.Element }[] = [
+  { key: "geral", label: "Visao geral", icon: <BarChart3 size={16} /> },
+  { key: "ia", label: "Gestao IA", icon: <Brain size={16} /> },
+  { key: "vendedores", label: "Atendimento vendedores", icon: <Trophy size={16} /> },
+  { key: "clientes", label: "Clientes", icon: <UserRound size={16} /> },
+  { key: "insights", label: "Insights + reports", icon: <Lightbulb size={16} /> },
+];
+
+const kpisGeral = [
+  { label: "Leads/dia", value: "500", delta: "+24%", meta: "Meta 480" },
+  { label: "Qualificados", value: "60%", delta: "+8%", meta: "Meta 55%" },
+  { label: "Conversao", value: "39%", delta: "+12%", meta: "Meta 32%" },
+  { label: "No-show", value: "10%", delta: "-5%", meta: "Meta <= 15%" },
+  { label: "Receita", value: "R$ 2,3M", delta: "+18%", meta: "Meta R$ 2,0M" },
+  { label: "Pipeline", value: "R$ 4,3M", delta: "novo", meta: "Prox. 30 dias" },
+];
+
+const leadTrend = [
+  { name: "Seg", leads: 210, qualificados: 130, agendados: 90 },
+  { name: "Ter", leads: 260, qualificados: 165, agendados: 110 },
+  { name: "Qua", leads: 300, qualificados: 182, agendados: 124 },
+  { name: "Qui", leads: 320, qualificados: 195, agendados: 138 },
+  { name: "Sex", leads: 280, qualificados: 172, agendados: 120 },
+  { name: "Sab", leads: 240, qualificados: 150, agendados: 100 },
+];
+
+const funnelData = [
+  { name: "Leads", value: 15000, fill: "var(--prime-primary)" },
+  { name: "Qualificados", value: 9000, fill: "var(--prime-accent)" },
+  { name: "Agendados", value: 7000, fill: "color-mix(in oklab, var(--prime-primary) 70%, var(--background))" },
+  { name: "Confirmados", value: 6450, fill: "color-mix(in oklab, var(--prime-accent) 60%, var(--background))" },
+  { name: "Realizados", value: 5800, fill: "color-mix(in oklab, var(--prime-primary) 85%, var(--background))" },
+];
+
+const channelPerf = [
+  { name: "WhatsApp", conversao: 44 },
+  { name: "Instagram", conversao: 36 },
+  { name: "Google", conversao: 31 },
+  { name: "Indicacao", conversao: 58 },
+];
+
+const iaVolume = [
+  { name: "Seg", resolvidos: 180, escalados: 60 },
+  { name: "Ter", resolvidos: 210, escalados: 70 },
+  { name: "Qua", resolvidos: 240, escalados: 82 },
+  { name: "Qui", resolvidos: 260, escalados: 90 },
+  { name: "Sex", resolvidos: 230, escalados: 78 },
+  { name: "Sab", resolvidos: 190, escalados: 65 },
+];
+
+const iaIntentos = [
+  { name: "Agendamento", volume: 320 },
+  { name: "FAQ", volume: 210 },
+  { name: "Reagendamento", volume: 160 },
+  { name: "Pre-cadastro", volume: 140 },
+];
+
+const vendedoresPerf = [
+  { name: "Ana", deals: 28, score: 92 },
+  { name: "Carlos", deals: 24, score: 89 },
+  { name: "Julio", deals: 21, score: 85 },
+  { name: "Marina", deals: 18, score: 81 },
+];
+
+const tempoAtendimento = [
+  { name: "Seg", tempo: 18 },
+  { name: "Ter", tempo: 16 },
+  { name: "Qua", tempo: 14 },
+  { name: "Qui", tempo: 13 },
+  { name: "Sex", tempo: 15 },
+  { name: "Sab", tempo: 17 },
+];
+
+const clients: Client[] = [
+  {
+    id: 1,
+    nome: "Marina Duarte",
+    etapa: "Agendado",
+    temperatura: "Quente",
+    score: 88,
+    tags: ["Cirurgia", "Convênio"],
+    canal: "WhatsApp",
+    ticket: "R$ 4.200",
+    ultimaAcao: "Hoje 09:18",
+    analise: {
+      resumo: "Alta intencao, respondeu rapido e enviou exames completos.",
+      sinais: ["Resposta em menos de 4 min", "Aceitou horario sugerido", "Convênio validado"],
+      riscos: ["Consulta em horario de pico"],
+      proximaAcao: "Confirmar lembrete D-1 e preparar checklist pre-op.",
+    },
+  },
+  {
+    id: 2,
+    nome: "Rafael Souza",
+    etapa: "Proposta",
+    temperatura: "Morno",
+    score: 72,
+    tags: ["Consulta", "Particular"],
+    canal: "Instagram",
+    ticket: "R$ 1.800",
+    ultimaAcao: "Hoje 08:40",
+    analise: {
+      resumo: "Precisa de reforco de valor e prova social antes de fechar.",
+      sinais: ["Engajamento em conteudo educativo", "Perguntou sobre parcelamento"],
+      riscos: ["Comparando com concorrentes"],
+      proximaAcao: "Enviar depoimentos e simulacao de pagamento.",
+    },
+  },
+  {
+    id: 3,
+    nome: "Patricia Lima",
+    etapa: "Follow-up",
+    temperatura: "Frio",
+    score: 54,
+    tags: ["Follow-up"],
+    canal: "Google",
+    ticket: "R$ 980",
+    ultimaAcao: "Ontem 18:20",
+    analise: {
+      resumo: "Baixa resposta, precisa de reengajamento com oferta de horario.",
+      sinais: ["Leu mensagem, nao respondeu"],
+      riscos: ["Risco de abandono"],
+      proximaAcao: "Oferecer horario noturno + CTA direto.",
+    },
+  },
+];
+
+const insights = [
+  {
+    title: "Oportunidade de receita",
+    desc: "Fila de espera tem 47 pacientes e 12 horarios vagos na proxima semana.",
+    action: "Disparar campanha de remarcacao",
+  },
+  {
+    title: "Objeçao principal",
+    desc: "79% dos leads de cirurgia citam preco alto no primeiro contato.",
+    action: "Apresentar parcelamento antes da objeçao",
+  },
+  {
+    title: "Melhor canal",
+    desc: "Indicacoes convertem 94% e apresentam LTV 2,4x maior.",
+    action: "Ativar programa de indicacoes",
+  },
+];
+
+const reportCards = [
+  {
+    title: "Relatorio executivo",
+    desc: "Performance comercial, SLA e receita projetada em PDF.",
+  },
+  {
+    title: "Relatorio granular",
+    desc: "Detalhe por canal, campanha e funil com segmentacoes.",
+  },
+  {
+    title: "Alertas automacao",
+    desc: "Acionamentos, follow-ups e tarefas pendentes da IA.",
+  },
+];
+
+const leadTrendChartConfig = {
+  leads: { label: "Leads", color: "var(--prime-primary)" },
+  agendados: { label: "Agendados", color: "var(--prime-accent)" },
+} satisfies ChartConfig;
+
+const funnelChartConfig = {
+  value: { label: "Volume", color: "var(--prime-primary)" },
+} satisfies ChartConfig;
+
+const channelChartConfig = {
+  conversao: { label: "Conversao", color: "var(--prime-primary)" },
+} satisfies ChartConfig;
+
+const iaVolumeChartConfig = {
+  resolvidos: { label: "Resolvidos", color: "var(--prime-primary)" },
+  escalados: { label: "Escalados", color: "var(--prime-accent)" },
+} satisfies ChartConfig;
+
+const iaIntentChartConfig = {
+  volume: { label: "Intencoes", color: "var(--prime-primary)" },
+} satisfies ChartConfig;
+
+const sellerDealChartConfig = {
+  deals: { label: "Deals", color: "var(--prime-primary)" },
+} satisfies ChartConfig;
+
+const tempoChartConfig = {
+  tempo: { label: "Tempo medio", color: "var(--prime-primary)" },
+} satisfies ChartConfig;
+
+const insightChartConfig = {
+  qualificados: { label: "Qualificados", color: "var(--prime-primary)" },
+} satisfies ChartConfig;
 
 export default function DashboardModalContent() {
-  const [tab, setTab] = useState<Tab>("overview");
-  const [range, setRange] = useState<"7d" | "30d" | "90d">("30d");
+  const [tab, setTab] = useState<TabKey>("geral");
+  const [range, setRange] = useState<keyof typeof rangeOptions>("30d");
+  const [selectedClientId, setSelectedClientId] = useState<number>(clients[0].id);
 
-  const faixaTempo = {
-    "7d": "Últimos 7 dias",
-    "30d": "Últimos 30 dias",
-    "90d": "Últimos 90 dias",
-  };
-
-  const kpisOverview = [
-    { label: "Leads/dia", value: "500", change: "+24%", meta: "Meta: 480", fill: 1.04, tone: "positive" },
-    { label: "Conversão", value: "39%", change: "+160%", meta: "Meta: 32%", fill: 1.22, tone: "positive" },
-    { label: "No-show", value: "10%", change: "-60%", meta: "Meta: <=15%", fill: 0.67, tone: "positive" },
-    { label: "Consultas/mês", value: "5.800", change: "+42%", meta: "Meta: 5.500", fill: 1.05, tone: "positive" },
-    { label: "Receita", value: "R$ 2.3M", change: "+42%", meta: "Meta: R$ 2.0M", fill: 1.15, tone: "positive" },
-    { label: "Pipeline", value: "R$ 4.3M", change: "novo", meta: "Próx. 30 dias", fill: 1, tone: "neutral" },
-    { label: "Qualificação", value: "60%", change: "estável", meta: "Meta: 60%", fill: 1, tone: "positive" },
-    { label: "Show Rate", value: "90%", change: "+7%", meta: "Meta: 85%", fill: 1.06, tone: "positive" },
-  ];
-
-  const statusOperacao = [
-    {
-      title: "SLA em 6 min",
-      desc: "94% dos leads respondidos em < 10 min",
-      icon: <Clock3 size={18} />,
-      tone: "emerald",
-    },
-    {
-      title: "Bots 24/7 ligados",
-      desc: "SDR + Anti No-show + FAQ educacional",
-      icon: <Sparkles size={18} />,
-      tone: "blue",
-    },
-    {
-      title: "LGPD + rastreio",
-      desc: "Consentimentos e logs gravados no CRM",
-      icon: <ShieldCheck size={18} />,
-      tone: "slate",
-    },
-  ];
-
-  const gargalosFunil = [
-    {
-      titulo: "Lead para Qualificado",
-      detalhe: "40% reprovados por dados incompletos ou sem convênio aceito.",
-      acao: "Coleta automática e FAQ para pré-qualificar.",
-    },
-    {
-      titulo: "Agendado para Confirmado",
-      detalhe: "Risco de no-show em horários de manhã (8h-10h).",
-      acao: "Lembrete + fila de espera com reoferta imediata.",
-    },
-    {
-      titulo: "Consulta para Cirurgia",
-      detalhe: "24 pacientes aguardando retorno do convênio.",
-      acao: "Trigger de validação ERP + call back dedicado.",
-    },
-  ];
-
-  const acoesRapidas = [
-    "Disparar lembrete de confirmação",
-    "Segmentar leads de indicação (LTV alto)",
-    "Oferecer horário noturno para Google Ads",
-    "Campanha anti no-show fim de semana",
-  ];
+  const selectedClient = clients.find((client) => client.id === selectedClientId) ?? clients[0];
 
   return (
-    <div className="h-full flex flex-col bg-white">
-      <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div className="h-full flex flex-col bg-slate-50">
+      <header className="border-b border-slate-200 bg-white px-6 py-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-prime">Dashboard de Gestão</p>
-            <div className="text-sm text-slate-600">
-              {faixaTempo[range]} • Integração CRM + Agenda Unificada em tempo real
-            </div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-prime">Dashboard executivo</p>
+            <div className="text-2xl font-bold text-slate-900">Visao completa do atendimento comercial</div>
+            <div className="text-sm text-slate-600">KPIs, funis e insights com suporte de IA</div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {(["7d", "30d", "90d"] as const).map((r) => (
+          <div className="flex flex-wrap items-center gap-2">
+            {(Object.keys(rangeOptions) as Array<keyof typeof rangeOptions>).map((key) => (
               <button
-                key={r}
-                onClick={() => setRange(r)}
-                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${range === r
-                  ? "bg-prime text-white shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
-                  }`}
+                key={key}
+                onClick={() => setRange(key)}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  range === key
+                    ? "bg-prime text-white shadow"
+                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }`}
               >
                 <Clock3 size={14} />
-                {faixaTempo[r]}
+                {rangeOptions[key]}
               </button>
             ))}
+            <span className="inline-flex items-center gap-2 rounded-full bg-prime-accent/15 px-4 py-2 text-sm font-semibold text-prime">
+              <ShieldCheck size={14} />
+              Dados anonimizados
+            </span>
           </div>
         </div>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-            <CheckCircle2 size={14} />
-            Visão executiva com metas
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-            <BarChart3 size={14} />
-            Bench ortopedia + particular
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            <ShieldCheck size={14} />
-            Dados anonimizados para demo
-          </span>
-        </div>
-      </div>
-
-      <div className="border-b border-slate-200 bg-white px-6 py-3">
-        <div className="flex gap-2 overflow-x-auto">
-          {[
-            { k: "overview", t: "Visão Geral" },
-            { k: "funil", t: "Funil" },
-            { k: "agendamentos", t: "Agendamentos" },
-            { k: "insights", t: "Insights" },
-          ].map((i) => (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {tabItems.map((item) => (
             <button
-              key={i.k}
-              onClick={() => setTab(i.k as Tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${tab === i.k
-                ? "bg-prime text-white shadow-sm"
-                : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
-                }`}
+              key={item.key}
+              onClick={() => setTab(item.key)}
+              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                tab === item.key
+                  ? "bg-prime text-white shadow-sm"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }`}
             >
-              {i.t}
+              {item.icon}
+              {item.label}
             </button>
           ))}
         </div>
-      </div>
+      </header>
 
       <div className="flex-1 overflow-auto p-6">
-        {tab === "overview" && (
+        {tab === "geral" && (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {kpisOverview.map((kpi) => (
-                <div key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {kpisGeral.map((kpi) => (
+                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
                     {kpi.label}
-                    {kpi.tone === "positive" ? <CheckCircle2 size={14} className="text-emerald-600" /> : <AlertTriangle size={14} className="text-amber-600" />}
+                    <CheckCircle2 size={14} className="text-prime-accent" />
                   </div>
                   <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
-                  <div className={`text-sm font-semibold ${kpi.tone === "positive" ? "text-emerald-600" : "text-amber-700"}`}>
-                    {kpi.change} vs mês anterior
-                  </div>
-                  <div className="mt-1 text-xs text-slate-500">{kpi.meta}</div>
-                  <div className="mt-3 h-2 rounded-full bg-slate-100">
-                    <div
-                      className={`h-2 rounded-full ${kpi.tone === "positive" ? "bg-emerald-500" : "bg-amber-500"}`}
-                      style={{ width: `${Math.min(kpi.fill * 100, 120)}%` }}
-                    />
-                  </div>
+                  <div className="text-sm font-semibold text-prime">{kpi.delta}</div>
+                  <div className="text-xs text-slate-500">{kpi.meta}</div>
                 </div>
               ))}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {statusOperacao.map((item) => (
-                <div
-                  key={item.title}
-                  className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm ${item.tone === "emerald" ? "ring-1 ring-emerald-50" : item.tone === "blue" ? "ring-1 ring-sky-50" : "ring-1 ring-slate-100"
-                    }`}
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                    {item.icon}
-                    {item.title}
-                  </div>
-                  <p className="mt-2 text-sm text-slate-600">{item.desc}</p>
+            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="text-lg font-bold text-slate-900">Leads e agendamentos</div>
+                  <div className="text-xs text-slate-500">{rangeOptions[range]}</div>
                 </div>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-                  <Target size={18} className="text-prime" />
-                  Distribuição: Particular vs Convênio
+                <div className="mt-4">
+                  <ChartContainer config={leadTrendChartConfig} className="h-56 w-full">
+                    <AreaChart data={leadTrend}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Area type="monotone" dataKey="leads" stroke="var(--color-leads)" fill="var(--color-leads)" fillOpacity={0.12} />
+                      <Area type="monotone" dataKey="agendados" stroke="var(--color-agendados)" fill="var(--color-agendados)" fillOpacity={0.2} />
+                    </AreaChart>
+                  </ChartContainer>
                 </div>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="font-semibold text-slate-700">Particular</div>
-                      <div className="text-slate-600">58% • 8.700</div>
-                    </div>
-                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
-                      <div className="h-full bg-prime-accent" style={{ width: "58%" }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="font-semibold text-slate-700">Convênio</div>
-                      <div className="text-slate-600">42% • 6.300</div>
-                    </div>
-                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
-                      <div className="h-full bg-prime" style={{ width: "42%" }} />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-3 text-xs text-slate-500">Meta: manter particular acima de 55% sem perder ocupação.</div>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-                  <BarChart3 size={18} className="text-prime" />
-                  Procedimentos Mais Procurados
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-lg font-bold text-slate-900">
+                  <Gauge size={18} className="text-prime" />
+                  Funil de vendas
                 </div>
-                <div className="space-y-3">
-                  {[
-                    { nome: "Artroscopia", pct: 38, leads: 5700 },
-                    { nome: "Tratamento Artrose", pct: 32, leads: 4800 },
-                    { nome: "Artroplastia", pct: 18, leads: 2700 },
-                    { nome: "Células-Tronco", pct: 12, leads: 1800 },
-                  ].map((p) => (
-                    <div key={p.nome}>
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="font-semibold text-slate-700">{p.nome}</div>
-                        <div className="text-slate-600">{p.pct}% • {p.leads}</div>
+                <div className="mt-4">
+                  <ChartContainer config={funnelChartConfig} className="h-56 w-full">
+                    <FunnelChart>
+                      <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
+                      <Funnel dataKey="value" data={funnelData} isAnimationActive>
+                        <LabelList dataKey="name" position="right" fill="#0f172a" stroke="none" />
+                      </Funnel>
+                    </FunnelChart>
+                  </ChartContainer>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <Target size={16} className="text-prime" />
+                  Conversao por canal
+                </div>
+                <div className="mt-4">
+                  <ChartContainer config={channelChartConfig} className="h-44 w-full">
+                    <BarChart data={channelPerf}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="conversao" fill="var(--color-conversao)" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+                <div className="mt-2 text-xs text-slate-500">Indicacao continua com maior conversao.</div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <CalendarCheck2 size={16} className="text-prime" />
+                  Agenda diaria
+                </div>
+                <div className="mt-4 space-y-3 text-sm text-slate-600">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-slate-700">Ocupacao</span>
+                    <span>82% • 3 lacunas</span>
+                  </div>
+                  <div className="h-3 rounded-full bg-slate-100">
+                    <div className="h-3 rounded-full bg-prime-accent" style={{ width: "82%" }} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    {["08h-10h", "13h-15h", "17h-19h"].map((slot) => (
+                      <div key={slot} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center">
+                        <div className="font-semibold text-prime">{slot}</div>
+                        <div className="text-slate-500">Fila ativa</div>
                       </div>
-                      <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
-                        <div className="h-full bg-prime" style={{ width: `${p.pct}%` }} />
-                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
+                  Anti no-show ligado: lembretes 48h, 24h e 2h.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === "ia" && (
+          <div className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                { label: "Atendimentos IA", value: "1.420", meta: "Semana" },
+                { label: "Leads qualificados", value: "860", meta: "Qualificados" },
+                { label: "Escalados", value: "320", meta: "Para humano" },
+                { label: "Tempo medio", value: "6 min", meta: "SLA" },
+              ].map((kpi) => (
+                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{kpi.label}</div>
+                  <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
+                  <div className="text-xs text-slate-500">{kpi.meta}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <Sparkles size={16} className="text-prime" />
+                  Resolucao IA vs escalados
+                </div>
+                <div className="mt-4">
+                  <ChartContainer config={iaVolumeChartConfig} className="h-52 w-full">
+                    <AreaChart data={iaVolume}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Area type="monotone" dataKey="resolvidos" stroke="var(--color-resolvidos)" fill="var(--color-resolvidos)" fillOpacity={0.12} />
+                      <Area type="monotone" dataKey="escalados" stroke="var(--color-escalados)" fill="var(--color-escalados)" fillOpacity={0.18} />
+                    </AreaChart>
+                  </ChartContainer>
+                </div>
+                <div className="mt-2 text-xs text-slate-500">IA resolve 68% sem interacao humana.</div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <MessageSquare size={16} className="text-prime" />
+                  Principais intencoes
+                </div>
+                <div className="mt-4">
+                  <ChartContainer config={iaIntentChartConfig} className="h-52 w-full">
+                    <BarChart data={iaIntentos}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="volume" fill="var(--color-volume)" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+                <div className="mt-2 text-xs text-slate-500">FAQ e reagendamento reduziram 22% de chamadas humanas.</div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <ShieldCheck size={16} className="text-prime" />
+                Qualidade e compliance
+              </div>
+              <div className="mt-3 grid gap-3 md:grid-cols-3 text-sm text-slate-600">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div className="font-semibold text-slate-900">LGPD em dia</div>
+                  <div>Consentimentos registrados em 100% dos leads.</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div className="font-semibold text-slate-900">SLA controlado</div>
+                  <div>98% dos contatos respondidos em menos de 10 min.</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div className="font-semibold text-slate-900">Acuracia</div>
+                  <div>Classificacao correta em 93% das triagens.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === "vendedores" && (
+          <div className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                { label: "Tempo medio", value: "14 min", meta: "Atendimento humano" },
+                { label: "Score medio", value: "88", meta: "Satisfacao" },
+                { label: "Deals fechados", value: "91", meta: "Ultimos 30 dias" },
+                { label: "Receita", value: "R$ 1,2M", meta: "Com humano" },
+              ].map((kpi) => (
+                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{kpi.label}</div>
+                  <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
+                  <div className="text-xs text-slate-500">{kpi.meta}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <Trophy size={16} className="text-prime" />
+                  Deals por vendedor
+                </div>
+                <div className="mt-4">
+                  <ChartContainer config={sellerDealChartConfig} className="h-52 w-full">
+                    <BarChart data={vendedoresPerf}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="deals" fill="var(--color-deals)" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <Clock3 size={16} className="text-prime" />
+                  Tempo medio por dia
+                </div>
+                <div className="mt-4">
+                  <ChartContainer config={tempoChartConfig} className="h-52 w-full">
+                    <LineChart data={tempoAtendimento}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line type="monotone" dataKey="tempo" stroke="var(--color-tempo)" strokeWidth={3} dot={{ fill: "var(--color-tempo)", r: 4 }} />
+                    </LineChart>
+                  </ChartContainer>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-semibold text-slate-700">Score por vendedor</div>
+                <span className="text-xs text-slate-500">IA valida qualidade do atendimento</span>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {vendedoresPerf.map((seller) => (
+                  <div key={seller.name} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="font-semibold text-slate-900">{seller.name}</div>
+                      <div className="text-prime">Score {seller.score}</div>
                     </div>
+                    <div className="mt-2 h-2 rounded-full bg-white">
+                      <div className="h-2 rounded-full bg-prime-accent" style={{ width: `${seller.score}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {tab === "clientes" && (
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xl font-bold text-slate-900">Base de clientes qualificados</div>
+                <div className="text-sm text-slate-600">Clique para abrir analise IA do lead</div>
+              </div>
+              <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                Exportar lista
+              </button>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="grid grid-cols-[1.2fr_1fr_1fr_0.8fr_0.8fr] gap-3 border-b border-slate-200 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <div>Cliente</div>
+                  <div>Etapa</div>
+                  <div>Canal</div>
+                  <div>Score</div>
+                  <div>Ticket</div>
+                </div>
+                <div className="mt-3 space-y-2">
+                  {clients.map((client) => (
+                    <button
+                      key={client.id}
+                      onClick={() => setSelectedClientId(client.id)}
+                      className={`grid w-full grid-cols-[1.2fr_1fr_1fr_0.8fr_0.8fr] items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition ${
+                        client.id === selectedClientId
+                          ? "border-prime bg-prime/5"
+                          : "border-slate-200 bg-white hover:bg-slate-50"
+                      }`}
+                    >
+                      <div>
+                        <div className="font-semibold text-slate-900">{client.nome}</div>
+                        <div className="text-xs text-slate-500">{client.ultimaAcao}</div>
+                      </div>
+                      <div className="text-slate-700">{client.etapa}</div>
+                      <div className="text-slate-600">{client.canal}</div>
+                      <div className="text-prime font-semibold">{client.score}</div>
+                      <div className="text-slate-700">{client.ticket}</div>
+                    </button>
                   ))}
                 </div>
               </div>
-            </div>
-            <div className="text-xs text-slate-500">Números ilustrativos extraídos do documento de arquitetura. Ajustar com dados reais do período.</div>
-          </div>
-        )}
 
-        {tab === "funil" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { label: "Leads/mês", value: "15.000" },
-                { label: "Qualificados", value: "60%" },
-                { label: "Agendados", value: "~7.000" },
-                { label: "Confirmados", value: "~6.450" },
-                { label: "Realizados", value: "5.800" },
-                { label: "No-show", value: "10%" },
-              ].map((kpi) => (
-                <div key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="text-xs font-medium text-slate-600 uppercase tracking-wide">{kpi.label}</div>
-                  <div className="mt-2 text-2xl font-bold text-prime">{kpi.value}</div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                  <Sparkles size={16} className="text-prime" />
+                  Analise IA do cliente
                 </div>
-              ))}
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-6">
-                <Gauge size={18} className="text-prime" />
-                Funil de Conversão Completo
-              </div>
-              <div className="space-y-4">
-                {[
-                  { etapa: "Leads", valor: 15000, percentual: 100, cor: "bg-prime-accent" },
-                  { etapa: "Qualificados", valor: 9000, percentual: 60, cor: "bg-indigo-600" },
-                  { etapa: "Agendados", valor: 7000, percentual: 46.7, cor: "bg-emerald-600" },
-                  { etapa: "Confirmados", valor: 6450, percentual: 43.1, cor: "bg-sky-700" },
-                  { etapa: "Realizados", valor: 5800, percentual: 38.9, cor: "bg-prime" },
-                ].map((item, idx) => (
-                  <div key={item.etapa} className="relative">
-                    <div className="flex items-center gap-4">
-                      <div className="w-32 text-sm font-medium text-slate-700">{item.etapa}</div>
-                      <div className="flex-1">
-                        <div className="h-10 bg-slate-100 rounded-lg overflow-hidden relative">
-                          <div
-                            className={`h-full ${item.cor} transition-all duration-500 flex items-center justify-between px-4`}
-                            style={{ width: `${item.percentual}%` }}
-                          >
-                            <span className="text-white font-bold text-sm">{item.valor.toLocaleString()}</span>
-                            <span className="text-white font-bold text-sm">{item.percentual.toFixed(1)}%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {idx < 4 && (
-                      <div className="ml-32 pl-4 mt-1 text-xs text-amber-700">
-                        Perda: {((1 - item.percentual / 100) * 100).toFixed(1)}% • Ação: {idx === 0 ? "qualificar com bot" : idx === 1 ? "oferecer horários" : idx === 2 ? "confirmar presença" : "follow-up cirúrgico"}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4">
-              {gargalosFunil.map((gargalo) => (
-                <div key={gargalo.titulo} className="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
-                  <div className="flex items-center gap-2 text-sm font-bold text-amber-900">
-                    <AlertTriangle size={16} />
-                    {gargalo.titulo}
-                  </div>
-                  <p className="mt-2 text-sm text-amber-800">{gargalo.detalhe}</p>
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-amber-900 shadow-sm">
-                    <Sparkles size={14} />
-                    {gargalo.acao}
-                  </div>
+                <div className="mt-2 rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
+                  Temperatura {selectedClient.temperatura} • Score {selectedClient.score}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === "agendamentos" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: "Realizados (mês)", value: "5.800", status: "positive" },
-                { label: "No-show", value: "10%", status: "positive" },
-                { label: "Show Rate", value: "90%", status: "positive" },
-                { label: "Pipeline", value: "R$ 4.3M", status: "positive" },
-              ].map((kpi) => (
-                <div key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="text-xs font-medium text-slate-600 uppercase tracking-wide">{kpi.label}</div>
-                  <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-                  <CalendarCheck2 size={18} className="text-prime" />
-                  Agenda de Hoje
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-semibold text-slate-700">Ocupação</span>
-                    <span className="text-slate-600">82% • 3 lacunas</span>
-                  </div>
-                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500" style={{ width: "82%" }} />
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 text-xs text-slate-700">
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                      <div className="font-semibold text-prime">08h-10h</div>
-                      <div className="text-slate-600">2 vagas livres</div>
-                    </div>
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                      <div className="font-semibold text-prime">13h-15h</div>
-                      <div className="text-slate-600">Fila de espera ativa</div>
-                    </div>
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                      <div className="font-semibold text-prime">17h-19h</div>
-                      <div className="text-slate-600">Alta procura (Google)</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-                  Anti No-show ligado: lembretes 48h, 24h, 2h + fila de espera automática.
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-                  <BarChart3 size={18} className="text-prime" />
-                  Particular vs Convênio
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="font-semibold text-slate-700">Particular</div>
-                      <div className="text-slate-600">58% • 8.700</div>
-                    </div>
-                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
-                      <div className="h-full bg-prime-accent" style={{ width: "58%" }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="font-semibold text-slate-700">Convênio</div>
-                      <div className="text-slate-600">42% • 6.300</div>
-                    </div>
-                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden mt-2">
-                      <div className="h-full bg-prime" style={{ width: "42%" }} />
-                    </div>
-                  </div>
-                </div>
+                <div className="mt-3 text-sm text-slate-700">{selectedClient.analise.resumo}</div>
                 <div className="mt-4">
-                  <div className="text-sm font-semibold text-slate-800 mb-2">Top 3 Convênios</div>
-                  <ul className="text-sm text-slate-700 space-y-1">
-                    <li>1. Unimed — 2.730 leads</li>
-                    <li>2. Bradesco — 1.890 leads</li>
-                    <li>3. Servir — 1.260 leads</li>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Sinais positivos</div>
+                  <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                    {selectedClient.analise.sinais.map((item) => (
+                      <li key={item} className="flex items-center gap-2">
+                        <CheckCircle2 size={14} className="text-prime-accent" />
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 </div>
+                <div className="mt-4">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Riscos</div>
+                  <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                    {selectedClient.analise.riscos.map((item) => (
+                      <li key={item} className="flex items-center gap-2">
+                        <AlertTriangle size={14} className="text-prime" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                  <span className="font-semibold text-slate-900">Proxima acao:</span> {selectedClient.analise.proximaAcao}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {selectedClient.tags.map((tag) => (
+                    <span key={tag} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-2 text-lg font-bold text-slate-900 mb-4">
-                <TrendingUp size={18} className="text-prime" />
-                Lacunas, fila de espera e ocupação
-              </div>
-              <div className="grid md:grid-cols-3 gap-3">
-                {[
-                  { titulo: "Fila de espera", detalhe: "12 pacientes aguardando encaixe para esta semana" },
-                  { titulo: "Lacunas críticas", detalhe: "3 horários livres amanhã de manhã" },
-                  { titulo: "Reagendamentos", detalhe: "5 cancelamentos capturados sem perder consulta" },
-                ].map((card) => (
-                  <div key={card.titulo} className="rounded-lg bg-slate-50 p-3 text-sm text-slate-700 border border-slate-200">
-                    <div className="font-semibold text-slate-900">{card.titulo}</div>
-                    <div className="mt-1 text-slate-700">{card.detalhe}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="text-xs text-slate-500">
-              Números ilustrativos do documento de arquitetura; ajustar quando integrar aos dados reais.
             </div>
           </div>
         )}
 
         {tab === "insights" && (
           <div className="space-y-6">
-            <div className="flex flex-wrap gap-2">
-              {acoesRapidas.map((acao) => (
-                <button
-                  key={acao}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
-                >
-                  <Sparkles size={14} className="text-prime" />
-                  {acao}
-                </button>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xl font-bold text-slate-900">Insights e reports IA</div>
+                <div className="text-sm text-slate-600">Recomendacoes acionaveis e relatorios executivos</div>
+              </div>
+              <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                Agendar envio semanal
+              </button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {insights.map((item) => (
+                <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                    <Lightbulb size={16} className="text-prime" />
+                    {item.title}
+                  </div>
+                  <div className="mt-2 text-sm text-slate-700">{item.desc}</div>
+                  <div className="mt-3 rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
+                    {item.action}
+                  </div>
+                </div>
               ))}
             </div>
 
-            <div className="rounded-xl border border-orange-200 bg-gradient-to-r from-amber-50 to-orange-50 p-6 shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="text-3xl">⚠️</div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-orange-900 text-lg mb-1">Oportunidade crítica do dia</h4>
-                  <p className="text-slate-700 mb-3">
-                    Ortopedia tem 47 pacientes em fila de espera e 12 horários vagos na próxima semana. Potencial de{" "}
-                    <span className="font-bold text-orange-700">+R$ 18.800</span> em receita.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <button className="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors">
-                      Disparar Campanha Agora
-                    </button>
-                    <button className="px-4 py-2 border border-orange-200 text-orange-800 rounded-lg font-semibold bg-white hover:bg-orange-50 transition-colors">
-                      Acionar fila de espera
-                    </button>
-                  </div>
-                </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <Sparkles size={16} className="text-prime" />
+                Score de oportunidades por periodo
+              </div>
+              <div className="mt-4">
+                <ChartContainer config={insightChartConfig} className="h-48 w-full">
+                  <LineChart data={leadTrend}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                    <YAxis tickLine={false} axisLine={false} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line type="monotone" dataKey="qualificados" stroke="var(--color-qualificados)" strokeWidth={3} dot={{ fill: "var(--color-qualificados)", r: 4 }} />
+                  </LineChart>
+                </ChartContainer>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <BarChart3 size={18} className="text-prime" />
-                  <h4 className="font-bold text-slate-900">Padrão de Conversão</h4>
+            <div className="grid gap-4 md:grid-cols-3">
+              {reportCards.map((report) => (
+                <div key={report.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="text-sm font-semibold text-slate-900">{report.title}</div>
+                  <div className="mt-2 text-sm text-slate-600">{report.desc}</div>
+                  <button className="mt-3 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    Gerar agora
+                  </button>
                 </div>
-                <p className="text-sm text-slate-700 mb-4">
-                  35% dos leads chegam no domingo com conversão de apenas 28% (vs 48% na segunda-feira). Causa: demora na resposta.
-                </p>
-                <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-lg">
-                  <div className="font-semibold text-emerald-900 text-sm">💡 Ação sugerida:</div>
-                  <p className="text-sm text-emerald-800 mt-1">Ativar bot com senso de urgência nos fins de semana</p>
-                  <div className="text-emerald-700 font-bold mt-2">Ganho potencial: +R$ 84.000/mês</div>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp size={18} className="text-prime" />
-                  <h4 className="font-bold text-slate-900">Objeção Principal</h4>
-                </div>
-                <p className="text-sm text-slate-700 mb-4">
-                  79% dos leads de cirurgia que não convertem mencionam “preço alto”. Taxa de conversão: apenas 22%.
-                </p>
-                <div className="bg-sky-50 border border-sky-200 p-3 rounded-lg">
-                  <div className="font-semibold text-sky-900 text-sm">💡 Ação sugerida:</div>
-                  <p className="text-sm text-sky-800 mt-1">Oferecer parcelamento 6x antes da objeção</p>
-                  <div className="text-sky-700 font-bold mt-2">Ganho potencial: +R$ 60.000/mês</div>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target size={18} className="text-prime" />
-                  <h4 className="font-bold text-slate-900">Melhor Canal</h4>
-                </div>
-                <p className="text-sm text-slate-700 mb-4">
-                  Indicações têm 94% de conversão, 4% de no-show e LTV de R$ 3.980 (melhor canal). Atualmente: apenas 13% dos leads.
-                </p>
-                <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
-                  <div className="font-semibold text-purple-900 text-sm">💡 Ação sugerida:</div>
-                  <p className="text-sm text-purple-800 mt-1">Criar programa de indicação com R$ 200 de incentivo</p>
-                  <div className="text-purple-700 font-bold mt-2">Meta: Dobrar indicações = +R$ 650k/mês</div>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <ShieldCheck size={18} className="text-prime" />
-                  <h4 className="font-bold text-slate-900">Tendência Positiva</h4>
-                </div>
-                <p className="text-sm text-slate-700 mb-4">
-                  Lesões do joelho aumentaram conversão em 18% (35% para 53%). Motivo: resposta mais rápida no WhatsApp.
-                </p>
-                <div className="bg-teal-50 border border-teal-200 p-3 rounded-lg">
-                  <div className="font-semibold text-teal-900 text-sm">💡 Ação sugerida:</div>
-                  <p className="text-sm text-teal-800 mt-1">Replicar estratégia em outras especialidades</p>
-                  <div className="text-teal-700 font-bold mt-2">Continue fazendo!</div>
-                </div>
-              </div>
+              ))}
             </div>
+            <div className="text-xs text-slate-500">Numeros ilustrativos para demonstracao comercial.</div>
           </div>
         )}
       </div>
