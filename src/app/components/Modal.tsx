@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import FocusTrap from "focus-trap-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
@@ -10,8 +10,8 @@ type ModalProps = {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
-  scrollContent?: boolean; // default true
-  size?: "full" | "md"; // default full
+  scrollContent?: boolean;
+  size?: "full" | "md" | "fullscreen";
   titleAlign?: "left" | "center";
   closeLabel?: string;
 };
@@ -79,17 +79,11 @@ export default function Modal({
     []
   );
 
-  const overlayMotion = shouldReduceMotion
-    ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-      }
-    : {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-      };
+  const overlayMotion = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
 
   const dialogMotion = shouldReduceMotion
     ? {
@@ -117,10 +111,12 @@ export default function Modal({
         >
           <FocusTrap active={open} focusTrapOptions={focusTrapOptions}>
             <motion.div
-              className={`relative bg-white md:rounded-xl md:overflow-hidden flex flex-col ${
-                size === "md"
-                  ? "w-full h-full md:w-[900px] md:h-auto md:max-h-[85vh]"
-                  : "w-full h-full"
+              className={`relative bg-white flex flex-col shadow-2xl ${
+                size === "fullscreen"
+                  ? "w-screen h-screen"
+                  : size === "md"
+                  ? "w-full h-full md:w-[900px] md:h-auto md:max-h-[85vh] md:rounded-2xl md:overflow-hidden"
+                  : "w-full h-full md:max-w-6xl md:max-h-[90vh] md:rounded-2xl md:overflow-hidden"
               }`}
               initial={dialogMotion.initial}
               animate={dialogMotion.animate}
@@ -129,8 +125,9 @@ export default function Modal({
               role="dialog"
               aria-modal="true"
             >
+              {/* Header */}
               <div
-                className={`relative flex items-center border-b border-slate-200 px-4 md:px-6 py-3 flex-shrink-0 ${
+                className={`relative flex items-center border-b border-slate-200 px-4 md:px-6 py-4 flex-shrink-0 ${
                   titleAlign === "center" ? "justify-center" : "justify-between"
                 }`}
               >
@@ -145,7 +142,7 @@ export default function Modal({
                   aria-label="Fechar"
                   onClick={onClose}
                   ref={closeButtonRef}
-                  className={`rounded-md p-2 hover:bg-slate-100 text-slate-700 ${
+                  className={`rounded-lg p-2 hover:bg-slate-100 text-slate-700 transition-colors ${
                     titleAlign === "center" ? "absolute right-4 md:right-6" : ""
                   }`}
                 >
@@ -156,6 +153,7 @@ export default function Modal({
                   )}
                 </button>
               </div>
+              {/* Body */}
               <div className={`w-full flex-1 ${scrollContent ? "overflow-auto" : "overflow-hidden"}`}>
                 {children}
               </div>

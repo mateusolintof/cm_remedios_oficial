@@ -1,14 +1,18 @@
 @import "tailwindcss";
+@plugin "../../hero.ts";
+@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+@custom-variant dark (&:is(.dark *));
 
-/* Theme tokens (genéricos) — ajuste para o novo cliente */
+/* Theme tokens - CM Remédios */
 :root {
   --background: #ffffff;
-  --foreground: #0f172a; /* slate-900 */
-  color-scheme: light; /* força tema claro */
-  /* Dr. Maurício — identidade (navy + azul claro) */
-  --prime-primary: #041e42; /* navy escuro */
-  --prime-accent: #41b6e6;  /* azul claro */
-  --prime-dark: #041e42;    /* para texto em botões/acento */
+  --foreground: #0f172a;
+  color-scheme: light;
+
+  /* Brand Colors */
+  --prime-primary: #041e42;
+  --prime-accent: #41b6e6;
+  --prime-dark: #041e42;
 }
 
 @theme inline {
@@ -31,7 +35,7 @@ body {
 
 /* Helpers for slide-like spacing in a continuous page */
 .section {
-  @apply py-12 md:py-16; /* menor espaçamento para página contínua */
+  @apply py-12 md:py-16;
 }
 
 .section-title { @apply text-3xl md:text-5xl font-bold text-prime; }

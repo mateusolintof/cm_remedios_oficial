@@ -3,6 +3,21 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { motion, type Variants } from "framer-motion";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardFooter,
+  Chip,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Divider,
+} from "@heroui/react";
 import {
   BellRing,
   CheckCircle2,
@@ -13,7 +28,8 @@ import {
   Target,
   ShieldCheck,
   Briefcase,
-  ArrowRight
+  ArrowRight,
+  ChevronRight,
 } from "lucide-react";
 import Modal from "./components/Modal";
 import { type FlowKind } from "./components/FlowDiagram";
@@ -21,6 +37,35 @@ import { type FlowKind } from "./components/FlowDiagram";
 // Configurações da Proposta
 const preparedFor = "CM Remédios";
 const proposalDate = "Outubro 2025";
+
+// Animation variants
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+  },
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+};
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+const slideInRight: Variants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
 
 const FlowDiagramLazy = dynamic<{ kind: FlowKind }>(
   () => import("./components/FlowDiagram"),
@@ -76,42 +121,85 @@ type ModalKind =
   | { type: "benefits"; solution: "agendamento" | "faq" | "triagem-noshow" | "pesquisa" }
   | null;
 
+// Motion Components
+const MotionButton = motion.create(Button);
+const MotionCard = motion.create(Card);
+
 export default function Home() {
   const [modal, setModal] = useState<ModalKind>(null);
 
   return (
     <div className="min-h-screen font-sans text-slate-900">
       {/* HEADER / NAV */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200 shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image src="/branding/cmremedios-logo.png" alt={`Logo ${preparedFor}`} width={140} height={48} className="h-10 w-auto" />
-          </div>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-            <a className="hover:text-prime transition-colors" href="#diagnostico">Diagnóstico</a>
-            <a className="hover:text-prime transition-colors" href="#solucoes">Soluções</a>
-            <a className="hover:text-prime transition-colors" href="#entregaveis">Entregáveis</a>
-            <a className="hover:text-prime transition-colors" href="#investimento">Investimento</a>
-          </nav>
-        </div>
-      </header>
+      <Navbar
+        isBlurred
+        className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-slate-200/50"
+        maxWidth="xl"
+      >
+        <NavbarBrand>
+          <Image src="/branding/cmremedios-logo.png" alt={`Logo ${preparedFor}`} width={140} height={48} className="h-10 w-auto" />
+        </NavbarBrand>
+        <NavbarContent className="hidden md:flex gap-6" justify="end">
+          <NavbarItem>
+            <Link href="#diagnostico" className="text-slate-600 hover:text-prime transition-colors font-medium">
+              Diagnóstico
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link href="#solucoes" className="text-slate-600 hover:text-prime transition-colors font-medium">
+              Soluções
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link href="#entregaveis" className="text-slate-600 hover:text-prime transition-colors font-medium">
+              Entregáveis
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link href="#investimento" className="text-slate-600 hover:text-prime transition-colors font-medium">
+              Investimento
+            </Link>
+          </NavbarItem>
+        </NavbarContent>
+      </Navbar>
 
-      {/* HERO SECTION - Assertivo e Profissional */}
-      <section className="section relative overflow-hidden bg-[#041e42] text-white py-20 md:py-28" id="hero">
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden bg-[#041e42] text-white py-20 md:py-28" id="hero">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-10"></div>
+        <motion.div
+          className="absolute top-20 right-20 w-96 h-96 bg-prime-accent/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
         <div className="mx-auto max-w-7xl px-4 relative z-10 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
-              <Target className="w-3 h-3" /> Plano de Expansão Comercial
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            <motion.div variants={fadeInUp}>
+              <Chip
+                startContent={<Target className="w-3 h-3" />}
+                variant="flat"
+                classNames={{
+                  base: "bg-emerald-500/10 border border-emerald-500/30",
+                  content: "text-emerald-400 text-xs font-bold uppercase tracking-wider",
+                }}
+              >
+                Plano de Expansão Comercial
+              </Chip>
+            </motion.div>
+            <motion.h1
+              variants={fadeInUp}
+              className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6 mt-6"
+            >
               Agentes Inteligentes & <span className="text-prime-accent">Gestão Unificada</span>
-            </h1>
-            <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+            </motion.h1>
+            <motion.p variants={fadeInUp} className="text-lg text-slate-300 leading-relaxed max-w-xl">
               Transforme 35.000 interações mensais em resultados. Nossa IA centraliza o atendimento, qualifica 15.000 leads/mês e integra sua agenda ERP para máxima conversão.
-            </p>
+            </motion.p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <motion.div variants={fadeInUp} className="mt-8 flex flex-wrap gap-4">
               <div className="flex flex-col border-l-2 border-prime-accent pl-4">
                 <span className="text-xs text-slate-400 uppercase tracking-wider">Cliente</span>
                 <span className="font-semibold text-white">{preparedFor}</span>
@@ -120,527 +208,765 @@ export default function Home() {
                 <span className="text-xs text-slate-400 uppercase tracking-wider">Validade</span>
                 <span className="font-semibold text-white">{proposalDate}</span>
               </div>
-            </div>
-          </div>
-          <div className="relative hidden md:block">
-            <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl">
-              <h3 className="text-white font-semibold mb-4 border-b border-white/10 pb-2">Objetivos do Projeto</h3>
-              <ul className="space-y-4 text-sm text-slate-300">
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="text-emerald-400 h-5 w-5" />
-                  <span>Atendimento imediato (Tempo de resposta &lt; 1min)</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="text-emerald-400 h-5 w-5" />
-                  <span>Qualificação automática de convênios</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="text-emerald-400 h-5 w-5" />
-                  <span>Redução da taxa de No-Show</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="relative hidden md:block"
+            initial="hidden"
+            animate="visible"
+            variants={slideInRight}
+          >
+            <Card className="bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl">
+              <CardHeader className="border-b border-white/10 pb-4">
+                <h3 className="text-white font-semibold">Objetivos do Projeto</h3>
+              </CardHeader>
+              <CardBody className="space-y-4">
+                {[
+                  "Atendimento imediato (Tempo de resposta < 1min)",
+                  "Qualificação automática de convênios",
+                  "Redução da taxa de No-Show",
+                ].map((item, index) => (
+                  <motion.div
+                    key={item}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + index * 0.1 }}
+                  >
+                    <CheckCircle2 className="text-emerald-400 h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm text-slate-300">{item}</span>
+                  </motion.div>
+                ))}
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
-      {/* DIAGNÓSTICO - Foco em Oportunidade de Melhoria */}
-      <section className="section bg-slate-50" id="diagnostico">
+      {/* DIAGNÓSTICO */}
+      <section className="py-16 md:py-20 bg-slate-50" id="diagnostico">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="max-w-3xl">
+          <motion.div
+            className="max-w-3xl"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
             <h2 className="section-title">Diagnóstico Operacional</h2>
             <p className="subtitle mt-4 text-slate-600">
               Identificamos os principais pontos de fricção que impedem o consultório de escalar sua eficiência comercial hoje.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="mt-10 space-y-6">
-            <div className="card">
-              <h3 className="text-xl font-bold text-prime mb-3">1. Atendimento ineficiente</h3>
-              <ul className="list-disc pl-5 space-y-2 text-slate-700">
-                <li><strong>Atendimento online sobrecarregado:</strong>
-                  <ul className="list-[circle] pl-5 mt-1 space-y-1 text-slate-600">
-                    <li>Não consegue qualificar ou agendar corretamente.</li>
-                    <li>Não consegue buscar de forma eficiente as dúvidas e informações.</li>
-                    <li>Atendimento presencial fica limitado porque são muitas tarefas a serem executadas.</li>
+          <motion.div
+            className="mt-10 space-y-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            {[
+              {
+                title: "1. Atendimento ineficiente",
+                items: [
+                  { main: "Atendimento online sobrecarregado:", sub: ["Não consegue qualificar ou agendar corretamente.", "Não consegue buscar de forma eficiente as dúvidas e informações.", "Atendimento presencial fica limitado porque são muitas tarefas a serem executadas."] },
+                ],
+              },
+              {
+                title: "2. Alto volume sem atendimento",
+                items: [
+                  { main: "61% do tempo total da semana não tem atendimento humano (101 horas):", sub: ["Estudos mostram que 50% a 70% dos usuários que iniciam contato fora do horário comercial e só recebem resposta no dia seguinte não dão continuidade à conversa.", "Se o volume mensal é de 1000 pessoas, isso representa uma perda de ao menos 500 possíveis agendamentos."] },
+                ],
+              },
+              {
+                title: "3. Múltiplos gaps",
+                items: [
+                  { main: "Com alto volume de atendimento presencial e online, não é possível conferir corretamente:", sub: ["Taxa de no-show e remarcação.", "Informações sobre exames e procedimentos, o que pode acarretar em retrabalho e tempo que poderia ser destinado à conversão ou a um atendimento de qualidade."] },
+                ],
+              },
+            ].map((card, idx) => (
+              <MotionCard
+                key={idx}
+                variants={fadeInUp}
+                className="bg-white shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+              >
+                <CardBody className="p-6">
+                  <h3 className="text-xl font-bold text-prime mb-3">{card.title}</h3>
+                  <ul className="list-disc pl-5 space-y-2 text-slate-700">
+                    {card.items.map((item, i) => (
+                      <li key={i}>
+                        <strong>{item.main}</strong>
+                        <ul className="list-[circle] pl-5 mt-1 space-y-1 text-slate-600">
+                          {item.sub.map((s, j) => (
+                            <li key={j}>{s}</li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
                   </ul>
-                </li>
-              </ul>
-            </div>
-
-            <div className="card">
-              <h3 className="text-xl font-bold text-prime mb-3">2. Alto volume sem atendimento</h3>
-              <ul className="list-disc pl-5 space-y-2 text-slate-700">
-                <li><strong>61% do tempo total da semana não tem atendimento humano (101 horas):</strong>
-                  <ul className="list-[circle] pl-5 mt-1 space-y-1 text-slate-600">
-                    <li>Estudos mostram que 50% a 70% dos usuários que iniciam contato fora do horário comercial e só recebem resposta no dia seguinte não dão continuidade à conversa.</li>
-                    <li>Se o volume mensal é de 1000 pessoas, isso representa uma perda de ao menos 500 possíveis agendamentos.</li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-
-            <div className="card">
-              <h3 className="text-xl font-bold text-prime mb-3">3. Múltiplos gaps</h3>
-              <ul className="list-disc pl-5 space-y-2 text-slate-700">
-                <li>Com alto volume de atendimento presencial e online, não é possível conferir corretamente:
-                  <ul className="list-[circle] pl-5 mt-1 space-y-1 text-slate-600">
-                    <li>Taxa de no-show e remarcação.</li>
-                    <li>Informações sobre exames e procedimentos, o que pode acarretar em retrabalho e tempo que poderia ser destinado à conversão ou a um atendimento de qualidade.</li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
+                </CardBody>
+              </MotionCard>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* DESAFIO ATUAL */}
-      <section className="section bg-slate-50" id="desafio">
+      <section className="py-16 md:py-20 bg-slate-50" id="desafio">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="section-title">Desafio Atual</h2>
-          <p className="subtitle mt-2">Contexto da CM Remédios: Alto Volume de Leads sem atendimento adequado, muita insatisfação e reclamações sobre Atendimento.</p>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <h2 className="section-title">Desafio Atual</h2>
+            <p className="subtitle mt-2">Contexto da CM Remédios: Alto Volume de Leads sem atendimento adequado, muita insatisfação e reclamações sobre Atendimento.</p>
+          </motion.div>
 
-          <div className="mt-10 grid md:grid-cols-2 gap-6">
-            <div className="space-y-4">
+          <motion.div
+            className="mt-10 grid md:grid-cols-2 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            <motion.div variants={scaleIn} className="space-y-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/prints/avaliacao.png" alt="Avaliações de atendimento — CM Remédios" className="w-full rounded-lg border border-slate-200 shadow-sm" />
-            </div>
-            <div className="space-y-4">
+              <img src="/prints/avaliacao.png" alt="Avaliações de atendimento — CM Remédios" className="w-full rounded-xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow" />
+            </motion.div>
+            <motion.div variants={scaleIn} className="space-y-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/prints/reclameaqui1.png" alt="Reclamações — Reclame Aqui (1) — CM Remédios" className="w-full rounded-lg border border-slate-200 shadow-sm" />
+              <img src="/prints/reclameaqui1.png" alt="Reclamações — Reclame Aqui (1) — CM Remédios" className="w-full rounded-xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/prints/reclameaqui2.png" alt="Reclamações — Reclame Aqui (2) — CM Remédios" className="w-full rounded-lg border border-slate-200 shadow-sm" />
-            </div>
-          </div>
+              <img src="/prints/reclameaqui2.png" alt="Reclamações — Reclame Aqui (2) — CM Remédios" className="w-full rounded-xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow" />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* SOLUÇÕES */}
-      <section className="section bg-white" id="solucoes">
+      <section className="py-16 md:py-20 bg-white" id="solucoes">
         <div className="mx-auto max-w-7xl px-4">
-          <h2 className="section-title">Arquitetura da Solução</h2>
-          <p className="subtitle mt-2">Implementação de 4 Agentes Especializados + Ecossistema de Gestão.</p>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <h2 className="section-title">Arquitetura da Solução</h2>
+            <p className="subtitle mt-2">Implementação de 4 Agentes Especializados + Ecossistema de Gestão.</p>
+          </motion.div>
 
-          <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Card 1 */}
-            <div className="card group cursor-pointer hover:border-prime transition-all" onClick={() => setModal({ type: "solution", kind: "agendamento", title: "SDR & Agendamento" })}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span>
-              </div>
-              <h3 className="font-bold text-lg text-slate-900">1. SDR & Agendamento</h3>
-              <p className="text-sm text-slate-600 mt-2 mb-4">Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado.</p>
-            </div>
-
-            {/* Card 2 */}
-            <div className="card group cursor-pointer hover:border-prime transition-all" onClick={() => setModal({ type: "solution", kind: "faq", title: "FAQ Educacional" })}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span>
-              </div>
-              <h3 className="font-bold text-lg text-slate-900">2. FAQ Inteligente</h3>
-              <p className="text-sm text-slate-600 mt-2 mb-4">Base de conhecimento treinada para tirar dúvidas de preparo, valores e localização instantaneamente.</p>
-            </div>
-
-            {/* Card 3 */}
-            <div className="card group cursor-pointer hover:border-prime transition-all" onClick={() => setModal({ type: "solution", kind: "triagem-noshow", title: "Anti No-Show" })}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center">
-                  <BellRing className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span>
-              </div>
-              <h3 className="font-bold text-lg text-slate-900">3. Gestão de No-Show</h3>
-              <p className="text-sm text-slate-600 mt-2 mb-4">Automação de confirmações (D-2, D-1) e gestão ativa de fila de espera para preencher lacunas.</p>
-            </div>
-
-            {/* Card 4 */}
-            <div className="card group cursor-pointer hover:border-prime transition-all">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center">
-                  <FileBarChart className="h-5 w-5" />
-                </div>
-                {/* <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline">Ver Fluxo</span> */}
-              </div>
-              <h3 className="font-bold text-lg text-slate-900">4. Pesquisa & Satisfação</h3>
-              <p className="text-sm text-slate-600 mt-2 mb-4">Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.</p>
-            </div>
-          </div>
+          <motion.div
+            className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            {[
+              { icon: Sparkles, color: "blue", title: "1. SDR & Agendamento", desc: "Recepciona o paciente, identifica convênio ou particular e realiza o agendamento integrado.", kind: "agendamento" as FlowKind, flowTitle: "SDR & Agendamento" },
+              { icon: MessageSquare, color: "emerald", title: "2. FAQ Inteligente", desc: "Base de conhecimento treinada para tirar dúvidas de preparo, valores e localização instantaneamente.", kind: "faq" as FlowKind, flowTitle: "FAQ Educacional" },
+              { icon: BellRing, color: "purple", title: "3. Gestão de No-Show", desc: "Automação de confirmações (D-2, D-1) e gestão ativa de fila de espera para preencher lacunas.", kind: "triagem-noshow" as FlowKind, flowTitle: "Anti No-Show" },
+              { icon: FileBarChart, color: "amber", title: "4. Pesquisa & Satisfação", desc: "Envia pesquisa de satisfação, analisa sentimentos e direciona promotores para o Google.", kind: null, flowTitle: "" },
+            ].map((item, idx) => (
+              <MotionCard
+                key={idx}
+                variants={fadeInUp}
+                isPressable={!!item.kind}
+                className="bg-white shadow-sm border border-slate-200 hover:border-prime hover:shadow-lg transition-all cursor-pointer group"
+                onPress={item.kind ? () => setModal({ type: "solution", kind: item.kind!, title: item.flowTitle }) : undefined}
+              >
+                <CardHeader className="flex justify-between items-start pb-2">
+                  <div className={`w-10 h-10 bg-${item.color}-50 text-${item.color}-600 rounded-xl flex items-center justify-center`}>
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  {item.kind && (
+                    <span className="text-xs font-bold text-prime-accent uppercase tracking-wider group-hover:underline flex items-center gap-1">
+                      Ver Fluxo <ChevronRight className="w-3 h-3" />
+                    </span>
+                  )}
+                </CardHeader>
+                <CardBody className="pt-2">
+                  <h3 className="font-bold text-lg text-slate-900">{item.title}</h3>
+                  <p className="text-sm text-slate-600 mt-2">{item.desc}</p>
+                </CardBody>
+              </MotionCard>
+            ))}
+          </motion.div>
 
           {/* Ferramentas de Gestão */}
-          <div className="mt-8 bg-slate-50 rounded-2xl p-8 border border-slate-200">
-            <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
-              <KanbanSquare className="text-prime" /> Ferramentas de Controle
-            </h3>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="font-semibold text-slate-800 mb-2">CRM Integrado</h4>
-                <p className="text-sm text-slate-600 mb-4">Visualização clara do funil de vendas, com status de cada paciente e histórico de conversas.</p>
-                <button onClick={() => setModal({ type: "crm" })} className="text-sm font-bold text-prime hover:underline">Abrir Demonstração CRM →</button>
-              </div>
-              <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Dashboard Executivo</h4>
-                <p className="text-sm text-slate-600 mb-4">Acompanhamento em tempo real de KPIs: Taxa de conversão, Faturamento projetado e Eficiência dos canais.</p>
-                <button onClick={() => setModal({ type: "dashboard" })} className="text-sm font-bold text-prime hover:underline">Abrir Demonstração Dashboard →</button>
-              </div>
-            </div>
-          </div>
+          <motion.div
+            className="mt-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <Card className="bg-slate-50 border border-slate-200 shadow-sm">
+              <CardBody className="p-8">
+                <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2 text-lg">
+                  <KanbanSquare className="text-prime" /> Ferramentas de Controle
+                </h3>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="font-semibold text-slate-800 mb-2">CRM Integrado</h4>
+                    <p className="text-sm text-slate-600 mb-4">Visualização clara do funil de vendas, com status de cada paciente e histórico de conversas.</p>
+                    <Button
+                      variant="light"
+                      color="primary"
+                      onPress={() => setModal({ type: "crm" })}
+                      className="font-bold"
+                      endContent={<ArrowRight className="w-4 h-4" />}
+                    >
+                      Abrir Demonstração CRM
+                    </Button>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-800 mb-2">Dashboard Executivo</h4>
+                    <p className="text-sm text-slate-600 mb-4">Acompanhamento em tempo real de KPIs: Taxa de conversão, Faturamento projetado e Eficiência dos canais.</p>
+                    <Button
+                      variant="light"
+                      color="primary"
+                      onPress={() => setModal({ type: "dashboard" })}
+                      className="font-bold"
+                      endContent={<ArrowRight className="w-4 h-4" />}
+                    >
+                      Abrir Demonstração Dashboard
+                    </Button>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
-      {/* GANHOS ESPERADOS - Simplificado */}
-      <section className="section bg-white" id="ganhos">
+      {/* GANHOS ESPERADOS */}
+      <section className="py-16 md:py-20 bg-white" id="ganhos">
         <div className="mx-auto max-w-7xl px-4">
-          <h2 className="section-title">Ganhos Esperados</h2>
-          <p className="subtitle mt-2">Impacto direto nos indicadores chave do consultório.</p>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <h2 className="section-title">Ganhos Esperados</h2>
+            <p className="subtitle mt-2">Impacto direto nos indicadores chave do consultório.</p>
+          </motion.div>
 
-          <div className="mt-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-5 bg-emerald-50 rounded-xl border border-emerald-100">
-              <div className="text-3xl font-bold text-emerald-600 mb-2">+40%</div>
-              <div className="font-semibold text-emerald-900">Conversão de Leads</div>
-              <p className="text-xs text-emerald-800 mt-1">Resposta imediata aumenta drásticamente o aproveitamento.</p>
-            </div>
-            <div className="p-5 bg-blue-50 rounded-xl border border-blue-100">
-              <div className="text-3xl font-bold text-blue-600 mb-2">-60%</div>
-              <div className="font-semibold text-blue-900">Taxa de No-Show</div>
-              <p className="text-xs text-blue-800 mt-1">Confirmações multicanal e fila de espera ativa.</p>
-            </div>
-            <div className="p-5 bg-indigo-50 rounded-xl border border-indigo-100">
-              <div className="text-3xl font-bold text-indigo-600 mb-2">24h</div>
-              <div className="font-semibold text-indigo-900">Operação Comercial</div>
-              <p className="text-xs text-indigo-800 mt-1">Captura de pacientes noturnos e finais de semana.</p>
-            </div>
-            <div className="p-5 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="text-3xl font-bold text-slate-600 mb-2">100%</div>
-              <div className="font-semibold text-slate-900">Visibilidade</div>
-              <p className="text-xs text-slate-600 mt-1">Dados estruturados para tomada de decisão.</p>
-            </div>
-          </div>
+          <motion.div
+            className="mt-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            {[
+              { value: "+40%", label: "Conversão de Leads", desc: "Resposta imediata aumenta drásticamente o aproveitamento.", color: "emerald" },
+              { value: "-60%", label: "Taxa de No-Show", desc: "Confirmações multicanal e fila de espera ativa.", color: "blue" },
+              { value: "24h", label: "Operação Comercial", desc: "Captura de pacientes noturnos e finais de semana.", color: "indigo" },
+              { value: "100%", label: "Visibilidade", desc: "Dados estruturados para tomada de decisão.", color: "slate" },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                variants={scaleIn}
+                className={`p-6 bg-${item.color}-50 rounded-2xl border border-${item.color}-100 hover:shadow-lg transition-shadow`}
+              >
+                <div className={`text-4xl font-bold text-${item.color}-600 mb-2`}>{item.value}</div>
+                <div className={`font-semibold text-${item.color}-900`}>{item.label}</div>
+                <p className={`text-xs text-${item.color}-800 mt-2`}>{item.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
 
-          <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <button onClick={() => setModal({ type: "conquistas" })} className="btn-benefits text-sm">Detalhar Ganhos Operacionais</button>
-            <button onClick={() => setModal({ type: "inteligencia" })} className="btn-benefits text-sm">Ver Inteligência de Dados</button>
-          </div>
+          <motion.div
+            className="mt-10 flex flex-wrap gap-4 justify-center"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <MotionButton
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              variant="bordered"
+              className="font-semibold border-2 border-prime/20 hover:border-prime hover:bg-prime/5"
+              onPress={() => setModal({ type: "conquistas" })}
+              endContent={<ChevronRight className="w-4 h-4" />}
+            >
+              Detalhar Ganhos Operacionais
+            </MotionButton>
+            <MotionButton
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              variant="bordered"
+              className="font-semibold border-2 border-prime/20 hover:border-prime hover:bg-prime/5"
+              onPress={() => setModal({ type: "inteligencia" })}
+              endContent={<ChevronRight className="w-4 h-4" />}
+            >
+              Ver Inteligência de Dados
+            </MotionButton>
+          </motion.div>
         </div>
       </section>
 
-      {/* NOVA SEÇÃO: ENTREGÁVEIS (Tangibilização) */}
-      <section className="section bg-slate-50 border-y border-slate-200" id="entregaveis">
+      {/* ENTREGÁVEIS */}
+      <section className="py-16 md:py-20 bg-slate-50 border-y border-slate-200" id="entregaveis">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="section-title mb-8">O Que Será Entregue</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
+          <motion.h2
+            className="section-title mb-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            O Que Será Entregue
+          </motion.h2>
+          <motion.div
+            className="grid md:grid-cols-2 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            <motion.div variants={slideInLeft}>
               <h3 className="text-lg font-bold text-prime mb-4 flex items-center gap-2">
                 <Briefcase className="h-5 w-5" /> Setup Tecnológico
               </h3>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Configuração dos Agentes:</strong> Desenvolvimento e treino dos 4 fluxos (SDR, FAQ, No-Show, Pós-venda) com a base de conhecimento da Clínica</div>
-                </li>
-                <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Integração ERP:</strong> Conector seguro para deixar tudo integrado.</div>
-                </li>
-                <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Painel de Controle:</strong> Setup do CRM e Dashboard com as métricas definidas no diagnóstico.</div>
-                </li>
-              </ul>
-            </div>
-            <div>
+              <div className="space-y-3">
+                {[
+                  { title: "Configuração dos Agentes:", desc: "Desenvolvimento e treino dos 4 fluxos (SDR, FAQ, No-Show, Pós-venda) com a base de conhecimento da Clínica" },
+                  { title: "Integração ERP:", desc: "Conector seguro para deixar tudo integrado." },
+                  { title: "Painel de Controle:", desc: "Setup do CRM e Dashboard com as métricas definidas no diagnóstico." },
+                ].map((item, idx) => (
+                  <Card key={idx} className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                    <CardBody className="flex flex-row items-start gap-3 p-4">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                      <div className="text-sm text-slate-700">
+                        <strong>{item.title}</strong> {item.desc}
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            </motion.div>
+            <motion.div variants={slideInRight}>
               <h3 className="text-lg font-bold text-prime mb-4 flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5" /> Serviços & Garantias
               </h3>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                  <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Treinamento da Equipe:</strong> Workshop de 4h para secretárias sobre como operar o CRM e interagir com a IA.</div>
-                </li>
-                <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                  <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Acompanhamento Assistido:</strong> 30 dias de monitoramento intensivo pós-Go-Live para ajustes finos.</div>
-                </li>
-                <li className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                  <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0" />
-                  <div className="text-sm text-slate-700"><strong>Garantia de Performance:</strong> SLA de estabilidade e suporte técnico prioritário.</div>
-                </li>
-              </ul>
-            </div>
-          </div>
+              <div className="space-y-3">
+                {[
+                  { title: "Treinamento da Equipe:", desc: "Workshop de 4h para secretárias sobre como operar o CRM e interagir com a IA." },
+                  { title: "Acompanhamento Assistido:", desc: "30 dias de monitoramento intensivo pós-Go-Live para ajustes finos." },
+                  { title: "Garantia de Performance:", desc: "SLA de estabilidade e suporte técnico prioritário." },
+                ].map((item, idx) => (
+                  <Card key={idx} className="bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                    <CardBody className="flex flex-row items-start gap-3 p-4">
+                      <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                      <div className="text-sm text-slate-700">
+                        <strong>{item.title}</strong> {item.desc}
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* CALCULADORA ROI */}
-      <section className="py-16 bg-white" id="roi">
+      <section className="py-16 md:py-20 bg-white" id="roi">
         <div className="mx-auto max-w-5xl px-4 text-center">
-          <h2 className="section-title">Viabilidade Financeira</h2>
-          <p className="text-slate-600 mt-4 max-w-2xl mx-auto">
-            Utilize nossa calculadora para projetar o retorno sobre o investimento com base na recuperação de leads e redução de custos operacionais.
-          </p>
-          <div className="mt-8">
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={() => setModal({ type: "roi" })}
-                className="btn-primary px-8 py-3 shadow-lg shadow-prime/20"
-              >
-                Abrir Calculadora de ROI
-              </button>
-              <button
-                onClick={() => setModal({ type: "costs" })}
-                className="btn-primary px-8 py-3 shadow-lg shadow-prime/20"
-              >
-                Calcule a Redução de Custos
-              </button>
-            </div>
-          </div>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <h2 className="section-title">Viabilidade Financeira</h2>
+            <p className="text-slate-600 mt-4 max-w-2xl mx-auto">
+              Utilize nossa calculadora para projetar o retorno sobre o investimento com base na recuperação de leads e redução de custos operacionais.
+            </p>
+          </motion.div>
+          <motion.div
+            className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <MotionButton
+              whileHover={{ scale: 1.03, boxShadow: "0 20px 40px -15px rgba(4, 30, 66, 0.3)" }}
+              whileTap={{ scale: 0.98 }}
+              color="primary"
+              size="lg"
+              className="bg-prime-accent text-prime-dark font-bold shadow-lg"
+              onPress={() => setModal({ type: "roi" })}
+            >
+              Abrir Calculadora de ROI
+            </MotionButton>
+            <MotionButton
+              whileHover={{ scale: 1.03, boxShadow: "0 20px 40px -15px rgba(4, 30, 66, 0.3)" }}
+              whileTap={{ scale: 0.98 }}
+              color="primary"
+              size="lg"
+              className="bg-prime-accent text-prime-dark font-bold shadow-lg"
+              onPress={() => setModal({ type: "costs" })}
+            >
+              Calcule a Redução de Custos
+            </MotionButton>
+          </motion.div>
         </div>
       </section>
 
       {/* INVESTIMENTO */}
-      <section className="section bg-slate-50" id="investimento">
+      <section className="py-16 md:py-20 bg-slate-50" id="investimento">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="section-title text-center">Proposta Comercial</h2>
-          <p className="text-center text-slate-600 mt-3">Escolha um módulo individual ou contrate o ecossistema completo com ancoragem de preço.</p>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="text-center"
+          >
+            <h2 className="section-title">Proposta Comercial</h2>
+            <p className="text-slate-600 mt-3">Escolha um módulo individual ou contrate o ecossistema completo com ancoragem de preço.</p>
+          </motion.div>
 
-          {/* Linha superior: 3 módulos */}
-          {/* Linha 1: 3 Cards Modulares */}
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Pricing Cards */}
+          <motion.div
+            className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
             {/* Card 1: Agente FAQ */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:border-prime-accent/50 transition-colors">
-              <h3 className="text-lg font-bold text-prime mb-2">Agente FAQ + Informações Gerais</h3>
-              <div className="text-xs text-slate-500 mb-4">Implementação</div>
-              <div className="text-2xl font-bold text-slate-900 mb-1">R$ 15.000,00</div>
-              <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
-
-              <div className="text-xs text-slate-500 mb-1">Recorrência</div>
-              <div className="text-lg font-bold text-slate-900 mb-4">R$ 2.000,00/mês</div>
-
-              <ul className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4">
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Desenvolvimento e Suporte
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Implementação sistema de OCR (extrai dados de documentos)
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Acesso ao Banco de Conhecimento personalizado
-                </li>
-              </ul>
-              <button
-                onClick={() => setModal({ type: "benefits", solution: "faq" })}
-                className="btn-benefits mt-4"
-              >
-                Ver Benefícios Tangíveis <ArrowRight />
-              </button>
-            </div>
-
-            {/* Card 2: Agendamento Inteligente (Destaque) */}
-            <div className="bg-white rounded-2xl border-2 border-prime shadow-lg p-6 flex flex-col relative transform md:-translate-y-2">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-prime text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                Mais Popular
+            <motion.div
+              variants={fadeInUp}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-prime-accent/50 hover:shadow-lg transition-all flex flex-col min-h-[420px]"
+            >
+              <div className="p-6 pb-4">
+                <h3 className="text-lg font-bold text-prime">Agente FAQ + Informações Gerais</h3>
               </div>
-              <h3 className="text-lg font-bold text-prime mb-2">Agendamento Inteligente</h3>
-              <div className="text-xs text-slate-500 mb-4">Implementação</div>
-              <div className="text-3xl font-extrabold text-slate-900 mb-1">R$ 45.000,00</div>
-              <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
+              <div className="px-6 pb-4 flex-1 flex flex-col">
+                <div className="mb-4">
+                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
+                  <div className="text-2xl font-bold text-slate-900">R$ 15.000</div>
+                  <div className="text-xs text-slate-400">pagamento único</div>
+                </div>
+                <div className="h-px bg-slate-200 my-4" />
+                <div className="mb-5">
+                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
+                  <div className="text-xl font-bold text-slate-900">R$ 2.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
+                </div>
+                <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Desenvolvimento e Suporte</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Sistema de OCR</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Base de Conhecimento</li>
+                </ul>
+              </div>
+              <div className="p-6 pt-4 mt-auto">
+                <Button
+                  variant="bordered"
+                  className="w-full font-semibold"
+                  onPress={() => setModal({ type: "benefits", solution: "faq" })}
+                  endContent={<ArrowRight className="w-4 h-4" />}
+                >
+                  Ver Detalhes
+                </Button>
+              </div>
+            </motion.div>
 
-              <div className="text-xs text-slate-500 mb-1">Recorrência</div>
-              <div className="text-xl font-bold text-slate-900 mb-4">R$ 5.000,00/mês</div>
-
-              <ul className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4">
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Qualificação e Agendamento
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Desenvolvimento Personalizado
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Implementação e Treinamentos
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Suporte + Otimizações
-                </li>
-              </ul>
-              <button
-                onClick={() => setModal({ type: "benefits", solution: "agendamento" })}
-                className="btn-benefits mt-4"
+            {/* Card 2: Agendamento (Destaque) */}
+            <motion.div
+              variants={scaleIn}
+              className="bg-white rounded-2xl border-2 border-prime shadow-xl relative flex flex-col min-h-[420px] lg:-translate-y-3"
+            >
+              <Chip
+                className="absolute -top-3 left-1/2 -translate-x-1/2 z-10"
+                color="primary"
+                variant="solid"
+                classNames={{ base: "bg-prime", content: "text-white font-bold text-[10px] uppercase tracking-wide px-3" }}
               >
-                Ver Benefícios Tangíveis <ArrowRight />
-              </button>
-            </div>
+                Mais Popular
+              </Chip>
+              <div className="p-6 pb-4 pt-8">
+                <h3 className="text-lg font-bold text-prime">Agendamento Inteligente</h3>
+              </div>
+              <div className="px-6 pb-4 flex-1 flex flex-col">
+                <div className="mb-4">
+                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
+                  <div className="text-3xl font-extrabold text-slate-900">R$ 45.000</div>
+                  <div className="text-xs text-slate-400">pagamento único</div>
+                </div>
+                <div className="h-px bg-slate-200 my-4" />
+                <div className="mb-5">
+                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
+                  <div className="text-xl font-bold text-slate-900">R$ 5.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
+                </div>
+                <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Qualificação e Agendamento</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Desenvolvimento Personalizado</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Implementação e Treinamentos</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Suporte + Otimizações</li>
+                </ul>
+              </div>
+              <div className="p-6 pt-4 mt-auto">
+                <Button
+                  color="primary"
+                  className="w-full font-semibold bg-prime"
+                  onPress={() => setModal({ type: "benefits", solution: "agendamento" })}
+                  endContent={<ArrowRight className="w-4 h-4" />}
+                >
+                  Ver Detalhes
+                </Button>
+              </div>
+            </motion.div>
 
             {/* Card 3: Pré-triagem */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col hover:border-prime-accent/50 transition-colors">
-              <h3 className="text-lg font-bold text-prime mb-2">Agente Pré-triagem + Anti No-Show</h3>
-              <div className="text-xs text-slate-500 mb-4">Implementação</div>
-              <div className="text-2xl font-bold text-slate-900 mb-1">R$ 15.000,00</div>
-              <div className="text-xs text-slate-500 mb-4">Pagamento único</div>
-
-              <div className="text-xs text-slate-500 mb-1">Recorrência</div>
-              <div className="text-lg font-bold text-slate-900 mb-4">R$ 2.000,00/mês</div>
-
-              <ul className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-4">
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Desenvolvimento e Suporte
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Acesso ao Banco de Conhecimento
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-prime">•</span> Agente ativo (inicia as conversas)
-                </li>
-              </ul>
-              <button
-                onClick={() => setModal({ type: "benefits", solution: "triagem-noshow" })}
-                className="btn-benefits mt-4"
-              >
-                Ver Benefícios Tangíveis <ArrowRight />
-              </button>
-            </div>
-          </div>
-
-          {/* Linha 2: Card Pós-venda */}
-          <div className="mt-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 hover:border-prime-accent/50 transition-colors">
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-prime mb-2">Agente Pós-venda</h3>
-                <div className="grid grid-cols-2 gap-8 mt-4">
-                  <div>
-                    <div className="text-xs text-slate-500 mb-1">Implementação</div>
-                    <div className="text-2xl font-bold text-slate-900">R$ 15.000,00</div>
-                    <div className="text-xs text-slate-500">Pagamento único</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-500 mb-1">Recorrência</div>
-                    <div className="text-lg font-bold text-slate-900">R$ 2.000,00/mês</div>
-                  </div>
-                </div>
+            <motion.div
+              variants={fadeInUp}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-prime-accent/50 hover:shadow-lg transition-all flex flex-col min-h-[420px]"
+            >
+              <div className="p-6 pb-4">
+                <h3 className="text-lg font-bold text-prime">Pré-triagem + Anti No-Show</h3>
               </div>
-              <div className="flex-1 border-l border-slate-100 pl-6">
-                <ul className="space-y-2 text-sm text-slate-600">
-                  <li className="flex items-start gap-2">
-                    <span className="text-prime">•</span> Entra em contato com os pacientes e realiza pesquisa de satisfação
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-prime">•</span> Leitura e Análise de Sentimentos
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-prime">•</span> Sentimento positivo → envia link do Google
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-prime">•</span> Sentimento negativo → rapport + insight interno
-                  </li>
+              <div className="px-6 pb-4 flex-1 flex flex-col">
+                <div className="mb-4">
+                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
+                  <div className="text-2xl font-bold text-slate-900">R$ 15.000</div>
+                  <div className="text-xs text-slate-400">pagamento único</div>
+                </div>
+                <div className="h-px bg-slate-200 my-4" />
+                <div className="mb-5">
+                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
+                  <div className="text-xl font-bold text-slate-900">R$ 2.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
+                </div>
+                <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Desenvolvimento e Suporte</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Base de Conhecimento</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Agente ativo (inicia conversas)</li>
                 </ul>
-                <button
-                  onClick={() => setModal({ type: "benefits", solution: "pesquisa" })}
-                  className="btn-benefits mt-4"
+              </div>
+              <div className="p-6 pt-4 mt-auto">
+                <Button
+                  variant="bordered"
+                  className="w-full font-semibold"
+                  onPress={() => setModal({ type: "benefits", solution: "triagem-noshow" })}
+                  endContent={<ArrowRight className="w-4 h-4" />}
                 >
-                  Ver Benefícios Tangíveis <ArrowRight />
-                </button>
+                  Ver Detalhes
+                </Button>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          {/* Linha 3: Ecossistema Full */}
-          <div className="mt-12 bg-slate-900 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-prime-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-prime-accent/20 transition-all duration-700"></div>
-
-            <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-prime-accent/20 border border-prime-accent/30 px-3 py-1 text-xs font-bold text-prime-accent uppercase tracking-wider mb-6">
-                  <Sparkles className="h-3 w-3" />
-                  Oferta Especial
-                </div>
-                <h3 className="text-3xl md:text-4xl font-extrabold mb-4">Ecossistema Full</h3>
-                <p className="text-slate-300 text-lg mb-8">
-                  Contrate todos os 4 agentes integrados + CRM + Dashboard e economize significativamente no setup e na recorrência.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[
-                    "SDR + Agendamento",
-                    "FAQ Inteligente",
-                    "Pré-triagem + Anti No-Show",
-                    "Pós-venda + Pesquisa",
-                    "CRM + Dashboard Executivo",
-                    "Integração ERP Completa"
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                        <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+          {/* Card Pós-venda */}
+          <motion.div
+            className="mt-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <Card className="bg-white border border-slate-200 shadow-sm hover:border-prime-accent/50 hover:shadow-lg transition-all">
+              <CardBody className="p-5 md:p-6">
+                <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+                  <div className="flex-1">
+                    <h3 className="text-base font-bold text-prime mb-4">Agente Pós-venda</h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
+                        <div className="text-2xl font-bold text-slate-900">R$ 15.000</div>
+                        <div className="text-[10px] text-slate-400">pagamento único</div>
                       </div>
-                      <span className="text-sm font-medium text-slate-200">{item}</span>
+                      <div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
+                        <div className="text-lg font-bold text-slate-900">R$ 2.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
+                      </div>
                     </div>
-                  ))}
+                  </div>
+                  <Divider orientation="vertical" className="hidden lg:block h-20" />
+                  <Divider className="lg:hidden" />
+                  <div className="flex-1">
+                    <ul className="space-y-1.5 text-sm text-slate-600 mb-4">
+                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> Pesquisa de satisfação automatizada</li>
+                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> Análise de Sentimentos com IA</li>
+                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> Redirecionamento para Google</li>
+                    </ul>
+                    <Button
+                      variant="bordered"
+                      className="font-semibold"
+                      onPress={() => setModal({ type: "benefits", solution: "pesquisa" })}
+                      endContent={<ArrowRight className="w-4 h-4" />}
+                    >
+                      Ver Detalhes
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              </CardBody>
+            </Card>
+          </motion.div>
 
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-                <div className="flex flex-col gap-6">
+          {/* Ecossistema Full */}
+          <motion.div
+            className="mt-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={scaleIn}
+          >
+            <Card className="bg-slate-900 text-white overflow-hidden relative group">
+              <motion.div
+                className="absolute top-0 right-0 w-96 h-96 bg-prime-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"
+                animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <CardBody className="p-8 md:p-12 relative z-10">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
                   <div>
-                    <div className="text-sm text-slate-400 mb-1">Investimento Total (Setup)</div>
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-lg text-slate-500 line-through">R$ 90.000</span>
-                      <span className="text-4xl font-extrabold text-white">R$ 70.000</span>
+                    <Chip
+                      startContent={<Sparkles className="h-3 w-3" />}
+                      variant="flat"
+                      classNames={{
+                        base: "bg-prime-accent/20 border border-prime-accent/30",
+                        content: "text-prime-accent text-xs font-bold uppercase tracking-wider",
+                      }}
+                    >
+                      Oferta Especial
+                    </Chip>
+                    <h3 className="text-3xl md:text-4xl font-extrabold mb-4 mt-4">Ecossistema Full</h3>
+                    <p className="text-slate-300 text-lg mb-8">
+                      Contrate todos os 4 agentes integrados + CRM + Dashboard e economize significativamente no setup e na recorrência.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {[
+                        "SDR + Agendamento",
+                        "FAQ Inteligente",
+                        "Pré-triagem + Anti No-Show",
+                        "Pós-venda + Pesquisa",
+                        "CRM + Dashboard Executivo",
+                        "Integração ERP Completa",
+                      ].map((item) => (
+                        <div key={item} className="flex items-center gap-3">
+                          <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                          </div>
+                          <span className="text-sm font-medium text-slate-200">{item}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-emerald-400 text-sm font-bold mt-1">Economia de R$ 20.000 no setup</div>
                   </div>
 
-                  <div className="w-full h-px bg-white/10"></div>
+                  <Card className="bg-white/5 backdrop-blur-sm border border-white/10">
+                    <CardBody className="p-8 space-y-6">
+                      <div>
+                        <div className="text-sm text-slate-400 mb-1">Investimento Total (Setup)</div>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-lg text-slate-500 line-through">R$ 90.000</span>
+                          <span className="text-4xl font-extrabold text-white">R$ 70.000</span>
+                        </div>
+                        <Chip color="success" variant="flat" size="sm" className="mt-2">
+                          Economia de R$ 20.000 no setup
+                        </Chip>
+                      </div>
 
-                  <div>
-                    <div className="text-sm text-slate-400 mb-1">Mensalidade (Recorrência)</div>
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-lg text-slate-500 line-through">R$ 11.000/mês</span>
-                      <span className="text-3xl font-bold text-white">R$ 7.000<span className="text-lg font-normal text-slate-400">/mês</span></span>
-                    </div>
-                    <div className="text-emerald-400 text-sm font-bold mt-1">Economia de R$ 4.000/mês</div>
-                  </div>
+                      <Divider className="bg-white/10" />
 
-                  <button
-                    className="w-full mt-4 bg-prime-accent hover:bg-sky-400 text-prime-dark font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg shadow-prime-accent/20"
-                    onClick={() => setModal({ type: "payback" })}
-                  >
-                    Projeto com payback em ~1 mês
-                  </button>
+                      <div>
+                        <div className="text-sm text-slate-400 mb-1">Mensalidade (Recorrência)</div>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-lg text-slate-500 line-through">R$ 11.000/mês</span>
+                          <span className="text-3xl font-bold text-white">R$ 7.000<span className="text-lg font-normal text-slate-400">/mês</span></span>
+                        </div>
+                        <Chip color="success" variant="flat" size="sm" className="mt-2">
+                          Economia de R$ 4.000/mês
+                        </Chip>
+                      </div>
+
+                      <MotionButton
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-prime-accent text-prime-dark font-bold py-6 shadow-lg"
+                        size="lg"
+                        onPress={() => setModal({ type: "payback" })}
+                      >
+                        Projeto com payback em ~1 mês
+                      </MotionButton>
+                    </CardBody>
+                  </Card>
                 </div>
-              </div>
-            </div>
-          </div>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="section bg-white" id="cta">
+      {/* CTA FINAL - CRONOGRAMA */}
+      <section className="py-16 md:py-20 bg-white" id="cta">
         <div className="mx-auto max-w-4xl px-4 text-center">
-          <h2 className="section-title">Cronograma de Execução</h2>
-          <p className="text-slate-600 mt-4">Próximos passos após a aprovação.</p>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <h2 className="section-title">Cronograma de Execução</h2>
+            <p className="text-slate-600 mt-4">Próximos passos após a aprovação.</p>
+          </motion.div>
 
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <motion.div
+            className="mt-10 grid grid-cols-1 md:grid-cols-4 gap-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
             {[
               { step: 1, title: "Kick-off", desc: "Reunião de alinhamento e acessos" },
               { step: 2, title: "Desenvolvimento", desc: "Configuração dos fluxos e integrações" },
               { step: 3, title: "Validação", desc: "Testes assistidos com a equipe" },
-              { step: 4, title: "Go-Live", desc: "Virada de chave oficial" }
+              { step: 4, title: "Go-Live", desc: "Virada de chave oficial" },
             ].map((s) => (
-              <div key={s.step} className="p-4 rounded-lg border border-slate-100 bg-slate-50 text-left hover:border-prime-accent/50 transition-colors cursor-pointer" onClick={() => setModal({ type: "phases", phase: s.step as 1 | 2 | 3 | 4 })}>
-                <span className="text-xs font-bold text-prime-accent uppercase">Fase 0{s.step}</span>
-                <h4 className="font-bold text-slate-900 mt-1">{s.title}</h4>
-                <p className="text-xs text-slate-500 mt-2">{s.desc}</p>
-                <span className="text-xs text-prime mt-2 block font-medium">Ver detalhes →</span>
-              </div>
+              <MotionCard
+                key={s.step}
+                variants={fadeInUp}
+                isPressable
+                className="bg-slate-50 border border-slate-100 hover:border-prime-accent/50 hover:shadow-lg transition-all text-left"
+                onPress={() => setModal({ type: "phases", phase: s.step as 1 | 2 | 3 | 4 })}
+              >
+                <CardBody className="p-4">
+                  <Chip size="sm" variant="flat" color="primary" className="mb-2">
+                    Fase 0{s.step}
+                  </Chip>
+                  <h4 className="font-bold text-slate-900">{s.title}</h4>
+                  <p className="text-xs text-slate-500 mt-2">{s.desc}</p>
+                  <span className="text-xs text-prime mt-3 block font-medium flex items-center gap-1">
+                    Ver detalhes <ChevronRight className="w-3 h-3" />
+                  </span>
+                </CardBody>
+              </MotionCard>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="mt-16">
-            <p className="mt-4 text-sm text-slate-500">Dúvidas técnicas? <a href="#" className="text-prime underline">Fale com o especialista</a>.</p>
-          </div>
+          <motion.div
+            className="mt-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+          >
+            <p className="text-sm text-slate-500">
+              Dúvidas técnicas? <Link href="#" className="text-prime underline font-medium">Fale com o especialista</Link>.
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -652,7 +978,7 @@ export default function Home() {
       </footer>
 
       {/* MODALS RENDERER */}
-      <Modal open={modal?.type === "solution"} onClose={() => setModal(null)} title={(modal && modal.type === "solution" && modal.title) || "Fluxo"} scrollContent={false}>
+      <Modal open={modal?.type === "solution"} onClose={() => setModal(null)} title={(modal && modal.type === "solution" && modal.title) || "Fluxo"} scrollContent={false} size="fullscreen">
         <div className="h-full">{modal && modal.type === "solution" ? <FlowDiagramLazy kind={modal.kind} /> : null}</div>
       </Modal>
       <Modal open={modal?.type === "roi"} onClose={() => setModal(null)} title="Simulador de ROI" titleAlign="center" closeLabel="Fechar">
@@ -664,8 +990,8 @@ export default function Home() {
           }}
         />
       </Modal>
-      <Modal open={modal?.type === "crm"} onClose={() => setModal(null)} title="CRM Integrado"> <CRMModalLazy /> </Modal>
-      <Modal open={modal?.type === "dashboard"} onClose={() => setModal(null)} title="Painel Executivo"> <DashboardModalLazy /> </Modal>
+      <Modal open={modal?.type === "crm"} onClose={() => setModal(null)} title="CRM Integrado" size="fullscreen"> <CRMModalLazy /> </Modal>
+      <Modal open={modal?.type === "dashboard"} onClose={() => setModal(null)} title="Painel Executivo" size="fullscreen"> <DashboardModalLazy /> </Modal>
       <Modal open={modal?.type === "phases"} onClose={() => setModal(null)} title={`Fase ${modal?.type === "phases" ? modal.phase : 1}: Detalhamento`} size="md"> <PhaseDetailModalLazy phase={modal?.type === "phases" ? modal.phase : 1} /> </Modal>
       <Modal open={modal?.type === "conquistas"} onClose={() => setModal(null)} title="Ganhos Operacionais"> <ConquistasModalLazy /> </Modal>
       <Modal open={modal?.type === "inteligencia"} onClose={() => setModal(null)} title="Inteligência de Dados"> <InteligenciaModalLazy /> </Modal>
