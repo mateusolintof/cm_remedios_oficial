@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   BarChart3,
   BellRing,
   CalendarCheck2,
   CheckCircle2,
+  ChevronDown,
   Clock3,
   FileBarChart,
   Gauge,
@@ -13,8 +14,10 @@ import {
   MessageSquare,
   PanelsTopLeft,
   Sparkles,
+  Stethoscope,
   Target,
   UserRound,
+  Zap,
 } from "lucide-react";
 import {
   Area,
@@ -79,12 +82,25 @@ type Contact = {
   especialidade: string;
 };
 
-const viewItems: { key: ViewKey; label: string; icon: JSX.Element }[] = [
-  { key: "overview", label: "Visao geral", icon: <PanelsTopLeft size={16} /> },
-  { key: "pipelines", label: "Pipelines", icon: <KanbanSquare size={16} /> },
-  { key: "inbox", label: "Inbox unificado", icon: <MessageSquare size={16} /> },
-  { key: "contacts", label: "Gestao de contatos", icon: <UserRound size={16} /> },
-  { key: "analytics", label: "Reports", icon: <FileBarChart size={16} /> },
+type NavItem = {
+  id: string;
+  label: string;
+  icon: ReactNode;
+  view?: ViewKey;
+  disabled?: boolean;
+};
+
+const mainNavItems: NavItem[] = [
+  { id: "dashboard", label: "Dashboard", icon: <PanelsTopLeft size={16} />, view: "overview" },
+  { id: "inbox", label: "Inbox", icon: <MessageSquare size={16} />, view: "inbox" },
+];
+
+const managementNavItems: NavItem[] = [
+  { id: "contacts", label: "Contacts", icon: <UserRound size={16} />, view: "contacts" },
+  { id: "companies", label: "Companies", icon: <Stethoscope size={16} />, disabled: true },
+  { id: "activities", label: "Activities", icon: <Zap size={16} />, disabled: true },
+  { id: "calendar", label: "Calendar", icon: <CalendarCheck2 size={16} />, disabled: true },
+  { id: "reports", label: "Reports", icon: <FileBarChart size={16} />, view: "analytics" },
 ];
 
 const pipelineInfo: Record<PipelineKey, { label: string; desc: string }> = {
@@ -107,7 +123,7 @@ const pipelineStages: Record<PipelineKey, { key: string; label: string; tone: st
     { key: "fechamento", label: "Fechamento", tone: "bg-prime/80", hint: "Deal fechado" },
   ],
   followup: [
-    { key: "sem-resposta", label: "Sem resposta", tone: "bg-prime", hint: "SLA expirado" },
+    { key: "sem-resposta", label: "Sem resposta", tone: "bg-prime", hint: "Sem retorno" },
     { key: "reativacao", label: "Reativacao", tone: "bg-prime-accent", hint: "Sequencia IA" },
     { key: "recuperado", label: "Recuperado", tone: "bg-prime-dark", hint: "Voltou ao funil" },
     { key: "perdido", label: "Perdido", tone: "bg-prime/80", hint: "Registrar motivo" },
@@ -547,9 +563,9 @@ const contacts: Contact[] = [
 ];
 
 const overviewKpis = [
-  { label: "SLA medio", value: "6 min", meta: "Meta < 10 min", tone: "positive" },
-  { label: "Leads em atendimento", value: "284", meta: "IA + humano", tone: "positive" },
+  { label: "Conversas ativas", value: "284", meta: "Inbox unificado", tone: "positive" },
   { label: "Agendamentos ativos", value: "126", meta: "Proximos 7 dias", tone: "positive" },
+  { label: "Deals em negociacao", value: "412", meta: "Pipelines", tone: "positive" },
   { label: "Receita em pipeline", value: "R$ 1,9M", meta: "Prox. 30 dias", tone: "positive" },
 ];
 
@@ -619,10 +635,6 @@ const agendadosChartConfig = {
   agendados: { label: "Agendados", color: "var(--prime-accent)" },
 } satisfies ChartConfig;
 
-const iaPerformanceChartConfig = {
-  sla: { label: "SLA IA", color: "var(--prime-primary)" },
-} satisfies ChartConfig;
-
 const temperatureStyles: Record<Deal["temperatura"], string> = {
   quente: "bg-prime-accent/15 text-prime",
   morno: "bg-prime/10 text-prime",
@@ -634,6 +646,7 @@ const contactSegments = ["Todos", "Qualificados", "Alta prioridade", "Agendados"
 export default function CRMModalContent() {
   const [view, setView] = useState<ViewKey>("overview");
   const [pipeline, setPipeline] = useState<PipelineKey>("ia");
+  const [pipelineMenuOpen, setPipelineMenuOpen] = useState(true);
   const [selectedConversationId, setSelectedConversationId] = useState<number>(conversations[0].id);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
@@ -671,83 +684,97 @@ export default function CRMModalContent() {
             </span>
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {viewItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setView(item.key)}
-              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                view === item.key ? "bg-prime text-white shadow-sm" : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
-        </div>
       </header>
 
-      <div className="flex-1 overflow-hidden lg:flex">
-        <aside className="w-full border-b border-slate-200 bg-white px-5 py-4 lg:w-72 lg:border-b-0 lg:border-r">
-          <div className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Pipelines ativos</div>
-          <div className="mt-3 space-y-2">
-            {(Object.keys(pipelineInfo) as PipelineKey[]).map((key) => (
-              <button
-                key={key}
-                onClick={() => {
-                  setPipeline(key);
-                  setView("pipelines");
-                }}
-                className={`w-full rounded-xl border px-4 py-3 text-left transition ${
-                  pipeline === key
-                    ? "border-prime bg-prime text-white shadow"
-                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                <div className="text-sm font-semibold">{pipelineInfo[key].label}</div>
-                <div className={`text-xs ${pipeline === key ? "text-white/80" : "text-slate-500"}`}>{pipelineInfo[key].desc}</div>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-              <Gauge size={16} className="text-prime" />
-              SLA + performance
-            </div>
-            <div className="mt-3 space-y-3 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-500">Tempo medio</span>
-                <span className="font-semibold text-slate-900">6 min</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-500">IA vs humano</span>
-                <span className="font-semibold text-slate-900">68% / 32%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-500">Deals abertos</span>
-                <span className="font-semibold text-slate-900">412</span>
-              </div>
+      <div className="flex flex-1 min-h-0 flex-col lg:flex-row">
+        <aside className="w-full border-b border-prime/30 bg-prime px-5 py-6 text-white lg:w-72 lg:border-b-0 lg:border-r lg:overflow-y-auto">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">AI</div>
+            <div>
+              <div className="text-sm font-semibold">CRM Comercial</div>
+              <div className="text-xs text-white/60">Menu principal</div>
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-prime-accent/30 bg-prime-accent/10 p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-prime">
-              <BellRing size={16} />
-              Alertas inteligentes
-            </div>
-            <div className="mt-3 space-y-2 text-sm text-slate-700">
-              <div className="rounded-lg bg-white px-3 py-2 border border-slate-200">
-                12 leads com risco de no-show nas proximas 24h
+          <div className="mt-6 space-y-6">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Main</div>
+              <div className="mt-3 space-y-1">
+                {mainNavItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => item.view && setView(item.view)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                      view === item.view ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    setView("pipelines");
+                    setPipelineMenuOpen((state) => !state);
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    view === "pipelines" ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+                  aria-expanded={pipelineMenuOpen}
+                >
+                  <KanbanSquare size={16} />
+                  <span className="flex-1 text-left">Pipeline</span>
+                  <ChevronDown size={16} className={`transition-transform ${pipelineMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+                {pipelineMenuOpen && (
+                  <div className="ml-9 mt-2 space-y-1">
+                    {(Object.keys(pipelineInfo) as PipelineKey[]).map((key) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          setPipeline(key);
+                          setView("pipelines");
+                        }}
+                        className={`flex w-full items-center truncate rounded-md px-2 py-1 text-xs font-semibold transition ${
+                          pipeline === key && view === "pipelines"
+                            ? "bg-white/15 text-white"
+                            : "text-white/60 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        {pipelineInfo[key].label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="rounded-lg bg-white px-3 py-2 border border-slate-200">
-                3 cirurgias aguardando validacao de convenio
+            </div>
+
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Management</div>
+              <div className="mt-3 space-y-1">
+                {managementNavItems.map((item) => {
+                  const isActive = item.view ? view === item.view : false;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => item.view && setView(item.view)}
+                      disabled={item.disabled}
+                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                        isActive ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+                      } ${item.disabled ? "cursor-not-allowed opacity-60 hover:bg-transparent hover:text-white/60" : ""}`}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
         </aside>
 
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
           {view === "overview" && (
             <div className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -763,7 +790,7 @@ export default function CRMModalContent() {
                 ))}
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div className="text-lg font-bold text-slate-900">Volume de leads e agendamentos</div>
@@ -803,50 +830,6 @@ export default function CRMModalContent() {
                         {item.name} {item.value}%
                       </span>
                     ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Clock3 size={16} className="text-prime" />
-                    SLA por horario
-                  </div>
-                  <div className="mt-4">
-                    <ChartContainer config={responseChartConfig} className="h-44 w-full">
-                      <LineChart data={responseData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                        <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                        <YAxis tickLine={false} axisLine={false} />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="sla" stroke="var(--color-sla)" strokeWidth={3} dot={{ fill: "var(--color-sla)", r: 4 }} />
-                      </LineChart>
-                    </ChartContainer>
-                  </div>
-                  <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                    Meta de resposta: <span className="font-semibold text-slate-800">10 min</span>. Ajuste automatico quando SLA sobe.
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold text-slate-900">Conversao por canal</div>
-                    <div className="text-xs text-slate-500">Qualificados / Leads</div>
-                  </div>
-                  <div className="mt-4">
-                    <ChartContainer config={conversionChartConfig} className="h-44 w-full">
-                      <BarChart data={conversionData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                        <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                        <YAxis tickLine={false} axisLine={false} />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Bar dataKey="rate" fill="var(--color-rate)" radius={[8, 8, 0, 0]} />
-                      </BarChart>
-                    </ChartContainer>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
-                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">Indicacao tem maior conversao (58%).</div>
-                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">Google precisa de follow-up mais rapido.</div>
                   </div>
                 </div>
               </div>
@@ -910,7 +893,7 @@ export default function CRMModalContent() {
                           </div>
                           <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
                             <span className="rounded-full bg-slate-100 px-2 py-1">Origem: {deal.origem}</span>
-                            <span className="rounded-full bg-slate-100 px-2 py-1">SLA: {deal.tempo}</span>
+                            <span className="rounded-full bg-slate-100 px-2 py-1">Há {deal.tempo}</span>
                             <span className="rounded-full bg-slate-100 px-2 py-1">Canal: {deal.canal}</span>
                           </div>
                           <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
@@ -1084,7 +1067,7 @@ export default function CRMModalContent() {
                 </div>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-[1.4fr_0.8fr]">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)]">
                 <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                   <div className="grid grid-cols-[1.2fr_1fr_1fr_1fr_0.8fr] gap-3 border-b border-slate-200 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                     <div>Lead</div>
@@ -1179,7 +1162,45 @@ export default function CRMModalContent() {
                 </div>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    <Gauge size={16} className="text-prime" />
+                    SLA + performance
+                  </div>
+                  <div className="mt-3 space-y-3 text-sm text-slate-600">
+                    <div className="flex items-center justify-between">
+                      <span>Tempo medio</span>
+                      <span className="font-semibold text-slate-900">6 min</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>IA vs humano</span>
+                      <span className="font-semibold text-slate-900">68% / 32%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Deals abertos</span>
+                      <span className="font-semibold text-slate-900">412</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    <BellRing size={16} className="text-prime" />
+                    Alertas inteligentes
+                  </div>
+                  <div className="mt-3 space-y-2 text-sm text-slate-600">
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                      12 leads com risco de no-show nas proximas 24h
+                    </div>
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                      3 cirurgias aguardando validacao de convenio
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                     <BarChart3 size={16} className="text-prime" />
@@ -1197,6 +1218,25 @@ export default function CRMModalContent() {
                     </ChartContainer>
                   </div>
                   <div className="mt-2 text-xs text-slate-500">Pipeline total estimado: R$ 1,6M.</div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="text-lg font-bold text-slate-900">Conversao por canal</div>
+                    <div className="text-xs text-slate-500">Qualificados / Leads</div>
+                  </div>
+                  <div className="mt-4">
+                    <ChartContainer config={conversionChartConfig} className="h-40 w-full">
+                      <BarChart data={conversionData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                        <YAxis tickLine={false} axisLine={false} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="rate" fill="var(--color-rate)" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ChartContainer>
+                  </div>
+                  <div className="mt-2 text-xs text-slate-500">Indicacao continua com maior conversao.</div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -1220,21 +1260,21 @@ export default function CRMModalContent() {
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Sparkles size={16} className="text-prime" />
-                    Performance IA
+                    <Clock3 size={16} className="text-prime" />
+                    SLA por horario
                   </div>
                   <div className="mt-4">
-                    <ChartContainer config={iaPerformanceChartConfig} className="h-40 w-full">
+                    <ChartContainer config={responseChartConfig} className="h-40 w-full">
                       <LineChart data={responseData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                         <XAxis dataKey="name" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="sla" stroke="var(--color-sla)" strokeWidth={2} />
+                        <Line type="monotone" dataKey="sla" stroke="var(--color-sla)" strokeWidth={2} dot={{ fill: "var(--color-sla)", r: 3 }} />
                       </LineChart>
                     </ChartContainer>
                   </div>
-                  <div className="mt-2 text-xs text-slate-500">IA resolve 68% sem escalacao humana.</div>
+                  <div className="mt-2 text-xs text-slate-500">Metas de SLA sao configuradas por canal e por etapa.</div>
                 </div>
               </div>
 

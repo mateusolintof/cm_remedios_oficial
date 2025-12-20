@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TrendingUp, Clock, Users, Calendar, Quote, ArrowUpRight } from "lucide-react";
+import { TrendingUp, Clock, Users, Quote, ArrowUpRight } from "lucide-react";
 
 interface CaseStudyData {
   company: string;

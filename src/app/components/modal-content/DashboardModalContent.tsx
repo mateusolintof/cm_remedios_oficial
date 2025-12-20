@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   BarChart3,
@@ -23,9 +23,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Funnel,
-  FunnelChart,
-  LabelList,
+  Cell,
   Line,
   LineChart,
   XAxis,
@@ -64,7 +62,7 @@ const rangeOptions = {
   "90d": "Ultimos 90 dias",
 } as const;
 
-const tabItems: { key: TabKey; label: string; icon: JSX.Element }[] = [
+const navItems: { key: TabKey; label: string; icon: ReactNode }[] = [
   { key: "geral", label: "Visao geral", icon: <BarChart3 size={16} /> },
   { key: "ia", label: "Gestao IA", icon: <Brain size={16} /> },
   { key: "vendedores", label: "Atendimento vendedores", icon: <Trophy size={16} /> },
@@ -90,12 +88,12 @@ const leadTrend = [
   { name: "Sab", leads: 240, qualificados: 150, agendados: 100 },
 ];
 
-const funnelData = [
-  { name: "Leads", value: 15000, fill: "var(--prime-primary)" },
-  { name: "Qualificados", value: 9000, fill: "var(--prime-accent)" },
-  { name: "Agendados", value: 7000, fill: "color-mix(in oklab, var(--prime-primary) 70%, var(--background))" },
-  { name: "Confirmados", value: 6450, fill: "color-mix(in oklab, var(--prime-accent) 60%, var(--background))" },
-  { name: "Realizados", value: 5800, fill: "color-mix(in oklab, var(--prime-primary) 85%, var(--background))" },
+const funnelStageData = [
+  { name: "Leads", value: 15000, pct: "100%", fill: "var(--prime-primary)", step: 0 },
+  { name: "Qualificados", value: 9000, pct: "60%", fill: "var(--prime-accent)", step: 1 },
+  { name: "Agendados", value: 7000, pct: "46.7%", fill: "color-mix(in oklab, var(--prime-primary) 70%, var(--background))", step: 2 },
+  { name: "Confirmados", value: 6450, pct: "43.1%", fill: "color-mix(in oklab, var(--prime-accent) 60%, var(--background))", step: 3 },
+  { name: "Realizados", value: 5800, pct: "38.9%", fill: "color-mix(in oklab, var(--prime-primary) 85%, var(--background))", step: 4 },
 ];
 
 const channelPerf = [
@@ -224,6 +222,48 @@ const reportCards = [
   },
 ];
 
+type FunnelBarProps = {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  fill?: string;
+  background?: { x?: number; y?: number; width?: number; height?: number };
+  payload?: { step?: number };
+};
+
+const funnelSteps = funnelStageData.length;
+
+const FunnelBar = ({
+  x = 0,
+  y = 0,
+  width = 0,
+  height = 0,
+  fill = "var(--prime-primary)",
+  background,
+  payload,
+}: FunnelBarProps) => {
+  if (width <= 0 || height <= 0) return null;
+  const step = payload?.step ?? 0;
+  const baseX = background?.x ?? x;
+  const baseWidth = background?.width ?? width;
+  const centeredX = baseX + (baseWidth - width) / 2;
+  const maxInset = Math.min(26, width * 0.22);
+  const minInset = Math.min(10, width * 0.1);
+  const inset = minInset + (maxInset - minInset) * (step / Math.max(1, funnelSteps - 1));
+  const topInset = Math.max(4, inset * 0.45);
+  const bottomInset = inset;
+  const path = [
+    `M ${centeredX + topInset} ${y}`,
+    `L ${centeredX + width - topInset} ${y}`,
+    `L ${centeredX + width - bottomInset} ${y + height}`,
+    `L ${centeredX + bottomInset} ${y + height}`,
+    "Z",
+  ].join(" ");
+
+  return <path d={path} fill={fill} stroke="rgba(15, 23, 42, 0.12)" strokeWidth={1} />;
+};
+
 const leadTrendChartConfig = {
   leads: { label: "Leads", color: "var(--prime-primary)" },
   agendados: { label: "Agendados", color: "var(--prime-accent)" },
@@ -289,31 +329,43 @@ export default function DashboardModalContent() {
                 {rangeOptions[key]}
               </button>
             ))}
-            <span className="inline-flex items-center gap-2 rounded-full bg-prime-accent/15 px-4 py-2 text-sm font-semibold text-prime">
-              <ShieldCheck size={14} />
-              Dados anonimizados
-            </span>
           </div>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {tabItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setTab(item.key)}
-              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                tab === item.key
-                  ? "bg-prime text-white shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
         </div>
       </header>
 
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex flex-1 min-h-0 flex-col lg:flex-row">
+        <aside className="w-full border-b border-prime/30 bg-prime px-5 py-6 text-white lg:w-72 lg:border-b-0 lg:border-r lg:overflow-y-auto">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">AI</div>
+            <div>
+              <div className="text-sm font-semibold">Dashboard</div>
+              <div className="text-xs text-white/60">Menu principal</div>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Main</div>
+            <div className="mt-3 space-y-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => setTab(item.key)}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    tab === item.key ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/60">
+              Dados anonimizados para demo comercial.
+            </div>
+          </div>
+        </aside>
+
+        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
         {tab === "geral" && (
           <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -330,7 +382,7 @@ export default function DashboardModalContent() {
               ))}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="text-lg font-bold text-slate-900">Leads e agendamentos</div>
@@ -355,20 +407,39 @@ export default function DashboardModalContent() {
                   <Gauge size={18} className="text-prime" />
                   Funil de vendas
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
                   <ChartContainer config={funnelChartConfig} className="h-56 w-full">
-                    <FunnelChart>
+                    <BarChart data={funnelStageData} layout="vertical" barCategoryGap={14} margin={{ top: 6, right: 16, bottom: 6, left: 16 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+                      <XAxis type="number" hide />
+                      <YAxis type="category" dataKey="name" hide />
                       <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-                      <Funnel dataKey="value" data={funnelData} isAnimationActive>
-                        <LabelList dataKey="name" position="right" fill="#0f172a" stroke="none" />
-                      </Funnel>
-                    </FunnelChart>
+                      <Bar dataKey="value" shape={<FunnelBar />} isAnimationActive>
+                        {funnelStageData.map((entry) => (
+                          <Cell key={entry.name} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
                   </ChartContainer>
+                  <div className="space-y-3">
+                    {funnelStageData.map((stage) => (
+                      <div key={stage.name} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: stage.fill }} />
+                          <span className="font-semibold text-slate-900">{stage.name}</span>
+                        </div>
+                        <span className="text-xs text-slate-500">{stage.pct}</span>
+                      </div>
+                    ))}
+                    <div className="rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
+                      Perdas mapeadas: reforcar follow-up nos primeiros 20 minutos.
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                   <Target size={16} className="text-prime" />
@@ -435,7 +506,7 @@ export default function DashboardModalContent() {
               ))}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                   <Sparkles size={16} className="text-prime" />
@@ -516,7 +587,7 @@ export default function DashboardModalContent() {
               ))}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+            <div className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                   <Trophy size={16} className="text-prime" />
@@ -588,9 +659,9 @@ export default function DashboardModalContent() {
               </button>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
               <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="grid grid-cols-[1.2fr_1fr_1fr_0.8fr_0.8fr] gap-3 border-b border-slate-200 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] gap-3 border-b border-slate-200 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <div>Cliente</div>
                   <div>Etapa</div>
                   <div>Canal</div>
@@ -602,7 +673,7 @@ export default function DashboardModalContent() {
                     <button
                       key={client.id}
                       onClick={() => setSelectedClientId(client.id)}
-                      className={`grid w-full grid-cols-[1.2fr_1fr_1fr_0.8fr_0.8fr] items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition ${
+                      className={`grid w-full grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition ${
                         client.id === selectedClientId
                           ? "border-prime bg-prime/5"
                           : "border-slate-200 bg-white hover:bg-slate-50"
@@ -726,6 +797,7 @@ export default function DashboardModalContent() {
             <div className="text-xs text-slate-500">Numeros ilustrativos para demonstracao comercial.</div>
           </div>
         )}
+        </main>
       </div>
     </div>
   );

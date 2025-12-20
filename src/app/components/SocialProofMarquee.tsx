@@ -13,14 +13,14 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    quote: "Reduzimos o tempo de resposta de 2h para menos de 1 minuto. Os pacientes adoram!",
+    quote: "Reduzimos o tempo de resposta de horas para minutos — e isso muda totalmente a conversão.",
     author: "Dr. Ricardo Mendes",
     role: "Diretor Clínico",
     company: "Clínica Saúde Total",
     rating: 5,
   },
   {
-    quote: "A taxa de no-show caiu 60% em apenas 3 meses de uso do sistema.",
+    quote: "Com confirmações automatizadas e fila de espera ativa, o no-show caiu de forma consistente.",
     author: "Dra. Ana Paula",
     role: "Coordenadora",
     company: "Centro Médico Vida",
@@ -34,7 +34,7 @@ const testimonials: Testimonial[] = [
     rating: 5,
   },
   {
-    quote: "O ROI foi positivo já no primeiro mês. Superou nossas expectativas.",
+    quote: "O projeto se pagou rápido com recuperação de leads e melhoria no aproveitamento da agenda.",
     author: "Dra. Fernanda Lima",
     role: "Sócia-fundadora",
     company: "Clínica Premium Care",
@@ -126,7 +126,7 @@ export default function SocialProofMarquee() {
                     {testimonial.rating && (
                       <div className="flex items-center gap-0.5">
                         {Array.from({ length: testimonial.rating }).map((_, i) => (
-                          <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                          <Star key={i} className="w-4 h-4 text-prime-accent fill-prime-accent" />
                         ))}
                       </div>
                     )}
@@ -169,15 +169,15 @@ export function SocialProofBadges() {
   return (
     <div className="flex flex-wrap items-center justify-center gap-4">
       <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm">
-        <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-        <span className="text-sm font-medium text-slate-700">4.9/5 Satisfação</span>
+        <Star className="w-4 h-4 text-prime-accent fill-prime-accent" />
+        <span className="text-sm font-medium text-slate-700">Satisfação alta</span>
       </div>
       <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm">
         <Building2 className="w-4 h-4 text-prime" />
-        <span className="text-sm font-medium text-slate-700">+50 Clínicas</span>
+        <span className="text-sm font-medium text-slate-700">Clínicas em operação</span>
       </div>
       <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm">
-        <span className="text-sm font-medium text-slate-700">+500k Atendimentos/mês</span>
+        <span className="text-sm font-medium text-slate-700">Operação 24/7</span>
       </div>
     </div>
   );
