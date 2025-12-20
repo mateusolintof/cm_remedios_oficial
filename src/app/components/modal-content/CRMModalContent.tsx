@@ -22,6 +22,7 @@ import {
   Clock3,
   FileBarChart,
   Gauge,
+  GripVertical,
   KanbanSquare,
   MessageSquare,
   PanelsTopLeft,
@@ -656,7 +657,9 @@ const temperatureStyles: Record<Deal["temperatura"], string> = {
 const contactSegments = ["Todos", "Qualificados", "Alta prioridade", "Agendados", "Sem resposta"];
 
 function SortableDealCard({ deal }: { deal: Deal }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: deal.id });
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
+    id: deal.id,
+  });
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -666,9 +669,7 @@ function SortableDealCard({ deal }: { deal: Deal }) {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md touch-none cursor-grab active:cursor-grabbing ${
+      className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
         isDragging ? "opacity-70 ring-2 ring-prime-accent/25" : ""
       }`}
     >
@@ -682,7 +683,19 @@ function SortableDealCard({ deal }: { deal: Deal }) {
           </div>
           <div className="text-xs text-slate-500">{deal.interesse}</div>
         </div>
-        <div className="shrink-0 text-sm font-bold text-prime">R$ {deal.valor.toLocaleString("pt-BR")}</div>
+        <div className="flex shrink-0 items-start gap-2">
+          <div className="text-sm font-bold text-prime">R$ {deal.valor.toLocaleString("pt-BR")}</div>
+          <button
+            ref={setActivatorNodeRef}
+            type="button"
+            {...attributes}
+            {...listeners}
+            aria-label="Arrastar deal"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50 cursor-grab active:cursor-grabbing touch-none"
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
@@ -966,7 +979,7 @@ export default function CRMModalContent() {
                   <div className="mt-4">
                     <ChartContainer config={volumeChartConfig} className="h-52 w-full">
                       <AreaChart data={volumeData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                         <XAxis dataKey="name" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} />
                         <ChartTooltip content={<ChartTooltipContent />} />
@@ -1334,7 +1347,7 @@ export default function CRMModalContent() {
                   <div className="mt-4">
                     <ChartContainer config={pipelineValueChartConfig} className="h-40 w-full">
                       <BarChart data={pipelineValueData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                         <XAxis dataKey="name" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} />
                         <ChartTooltip content={<ChartTooltipContent />} />
@@ -1353,7 +1366,7 @@ export default function CRMModalContent() {
                   <div className="mt-4">
                     <ChartContainer config={conversionChartConfig} className="h-40 w-full">
                       <BarChart data={conversionData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                         <XAxis dataKey="name" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} />
                         <ChartTooltip content={<ChartTooltipContent />} />
@@ -1372,7 +1385,7 @@ export default function CRMModalContent() {
                   <div className="mt-4">
                     <ChartContainer config={agendadosChartConfig} className="h-40 w-full">
                       <AreaChart data={volumeData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                         <XAxis dataKey="name" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} />
                         <ChartTooltip content={<ChartTooltipContent />} />
@@ -1391,7 +1404,7 @@ export default function CRMModalContent() {
                   <div className="mt-4">
                     <ChartContainer config={responseChartConfig} className="h-40 w-full">
                       <LineChart data={responseData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                         <XAxis dataKey="name" tickLine={false} axisLine={false} />
                         <YAxis tickLine={false} axisLine={false} />
                         <ChartTooltip content={<ChartTooltipContent />} />

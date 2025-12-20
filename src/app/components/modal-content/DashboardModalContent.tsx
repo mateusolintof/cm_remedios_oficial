@@ -23,8 +23,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Funnel,
-  FunnelChart,
   Line,
   LineChart,
   XAxis,
@@ -39,41 +37,69 @@ import {
 
 type TabKey = "geral" | "ia" | "vendedores" | "clientes" | "insights";
 
-type FunnelShapeProps = {
-  x?: number;
-  y?: number;
-  upperWidth?: number;
-  lowerWidth?: number;
-  height?: number;
-  fill?: string;
-  payload?: { step?: number };
+type FunnelStage = {
+  key: string;
+  name: string;
+  value: number;
+  fill: string;
 };
 
-function FunnelSegmentShape({ x, y, upperWidth, lowerWidth, height, fill, payload }: FunnelShapeProps) {
-  if (typeof x !== "number") return null;
-  if (typeof y !== "number") return null;
-  if (typeof upperWidth !== "number") return null;
-  if (typeof lowerWidth !== "number") return null;
-  if (typeof height !== "number") return null;
-  if (upperWidth === 0 && lowerWidth === 0) return null;
-
-  const safeFill = fill ?? "var(--prime-primary)";
-  const step = payload?.step ?? 0;
-  const widthGap = upperWidth - lowerWidth;
-  const gradientId = `funnel-step-${step}`;
-  const path = `M ${x},${y} L ${x + upperWidth},${y} L ${x + upperWidth - widthGap / 2},${y + height} L ${x + upperWidth - widthGap / 2 - lowerWidth},${y + height} Z`;
+function FunnelVisualization({ stages }: { stages: FunnelStage[] }) {
+  const total = stages[0]?.value ?? 0;
+  const viewBoxWidth = 320;
+  const viewBoxHeight = 240;
+  const gap = 10;
+  const segmentHeight = (viewBoxHeight - gap * (stages.length - 1)) / stages.length;
+  const maxWidth = viewBoxWidth * 0.86;
+  const centerX = viewBoxWidth / 2;
 
   return (
-    <g filter="url(#funnel-shadow)">
+    <svg
+      viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+      className="h-full w-full"
+      role="img"
+      aria-label="Funil de vendas"
+      focusable="false"
+    >
       <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--prime-accent)" stopOpacity={0.35} />
-          <stop offset="55%" stopColor={safeFill} stopOpacity={0.92} />
-          <stop offset="100%" stopColor={safeFill} stopOpacity={1} />
-        </linearGradient>
+        <filter id="funnelShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="rgba(4, 30, 66, 0.18)" />
+        </filter>
       </defs>
-      <path d={path} fill={`url(#${gradientId})`} stroke="rgba(255,255,255,0.8)" strokeWidth={1} strokeLinejoin="round" />
-    </g>
+
+      {stages.map((stage, idx) => {
+        const ratioTop = total > 0 ? stage.value / total : 0;
+        const ratioBottom =
+          idx < stages.length - 1 && total > 0 ? stages[idx + 1].value / total : Math.max(0.08, ratioTop * 0.78);
+
+        const topWidth = Math.max(32, maxWidth * ratioTop);
+        const bottomWidth = Math.max(26, maxWidth * ratioBottom);
+        const y = idx * (segmentHeight + gap);
+        const xTop = centerX - topWidth / 2;
+        const xBottom = centerX - bottomWidth / 2;
+        const gradientId = `funnelGradient-${stage.key}`;
+        const path = `M ${xTop} ${y} L ${xTop + topWidth} ${y} L ${xBottom + bottomWidth} ${y + segmentHeight} L ${xBottom} ${y + segmentHeight} Z`;
+
+        return (
+          <g key={stage.key} filter="url(#funnelShadow)">
+            <defs>
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--prime-accent)" stopOpacity={0.22} />
+                <stop offset="55%" stopColor={stage.fill} stopOpacity={0.92} />
+                <stop offset="100%" stopColor={stage.fill} stopOpacity={1} />
+              </linearGradient>
+            </defs>
+            <path
+              d={path}
+              fill={`url(#${gradientId})`}
+              stroke="rgba(255,255,255,0.85)"
+              strokeWidth={1}
+              strokeLinejoin="round"
+            />
+          </g>
+        );
+      })}
+    </svg>
   );
 }
 
@@ -110,29 +136,29 @@ const navItems: { key: TabKey; label: string; icon: ReactNode }[] = [
 ];
 
 const kpisGeral = [
-  { label: "Leads/dia", value: "500", delta: "+24%", meta: "Meta 480" },
-  { label: "Qualificados", value: "60%", delta: "+8%", meta: "Meta 55%" },
-  { label: "Conversão", value: "39%", delta: "+12%", meta: "Meta 32%" },
-  { label: "No-show", value: "10%", delta: "-5%", meta: "Meta <= 15%" },
-  { label: "Receita", value: "R$ 2,3M", delta: "+18%", meta: "Meta R$ 2,0M" },
-  { label: "Pipeline", value: "R$ 4,3M", delta: "novo", meta: "Próx. 30 dias" },
+  { label: "Leads/dia", value: "150", meta: "Média 7 dias" },
+  { label: "Qualificados", value: "55%", meta: "Por intenção" },
+  { label: "Agendamentos", value: "38%", meta: "Lead → agenda" },
+  { label: "No-show", value: "14%", meta: "Últimos 30 dias" },
+  { label: "Receita (pipeline)", value: "R$ 1,2M", meta: "Próx. 30 dias" },
+  { label: "Pipeline", value: "R$ 2,1M", meta: "Em negociação" },
 ];
 
 const leadTrend = [
-  { name: "Seg", leads: 210, qualificados: 130, agendados: 90 },
-  { name: "Ter", leads: 260, qualificados: 165, agendados: 110 },
-  { name: "Qua", leads: 300, qualificados: 182, agendados: 124 },
-  { name: "Qui", leads: 320, qualificados: 195, agendados: 138 },
-  { name: "Sex", leads: 280, qualificados: 172, agendados: 120 },
-  { name: "Sab", leads: 240, qualificados: 150, agendados: 100 },
+  { name: "Seg", leads: 138, qualificados: 82, agendados: 52 },
+  { name: "Ter", leads: 156, qualificados: 92, agendados: 58 },
+  { name: "Qua", leads: 172, qualificados: 101, agendados: 64 },
+  { name: "Qui", leads: 184, qualificados: 110, agendados: 70 },
+  { name: "Sex", leads: 168, qualificados: 98, agendados: 62 },
+  { name: "Sab", leads: 142, qualificados: 85, agendados: 54 },
 ];
 
-const funnelStageData = [
-  { name: "Leads", value: 15000, pct: "100%", fill: "var(--prime-primary)", step: 0 },
-  { name: "Qualificados", value: 9000, pct: "60%", fill: "var(--prime-accent)", step: 1 },
-  { name: "Agendados", value: 7000, pct: "46.7%", fill: "color-mix(in oklab, var(--prime-primary) 70%, var(--background))", step: 2 },
-  { name: "Confirmados", value: 6450, pct: "43.1%", fill: "color-mix(in oklab, var(--prime-accent) 60%, var(--background))", step: 3 },
-  { name: "Realizados", value: 5800, pct: "38.9%", fill: "color-mix(in oklab, var(--prime-primary) 85%, var(--background))", step: 4 },
+const funnelStageData: FunnelStage[] = [
+  { key: "leads", name: "Leads", value: 4500, fill: "var(--prime-primary)" },
+  { key: "qualificados", name: "Qualificados", value: 2500, fill: "var(--prime-accent)" },
+  { key: "agendados", name: "Agendados", value: 1700, fill: "color-mix(in oklab, var(--prime-primary) 70%, var(--background))" },
+  { key: "confirmados", name: "Confirmados", value: 1500, fill: "color-mix(in oklab, var(--prime-accent) 60%, var(--background))" },
+  { key: "realizados", name: "Realizados", value: 1300, fill: "color-mix(in oklab, var(--prime-primary) 85%, var(--background))" },
 ];
 
 const compactNumberFormatter = new Intl.NumberFormat("pt-BR", { notation: "compact", maximumFractionDigits: 1 });
@@ -249,11 +275,11 @@ const insights = [
   },
 ];
 
-const reportCards = [
-  {
-    title: "Relatório executivo",
-    desc: "Performance comercial, SLA e receita projetada em PDF.",
-  },
+	const reportCards = [
+	  {
+	    title: "Relatório executivo",
+	    desc: "Performance comercial, atendimento e receita projetada em PDF.",
+	  },
   {
     title: "Relatório granular",
     desc: "Detalhe por canal, campanha e funil com segmentações.",
@@ -267,10 +293,6 @@ const reportCards = [
 const leadTrendChartConfig = {
   leads: { label: "Leads", color: "var(--prime-primary)" },
   agendados: { label: "Agendados", color: "var(--prime-accent)" },
-} satisfies ChartConfig;
-
-const funnelChartConfig = {
-  value: { label: "Volume", color: "var(--prime-primary)" },
 } satisfies ChartConfig;
 
 const channelChartConfig = {
@@ -368,19 +390,18 @@ export default function DashboardModalContent() {
         <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
         {tab === "geral" && (
           <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {kpisGeral.map((kpi) => (
-                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    {kpi.label}
-                    <CheckCircle2 size={14} className="text-prime-accent" />
-                  </div>
-                  <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
-                  <div className="text-sm font-semibold text-prime">{kpi.delta}</div>
-                  <div className="text-xs text-slate-500">{kpi.meta}</div>
-                </div>
-              ))}
-            </div>
+	            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+	              {kpisGeral.map((kpi) => (
+	                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+	                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+	                    {kpi.label}
+	                    <CheckCircle2 size={14} className="text-prime-accent" />
+	                  </div>
+	                  <div className="mt-2 text-2xl font-bold tabular-nums text-slate-900">{kpi.value}</div>
+	                  <div className="text-xs text-slate-500">{kpi.meta}</div>
+	                </div>
+	              ))}
+	            </div>
 
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -391,7 +412,7 @@ export default function DashboardModalContent() {
                 <div className="mt-4">
                   <ChartContainer config={leadTrendChartConfig} className="h-56 w-full">
                     <AreaChart data={leadTrend}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} />
                       <ChartTooltip content={<ChartTooltipContent />} />
@@ -402,55 +423,47 @@ export default function DashboardModalContent() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2 text-lg font-bold text-slate-900">
-                  <Gauge size={18} className="text-prime" />
-                  Funil de vendas
-                </div>
-                <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-                  <ChartContainer config={funnelChartConfig} className="h-60 w-full">
-                    <FunnelChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
-                      <defs>
-                        <filter id="funnel-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="rgba(4, 30, 66, 0.22)" />
-                        </filter>
-                      </defs>
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Funnel
-                        dataKey="value"
-                        data={funnelStageData}
-                        isAnimationActive
-                        shape={<FunnelSegmentShape />}
-                        stroke="rgba(15, 23, 42, 0.08)"
-                        lastShapeType="rectangle"
-                        labelLine={false}
-                      />
-                    </FunnelChart>
-                  </ChartContainer>
-                  <div className="space-y-3">
-                    {funnelStageData.map((stage) => (
-                      <div
-                        key={stage.name}
-                        className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700"
-                      >
-                        <div className="flex min-w-0 flex-1 items-center gap-2">
-                          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: stage.fill }} />
-                          <span className="whitespace-nowrap font-semibold text-slate-900">{stage.name}</span>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-2 text-xs">
-                          <span className="w-14 text-right tabular-nums font-semibold text-slate-700">{formatCompactNumber(stage.value)}</span>
-                          <span className="tabular-nums rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-500">
-                            {stage.pct}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
-                      Perdas mapeadas: reforçar follow-up nos primeiros 20 minutos.
-                    </div>
-                  </div>
-                </div>
-              </div>
+	              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+	                <div className="flex items-center gap-2 text-lg font-bold text-slate-900">
+	                  <Gauge size={18} className="text-prime" />
+	                  Funil de vendas
+	                </div>
+	                <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+	                  <div className="h-60 w-full">
+	                    <FunnelVisualization stages={funnelStageData} />
+	                  </div>
+	                  <div className="space-y-3">
+	                    {funnelStageData.map((stage, idx) => {
+	                      const total = funnelStageData[0]?.value ?? 0;
+	                      const pctTotal = total > 0 ? (stage.value / total) * 100 : 0;
+	                      const pctLabel = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 }).format(pctTotal) + "%";
+
+	                      return (
+	                      <div
+	                        key={stage.key}
+	                        className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700"
+	                      >
+	                        <div className="flex min-w-0 flex-1 items-center gap-2">
+	                          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: stage.fill }} />
+	                          <span className="whitespace-nowrap font-semibold text-slate-900">{stage.name}</span>
+	                        </div>
+	                        <div className="flex shrink-0 items-center gap-2 text-xs">
+	                          <span className="w-14 text-right tabular-nums font-semibold text-slate-700">
+	                            {formatCompactNumber(stage.value)}
+	                          </span>
+	                          <span className="tabular-nums rounded-full border border-slate-200 bg-white px-2 py-0.5 text-slate-500">
+	                            {idx === 0 ? "100%" : pctLabel}
+	                          </span>
+	                        </div>
+	                      </div>
+	                      );
+	                    })}
+	                    <div className="rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
+	                      Oportunidade: reforçar follow-up nos primeiros 20 minutos para reduzir queda entre “Qualificados” e “Agendados”.
+	                    </div>
+	                  </div>
+	                </div>
+	              </div>
             </div>
 
             <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -462,7 +475,7 @@ export default function DashboardModalContent() {
                 <div className="mt-4">
                   <ChartContainer config={channelChartConfig} className="h-44 w-full">
                     <BarChart data={channelPerf}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} />
                       <ChartTooltip content={<ChartTooltipContent />} />
@@ -504,32 +517,32 @@ export default function DashboardModalContent() {
         )}
 
         {tab === "ia" && (
-          <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {[
-                { label: "Atendimentos IA", value: "1.420", meta: "Semana" },
-                { label: "Leads qualificados", value: "860", meta: "Qualificados" },
-                { label: "Escalados", value: "320", meta: "Para humano" },
-                { label: "Tempo medio", value: "6 min", meta: "SLA" },
-              ].map((kpi) => (
-                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{kpi.label}</div>
-                  <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
-                  <div className="text-xs text-slate-500">{kpi.meta}</div>
+	            <div className="space-y-6">
+	            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+	              {[
+	                { label: "Atendimentos (IA)", value: "820", meta: "Últimos 7 dias" },
+	                { label: "Leads qualificados", value: "470", meta: "Últimos 7 dias" },
+	                { label: "Escalados", value: "160", meta: "Para humano" },
+	                { label: "Tempo de resposta", value: "≈ 6 min", meta: "Média" },
+	              ].map((kpi) => (
+	                <div key={kpi.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+	                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{kpi.label}</div>
+	                  <div className="mt-2 text-2xl font-bold text-slate-900">{kpi.value}</div>
+	                  <div className="text-xs text-slate-500">{kpi.meta}</div>
                 </div>
               ))}
             </div>
 
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <Sparkles size={16} className="text-prime" />
-                  Resolucao IA vs escalados
-                </div>
+	              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+	                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+	                  <Sparkles size={16} className="text-prime" />
+	                  Resolução IA vs escalados
+	                </div>
                 <div className="mt-4">
                   <ChartContainer config={iaVolumeChartConfig} className="h-52 w-full">
                     <AreaChart data={iaVolume}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} />
                       <ChartTooltip content={<ChartTooltipContent />} />
@@ -538,18 +551,18 @@ export default function DashboardModalContent() {
                     </AreaChart>
                   </ChartContainer>
                 </div>
-                <div className="mt-2 text-xs text-slate-500">IA resolve 68% sem interacao humana.</div>
-              </div>
+	                <div className="mt-2 text-xs text-slate-500">Acompanhe quanto a IA resolve e quanto é escalado para o time.</div>
+	              </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <MessageSquare size={16} className="text-prime" />
-                  Principais intencoes
-                </div>
+	              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+	                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+	                  <MessageSquare size={16} className="text-prime" />
+	                  Principais intenções
+	                </div>
                 <div className="mt-4">
                   <ChartContainer config={iaIntentChartConfig} className="h-52 w-full">
                     <BarChart data={iaIntentos}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} />
                       <ChartTooltip content={<ChartTooltipContent />} />
@@ -557,24 +570,24 @@ export default function DashboardModalContent() {
                     </BarChart>
                   </ChartContainer>
                 </div>
-                <div className="mt-2 text-xs text-slate-500">FAQ e reagendamento reduziram 22% de chamadas humanas.</div>
-              </div>
+	                <div className="mt-2 text-xs text-slate-500">Entenda quais intents mais impactam a operação.</div>
+	              </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                <ShieldCheck size={16} className="text-prime" />
-                Qualidade e compliance
-              </div>
+	            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+	              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+	                <ShieldCheck size={16} className="text-prime" />
+	                Qualidade e conformidade
+	              </div>
               <div className="mt-3 grid gap-3 md:grid-cols-3 text-sm text-slate-600">
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
                   <div className="font-semibold text-slate-900">LGPD em dia</div>
                   <div>Consentimentos registrados em 100% dos leads.</div>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  <div className="font-semibold text-slate-900">SLA controlado</div>
-                  <div>98% dos contatos respondidos em menos de 10 min.</div>
-                </div>
+	                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+	                  <div className="font-semibold text-slate-900">Tempo de resposta</div>
+	                  <div>Relatórios por canal e por etapa (IA vs humano), com priorização.</div>
+	                </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
                   <div className="font-semibold text-slate-900">Acuracia</div>
                   <div>Classificacao correta em 93% das triagens.</div>
@@ -610,7 +623,7 @@ export default function DashboardModalContent() {
                 <div className="mt-4">
                   <ChartContainer config={sellerDealChartConfig} className="h-52 w-full">
                     <BarChart data={vendedoresPerf}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} />
                       <ChartTooltip content={<ChartTooltipContent />} />
@@ -628,7 +641,7 @@ export default function DashboardModalContent() {
                 <div className="mt-4">
                   <ChartContainer config={tempoChartConfig} className="h-52 w-full">
                     <LineChart data={tempoAtendimento}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} />
                       <ChartTooltip content={<ChartTooltipContent />} />
@@ -787,7 +800,7 @@ export default function DashboardModalContent() {
               <div className="mt-4">
                 <ChartContainer config={insightChartConfig} className="h-48 w-full">
                   <LineChart data={leadTrend}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+	                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.35)" />
                     <XAxis dataKey="name" tickLine={false} axisLine={false} />
                     <YAxis tickLine={false} axisLine={false} />
                     <ChartTooltip content={<ChartTooltipContent />} />

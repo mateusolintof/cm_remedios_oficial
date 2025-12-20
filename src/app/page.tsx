@@ -673,7 +673,7 @@ export default function Home() {
                   {
                     icon: <Clock3 className="h-5 w-5 text-prime" />,
                     title: "Tempo de primeira resposta",
-                    desc: "SLA por canal e por etapa (IA vs humano), com priorização automática.",
+                    desc: "Tempo por canal e por etapa (IA vs humano), com priorização automática.",
                   },
                   {
                     icon: <Target className="h-5 w-5 text-prime" />,
