@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TrendingUp, Clock, Users, Quote, ArrowUpRight } from "lucide-react";
+import { TrendingUp, Clock3, Users, Quote } from "lucide-react";
 
 interface CaseStudyData {
   company: string;
@@ -52,13 +52,13 @@ const caseStudies: CaseStudyData[] = [
 
 export default function CaseStudySection() {
   return (
-    <section className="py-16 md:py-20 bg-white">
+    <section className="py-12 md:py-16 bg-white">
       <div className="mx-auto max-w-7xl px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
           <span className="text-xs font-bold text-prime-accent uppercase tracking-wider">
             Cases de Sucesso
@@ -67,7 +67,7 @@ export default function CaseStudySection() {
             Resultados Reais de Clínicas como a Sua
           </h2>
           <p className="text-slate-600 mt-3 max-w-2xl mx-auto">
-            Conheça como outras clínicas transformaram seu atendimento e multiplicaram resultados com nossa metodologia.
+            Benchmarks e aprendizados de operações que adotaram automação com governança. Resultados variam por canal, ticket e equipe.
           </p>
         </motion.div>
 
@@ -89,7 +89,7 @@ export default function CaseStudySection() {
                     <p className="text-prime-accent/80 text-sm mt-1">{study.segment}</p>
                   </div>
                   <div className="flex items-center gap-1 px-3 py-1 bg-white/10 rounded-full text-xs font-medium">
-                    <Clock className="w-3 h-3" />
+                    <Clock3 className="w-3 h-3" />
                     {study.timeToResults}
                   </div>
                 </div>
@@ -100,7 +100,7 @@ export default function CaseStudySection() {
 
               {/* Results */}
               <div className="p-6">
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid gap-3 sm:grid-cols-3 mb-6">
                   {study.results.map((result, rIndex) => (
                     <motion.div
                       key={rIndex}
@@ -108,18 +108,18 @@ export default function CaseStudySection() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + rIndex * 0.1 }}
-                      className="text-center"
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm"
                     >
-                      <div className="text-xs text-slate-500 mb-1">{result.metric}</div>
-                      <div className="flex items-center justify-center gap-1 text-sm">
-                        <span className="text-slate-400 line-through">{result.before}</span>
-                        <ArrowUpRight className="w-3 h-3 text-emerald-500" />
-                        <span className="font-bold text-slate-800">{result.after}</span>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{result.metric}</div>
+                        <span className="rounded-full bg-prime-accent/15 px-2 py-0.5 text-[11px] font-bold text-prime">
+                          {result.improvement}
+                        </span>
                       </div>
-                      <div className={`text-xs font-bold mt-1 ${
-                        result.improvement.startsWith("+") ? "text-emerald-600" : "text-blue-600"
-                      }`}>
-                        {result.improvement}
+                      <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                        <span className="tabular-nums text-slate-500">{result.before}</span>
+                        <span className="text-slate-400">→</span>
+                        <span className="tabular-nums font-semibold text-slate-900">{result.after}</span>
                       </div>
                     </motion.div>
                   ))}
@@ -170,13 +170,13 @@ export default function CaseStudySection() {
 export function MiniCaseStudy({ company, metric, improvement }: { company: string; metric: string; improvement: string }) {
   return (
     <div className="inline-flex items-center gap-3 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm">
-      <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-        <TrendingUp className="w-3 h-3 text-emerald-600" />
+      <div className="w-6 h-6 rounded-full bg-prime-accent/15 flex items-center justify-center">
+        <TrendingUp className="w-3 h-3 text-prime" />
       </div>
       <span className="text-sm">
         <strong className="text-slate-800">{company}</strong>
         <span className="text-slate-500"> → </span>
-        <span className="text-emerald-600 font-bold">{improvement}</span>
+        <span className="text-prime font-bold">{improvement}</span>
         <span className="text-slate-400 text-xs ml-1">{metric}</span>
       </span>
     </div>

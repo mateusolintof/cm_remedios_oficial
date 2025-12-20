@@ -15,8 +15,8 @@ type Props = {
   onFinish?: () => void;
 };
 
-const investimento = 60000; // Setup único (Ecossistema Full)
-const mensalidade = 7000;   // Mensalidade recorrente (Ecossistema Full)
+const investimento = 25000; // Setup único (Ecossistema Full)
+const mensalidade = 2500;   // Mensalidade recorrente (Ecossistema Full)
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -27,9 +27,9 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 const formatCurrency = (value: number) => currencyFormatter.format(value);
 
 const defaultFaturamento: FaturamentoInputs = {
-  leadsMes: 15000, // Baseado em 500/dia
+  leadsMes: 3000,
   taxaConversaoAtual: 15,
-  ticketMedio: 100,
+  ticketMedio: 300,
 };
 
 export default function RoiModalContent({ preparedFor, onFinish }: Props) {
@@ -131,8 +131,8 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
                   <div className="text-xs text-slate-500">Taxa atual</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-emerald-700 uppercase bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-full">IA (+50%)</span>
-                  <span className="text-lg font-bold text-emerald-700">{taxaConversaoIA.toLocaleString("pt-BR")}%</span>
+                  <span className="text-xs font-bold text-prime uppercase bg-prime-accent/10 border border-prime-accent/20 px-2 py-1 rounded-full">IA (+50%)</span>
+                  <span className="text-lg font-bold text-prime">{taxaConversaoIA.toLocaleString("pt-BR")}%</span>
                 </div>
                 <p className="text-xs text-slate-500">A conversão com IA é sempre 50% maior que a taxa atual selecionada.</p>
               </div>
@@ -149,12 +149,12 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
                 <div>
                     <div className="text-sm text-slate-500 font-medium uppercase tracking-wide">Potencial de Receita Adicional</div>
                     <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-4xl md:text-5xl font-extrabold text-emerald-600">
+                        <span className="text-4xl md:text-5xl font-extrabold text-prime">
                             +{formatCurrency(receitaExtraMensal)}
                         </span>
                         <span className="text-slate-500 font-medium">/mês</span>
                     </div>
-                    <p className="text-sm text-emerald-700 mt-2 font-medium bg-emerald-50 inline-block px-3 py-1 rounded-full border border-emerald-100">
+                    <p className="text-sm text-prime mt-2 font-medium bg-prime-accent/10 inline-block px-3 py-1 rounded-full border border-prime-accent/20">
                         <TrendingUp className="inline h-3 w-3 mr-1" />
                         {Math.round(leadsConvertidosNovos - leadsConvertidosAtuais)} agendamentos extras mensais
                     </p>
@@ -180,7 +180,7 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
                           sublabel={`${Math.round(roi)}%`}
                           size={80}
                           strokeWidth={8}
-                          color="#041e42"
+                          color="var(--prime-primary)"
                         />
                     </div>
                     <div className="flex flex-col justify-center">
@@ -193,16 +193,26 @@ export default function RoiModalContent({ preparedFor, onFinish }: Props) {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-100">
-                    <p className="text-sm text-emerald-800 leading-relaxed">
-                      <strong>Estudos do MIT</strong> mostram que responder em até 5 minutos aumenta em <strong>10x</strong> as chances de conversão.
-                      Nossos agentes respondem em <strong>&lt;30 segundos</strong>, 24/7.
+                <div className="bg-gradient-to-r from-prime-accent/10 to-white rounded-lg p-4 border border-prime-accent/20">
+                    <p className="text-sm text-slate-700 leading-relaxed">
+                      Benchmarks de mercado apontam que reduzir o tempo de primeira resposta costuma elevar a conversão de forma relevante.
+                      Ajustamos premissas e metas após a imersão com os dados reais.
                     </p>
                 </div>
 
                 <div className="text-[10px] text-slate-400 leading-relaxed">
                     * Cálculo considera Setup ({formatCurrency(investimento)}) + 12x Mensalidade ({formatCurrency(mensalidade)}).
                 </div>
+
+                {onFinish ? (
+                  <button
+                    type="button"
+                    onClick={onFinish}
+                    className="mt-4 w-full rounded-xl bg-prime px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-prime-dark"
+                  >
+                    Ver opções de investimento
+                  </button>
+                ) : null}
              </div>
         </div>
       </div>

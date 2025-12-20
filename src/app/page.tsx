@@ -15,7 +15,6 @@ import {
   NavbarContent,
   NavbarItem,
   Link,
-  Divider,
 } from "@heroui/react";
 import {
   BarChart3,
@@ -888,277 +887,225 @@ export default function Home() {
             variants={fadeInUp}
             className="text-center"
           >
-            <h2 className="section-title">Proposta Comercial</h2>
-            <p className="text-slate-600 mt-3">Escolha um módulo individual ou contrate o ecossistema completo com ancoragem de preço.</p>
+            <h2 className="section-title">Investimento</h2>
+            <p className="text-slate-600 mt-3">Escolha módulos individuais ou o pacote completo com ancoragem de preço.</p>
           </motion.div>
 
-          {/* Pricing Cards */}
+          {/* Módulos Individuais */}
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {[
+              {
+                title: "FAQ Inteligente",
+                setup: "R$ 10.000",
+                monthly: "R$ 800",
+                tag: null,
+                bullets: ["Tira-dúvidas 24/7", "Base de Conhecimento Educacional"],
+                modal: "faq" as const,
+              },
+              {
+                title: "SDR + Agendamento",
+                setup: "R$ 20.000",
+                monthly: "R$ 2.200",
+                tag: "Core / Principal",
+                bullets: ["Qualificação de Leads", "Integração Tasy (Leitura/Escrita)"],
+                modal: "agendamento" as const,
+              },
+              {
+                title: "Anti No-Show",
+                setup: "R$ 10.000",
+                monthly: "R$ 1.000",
+                tag: null,
+                bullets: ["Confirmação D-2 e D-1", "Gestão de Fila de Espera"],
+                modal: "triagem-noshow" as const,
+              },
+            ].map((module) => (
+              <motion.div
+                key={module.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={fadeInUp}
+                className={`bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-prime-accent/40 hover:shadow-md transition-all flex flex-col min-h-[380px] ${
+                  module.tag ? "border-prime/40" : ""
+                }`}
+              >
+                <div className="p-6 pb-4 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-bold text-prime">{module.title}</h3>
+                    <div className="text-sm text-slate-600 mt-1">Setup + mensalidade recorrente</div>
+                  </div>
+                  {module.tag ? (
+                    <Chip
+                      size="sm"
+                      variant="flat"
+                      classNames={{
+                        base: "bg-prime-accent/15 border border-prime-accent/30",
+                        content: "text-prime text-[11px] font-bold uppercase tracking-wide",
+                      }}
+                    >
+                      {module.tag}
+                    </Chip>
+                  ) : null}
+                </div>
+
+                <div className="px-6 pb-4 flex-1 flex flex-col">
+                  <div className="grid grid-cols-2 gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <div>
+                      <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
+                      <div className="text-2xl font-bold text-slate-900">{module.setup}</div>
+                      <div className="text-xs text-slate-500">pagamento único</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensal</div>
+                      <div className="text-2xl font-bold text-slate-900">{module.monthly}</div>
+                      <div className="text-xs text-slate-500">por mês</div>
+                    </div>
+                  </div>
+
+                  <ul className="mt-5 space-y-2.5 text-sm text-slate-700 flex-1">
+                    {module.bullets.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="p-6 pt-4 mt-auto">
+                  <Button
+                    variant={module.tag ? "solid" : "bordered"}
+                    color="primary"
+                    className={module.tag ? "w-full font-semibold bg-prime hover:bg-prime-dark" : "w-full font-semibold"}
+                    onPress={() => setModal({ type: "benefits", solution: module.modal })}
+                    endContent={<ArrowRight className="w-4 h-4" />}
+                  >
+                    Ver detalhes
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Ecossistema + Condições */}
           <motion.div
-            className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6"
+            className="mt-10 grid gap-6 lg:grid-cols-2"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
           >
-            {/* Card 1: Agente FAQ */}
-            <motion.div
-              variants={fadeInUp}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-prime-accent/50 hover:shadow-lg transition-all flex flex-col min-h-[420px]"
-            >
-              <div className="p-6 pb-4">
-                <h3 className="text-lg font-bold text-prime">Agente FAQ + Informações Gerais</h3>
-              </div>
-              <div className="px-6 pb-4 flex-1 flex flex-col">
-                <div className="mb-4">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
-                  <div className="text-2xl font-bold text-slate-900">R$ 15.000</div>
-                  <div className="text-xs text-slate-400">pagamento único</div>
-                </div>
-                <div className="h-px bg-slate-200 my-4" />
-                <div className="mb-5">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
-                  <div className="text-xl font-bold text-slate-900">R$ 2.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
-                </div>
-                <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Desenvolvimento e Suporte</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Sistema de OCR</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Base de Conhecimento</li>
-                </ul>
-              </div>
-              <div className="p-6 pt-4 mt-auto">
-                <Button
-                  variant="bordered"
-                  className="w-full font-semibold"
-                  onPress={() => setModal({ type: "benefits", solution: "faq" })}
-                  endContent={<ArrowRight className="w-4 h-4" />}
-                >
-                  Ver Detalhes
-                </Button>
-              </div>
-            </motion.div>
+            <motion.div variants={scaleIn}>
+              <Card className="bg-slate-900 text-white overflow-hidden relative group">
+                <motion.div
+                  className="absolute top-0 right-0 w-96 h-96 bg-prime-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <CardBody className="p-8 md:p-10 relative z-10">
+                  <Chip
+                    startContent={<Sparkles className="h-3 w-3" />}
+                    variant="flat"
+                    classNames={{
+                      base: "bg-prime-accent/20 border border-prime-accent/30",
+                      content: "text-prime-accent text-xs font-bold uppercase tracking-wider",
+                    }}
+                  >
+                    Melhor custo-benefício
+                  </Chip>
 
-            {/* Card 2: Agendamento (Destaque) */}
-            <motion.div
-              variants={scaleIn}
-              className="bg-gradient-to-br from-white via-white to-prime-accent/5 rounded-2xl border-2 border-prime relative flex flex-col min-h-[420px] lg:-translate-y-6 pricing-card-featured"
-            >
-              <Chip
-                className="absolute -top-3 left-1/2 -translate-x-1/2 z-10"
-                color="primary"
-                variant="solid"
-                classNames={{ base: "bg-prime-accent", content: "text-prime-dark font-bold text-[10px] uppercase tracking-wide px-4 py-0.5" }}
-              >
-                Mais Popular
-              </Chip>
-              <div className="p-6 pb-4 pt-8">
-                <h3 className="text-xl font-bold text-prime">Agendamento Inteligente</h3>
-              </div>
-              <div className="px-6 pb-4 flex-1 flex flex-col">
-                <div className="mb-4">
-                  <div className="text-[11px] text-prime-accent uppercase tracking-wider mb-1 font-semibold">Setup</div>
-                  <div className="text-4xl font-extrabold text-slate-900">R$ 45.000</div>
-                  <div className="text-xs text-slate-400">pagamento único</div>
-                </div>
-                <div className="h-px bg-prime-accent/20 my-4" />
-                <div className="mb-5">
-                  <div className="text-[11px] text-prime-accent uppercase tracking-wider mb-1 font-semibold">Mensalidade</div>
-                  <div className="text-2xl font-bold text-slate-900">R$ 5.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
-                </div>
-                <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Qualificação e Agendamento</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Desenvolvimento Personalizado</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Implementação e Treinamentos</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Suporte + Otimizações</li>
-                </ul>
-              </div>
-              <div className="p-6 pt-4 mt-auto">
-                <Button
-                  color="primary"
-                  className="w-full font-semibold bg-prime hover:bg-prime-dark"
-                  onPress={() => setModal({ type: "benefits", solution: "agendamento" })}
-                  endContent={<ArrowRight className="w-4 h-4" />}
-                >
-                  Ver Detalhes
-                </Button>
-              </div>
-            </motion.div>
+                  <h3 className="text-3xl font-extrabold mt-4">Ecossistema Full</h3>
+                  <p className="text-slate-300 mt-3 text-sm leading-relaxed">
+                    Tudo que você precisa para atendimento 24/7, agendamento integrado e gestão comercial com visibilidade.
+                  </p>
 
-            {/* Card 3: Pré-triagem */}
-            <motion.div
-              variants={fadeInUp}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-prime-accent/50 hover:shadow-lg transition-all flex flex-col min-h-[420px]"
-            >
-              <div className="p-6 pb-4">
-                <h3 className="text-lg font-bold text-prime">Pré-triagem + Anti No-Show</h3>
-              </div>
-              <div className="px-6 pb-4 flex-1 flex flex-col">
-                <div className="mb-4">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
-                  <div className="text-2xl font-bold text-slate-900">R$ 15.000</div>
-                  <div className="text-xs text-slate-400">pagamento único</div>
-                </div>
-                <div className="h-px bg-slate-200 my-4" />
-                <div className="mb-5">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
-                  <div className="text-xl font-bold text-slate-900">R$ 2.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
-                </div>
-                <ul className="space-y-2.5 text-sm text-slate-600 flex-1">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Desenvolvimento e Suporte</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Base de Conhecimento</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0" /> Agente ativo (inicia conversas)</li>
-                </ul>
-              </div>
-              <div className="p-6 pt-4 mt-auto">
-                <Button
-                  variant="bordered"
-                  className="w-full font-semibold"
-                  onPress={() => setModal({ type: "benefits", solution: "triagem-noshow" })}
-                  endContent={<ArrowRight className="w-4 h-4" />}
-                >
-                  Ver Detalhes
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
+                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                    {[
+                      "SDR + Agendamento",
+                      "FAQ Inteligente",
+                      "Anti No-Show",
+                      "Integração Tasy completa",
+                      "CRM + Dashboard executivo",
+                      "Treinamento + 30 dias assistidos",
+                    ].map((item) => (
+                      <div key={item} className="flex items-center gap-3">
+                        <div className="w-5 h-5 rounded-full bg-prime-accent/20 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="h-3 w-3 text-prime-accent" />
+                        </div>
+                        <span className="text-slate-200">{item}</span>
+                      </div>
+                    ))}
+                  </div>
 
-          {/* Card Pós-venda */}
-          <motion.div
-            className="mt-6"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
-          >
-            <Card className="bg-white border border-slate-200 shadow-sm hover:border-prime-accent/50 hover:shadow-lg transition-all">
-              <CardBody className="p-5 md:p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                  <div className="flex-1">
-                    <h3 className="text-base font-bold text-prime mb-4">Agente Pós-venda</h3>
-                    <div className="grid grid-cols-2 gap-6">
+                  <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6">
+                    <div className="grid gap-5 md:grid-cols-2">
                       <div>
-                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Setup</div>
-                        <div className="text-2xl font-bold text-slate-900">R$ 15.000</div>
-                        <div className="text-[10px] text-slate-400">pagamento único</div>
+                        <div className="text-xs uppercase tracking-wider text-slate-400">Setup</div>
+                        <div className="mt-2 flex items-baseline gap-3">
+                          <span className="text-sm text-slate-500 line-through">R$ 40.000</span>
+                          <span className="text-3xl font-extrabold text-white">R$ 25.000</span>
+                        </div>
+                        <div className="mt-2 text-xs text-prime-accent font-semibold">-37% no setup</div>
                       </div>
                       <div>
-                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Mensalidade</div>
-                        <div className="text-lg font-bold text-slate-900">R$ 2.000<span className="text-sm font-normal text-slate-500">/mês</span></div>
+                        <div className="text-xs uppercase tracking-wider text-slate-400">Mensalidade</div>
+                        <div className="mt-2 flex items-baseline gap-3">
+                          <span className="text-sm text-slate-500 line-through">R$ 4.000/mês</span>
+                          <span className="text-3xl font-extrabold text-white">
+                            R$ 2.500<span className="text-base font-normal text-slate-400">/mês</span>
+                          </span>
+                        </div>
+                        <div className="mt-2 text-xs text-prime-accent font-semibold">Economia de R$ 1.500/mês</div>
                       </div>
                     </div>
-                  </div>
-                  <Divider orientation="vertical" className="hidden lg:block h-20" />
-                  <Divider className="lg:hidden" />
-                  <div className="flex-1">
-                    <ul className="space-y-1.5 text-sm text-slate-600 mb-4">
-                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0 mt-0.5" /> Pesquisa de satisfação automatizada</li>
-                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0 mt-0.5" /> Análise de Sentimentos com IA</li>
-                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-prime-accent shrink-0 mt-0.5" /> Redirecionamento para Google</li>
-                    </ul>
-                    <Button
-                      variant="bordered"
-                      className="font-semibold"
-                      onPress={() => setModal({ type: "benefits", solution: "pesquisa" })}
-                      endContent={<ArrowRight className="w-4 h-4" />}
-                    >
-                      Ver Detalhes
-                    </Button>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </motion.div>
 
-          {/* Ecossistema Full */}
-          <motion.div
-            className="mt-12"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={scaleIn}
-          >
-            <Card className="bg-slate-900 text-white overflow-hidden relative group">
-              <motion.div
-                className="absolute top-0 right-0 w-96 h-96 bg-prime-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"
-                animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <CardBody className="p-8 md:p-12 relative z-10">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
+                    <MotionButton
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="mt-6 w-full bg-prime-accent text-prime-dark font-bold py-6 shadow-lg"
+                      size="lg"
+                      onPress={() => setModal({ type: "payback" })}
+                    >
+                      Selecionar Pacote Completo
+                    </MotionButton>
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={fadeInUp}>
+              <Card className="bg-white border border-slate-200 shadow-sm">
+                <CardBody className="p-6 md:p-8 space-y-5">
                   <div>
-                    <Chip
-                      startContent={<Sparkles className="h-3 w-3" />}
-                      variant="flat"
-                      classNames={{
-                        base: "bg-prime-accent/20 border border-prime-accent/30",
-                        content: "text-prime-accent text-xs font-bold uppercase tracking-wider",
-                      }}
-                    >
-                      Oferta Especial
-                    </Chip>
-                    <h3 className="text-3xl md:text-4xl font-extrabold mb-4 mt-4">Ecossistema Full</h3>
-                    <p className="text-slate-300 text-lg mb-8">
-                      Contrate todos os 4 agentes integrados + CRM + Dashboard e economize significativamente no setup e na recorrência.
+                    <div className="text-sm font-bold text-slate-900">Condições de Pagamento</div>
+                    <p className="text-sm text-slate-600 mt-2">
+                      Opções flexíveis para setup + mensalidade, com início da recorrência após o Go-Live.
                     </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {[
-                        "SDR + Agendamento",
-                        "FAQ Inteligente",
-                        "Pré-triagem + Anti No-Show",
-                        "Pós-venda + Pesquisa",
-                        "CRM + Dashboard Executivo",
-                        "Integração ERP Completa",
-                      ].map((item) => (
-                        <div key={item} className="flex items-center gap-3">
-                          <div className="w-5 h-5 rounded-full bg-prime-accent/20 flex items-center justify-center shrink-0">
-                            <CheckCircle2 className="h-3 w-3 text-prime-accent" />
-                          </div>
-                          <span className="text-sm font-medium text-slate-200">{item}</span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
 
-                  <Card className="bg-white/5 backdrop-blur-sm border border-white/10">
-                    <CardBody className="p-8 space-y-6">
-                      <div>
-                        <div className="text-sm text-slate-400 mb-1">Investimento Total (Setup)</div>
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-lg text-slate-500 line-through">R$ 90.000</span>
-                          <span className="text-4xl font-extrabold text-white">R$ 70.000</span>
-                        </div>
-                        <Chip color="success" variant="flat" size="sm" className="mt-2">
-                          Economia de R$ 20.000 no setup
-                        </Chip>
+                  <div className="space-y-3 text-sm text-slate-700">
+                    {[
+                      { title: "À vista (PIX/TED)", desc: "5% de desconto no setup." },
+                      { title: "Entrada + 4 boletos", desc: "Parcelamento do setup em 5 pagamentos mensais." },
+                      { title: "Até 3x sem juros (cartão corporativo)", desc: "Parcelamento do setup com processamento financeiro." },
+                    ].map((item) => (
+                      <div key={item.title} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="font-semibold text-slate-900">{item.title}</div>
+                        <div className="text-sm text-slate-600 mt-1">{item.desc}</div>
                       </div>
+                    ))}
+                  </div>
 
-                      <Divider className="bg-white/10" />
+                  <div className="rounded-xl border border-prime-accent/30 bg-prime-accent/10 p-4 text-sm text-prime">
+                    Mensalidade inicia 30 dias após o Go-Live. Pagamento via boleto mensal ou PIX recorrente.
+                  </div>
 
-                      <div>
-                        <div className="text-sm text-slate-400 mb-1">Mensalidade (Recorrência)</div>
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-lg text-slate-500 line-through">R$ 11.000/mês</span>
-                          <span className="text-3xl font-bold text-white">R$ 7.000<span className="text-lg font-normal text-slate-400">/mês</span></span>
-                        </div>
-                        <Chip color="success" variant="flat" size="sm" className="mt-2">
-                          Economia de R$ 4.000/mês
-                        </Chip>
-                      </div>
-
-                      <MotionButton
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full bg-prime-accent text-prime-dark font-bold py-6 shadow-lg"
-                        size="lg"
-                        onPress={() => setModal({ type: "payback" })}
-                      >
-                        Projeto com payback em ~1 mês
-                      </MotionButton>
-                    </CardBody>
-                  </Card>
-                </div>
-              </CardBody>
-            </Card>
+                  <div className="text-xs text-slate-500 leading-relaxed">
+                    Valores incluem infraestrutura (servidores e banco de dados), suporte, backups e manutenção evolutiva do ecossistema durante a vigência do contrato.
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
           </motion.div>
 
           {/* Validity Countdown - Pricing Section */}

@@ -12,15 +12,15 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 const formatCurrency = (value: number) => currencyFormatter.format(value);
 
 const assumptions = {
-  leadsMensais: 10000,
+  leadsMensais: 3000,
   conversaoAtual: 15, // %
-  conversaoIA: 40, // %
-  ticketMedio: 80, // R$
-  margemContribuicao: 15, // %
-  colaboradoresSubstituidos: 5,
-  salarioMedio: 2000, // R$
-  setup: 70000,
-  mensal: 7000,
+  conversaoIA: 25, // %
+  ticketMedio: 300, // R$
+  margemContribuicao: 20, // %
+  colaboradoresSubstituidos: 2,
+  salarioMedio: 2500, // R$
+  setup: 25000,
+  mensal: 2500,
 };
 
 export default function PaybackModalContent() {
@@ -59,7 +59,17 @@ export default function PaybackModalContent() {
       paybackMeses,
       roi,
     };
-  }, []);
+  }, [
+    colaboradoresSubstituidos,
+    conversaoAtual,
+    conversaoIA,
+    leadsMensais,
+    margemContribuicao,
+    mensal,
+    salarioMedio,
+    setup,
+    ticketMedio,
+  ]);
 
   const paybackLabel = paybackMesesLabel(calculo.paybackMeses);
 
@@ -74,13 +84,14 @@ export default function PaybackModalContent() {
             </div>
             <h3 className="text-2xl font-extrabold text-prime leading-tight">Projeto que se paga em {paybackLabel}</h3>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Com 10 mil leads/mês atendidos pela IA, conversão saltando de 15% para 40% e substituição de 5 atendentes,
-              o ecossistema cobre todo o custo anual (setup + 12x mensal) e começa a gerar caixa já no primeiro ciclo.
+              Com {leadsMensais.toLocaleString("pt-BR")} leads/mês, conversão evoluindo de {conversaoAtual}% para {conversaoIA}% e
+              redução operacional de {colaboradoresSubstituidos} pessoas, o ecossistema tende a cobrir o custo anual (setup + 12x mensal)
+              e gerar caixa com previsibilidade.
             </p>
 
               <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-3">
               <div className="flex items-start gap-3">
-                <ArrowUpRight className="h-5 w-5 text-emerald-600" />
+                <ArrowUpRight className="h-5 w-5 text-prime-accent" />
                 <div>
                   <div className="text-xs uppercase font-bold text-slate-500">Custo total 12 meses</div>
                   <div className="text-xl font-bold text-slate-900">{formatCurrency(calculo.custoAnual)}</div>
@@ -91,7 +102,7 @@ export default function PaybackModalContent() {
                 <PiggyBank className="h-5 w-5 text-prime" />
                 <div>
                   <div className="text-xs uppercase font-bold text-slate-500">Ganho total 12 meses</div>
-                  <div className="text-xl font-bold text-emerald-700">+{formatCurrency(calculo.ganhoAnualTotal)}</div>
+                  <div className="text-xl font-bold text-prime">+{formatCurrency(calculo.ganhoAnualTotal)}</div>
                   <div className="text-xs text-slate-500">
                     Inclui margem de contribuição de {margemContribuicao}% e redução de custos de equipe.
                   </div>
@@ -107,8 +118,8 @@ export default function PaybackModalContent() {
               </div>
             </div>
 
-            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-sm text-emerald-800 leading-relaxed">
-              Atendimento imediato, follow-up ativo e pós-venda estruturado elevam a conversão e reduzem ociosidade de time.
+            <div className="rounded-xl border border-prime-accent/30 bg-prime-accent/10 p-4 text-sm text-prime leading-relaxed">
+              Atendimento imediato, follow-up ativo e governança de funil elevam a conversão e reduzem ociosidade de time.
               A operação roda 24/7 com custo variável menor e previsibilidade de caixa.
             </div>
           </div>
@@ -160,9 +171,9 @@ function Assumption({ label, value, highlight = false }: { label: string; value:
 
 function KpiCard({ title, value, caption, highlight = false }: { title: string; value: string; caption: string; highlight?: boolean }) {
   return (
-    <div className={`rounded-xl border ${highlight ? "border-emerald-200 bg-emerald-50" : "border-slate-200 bg-white"} p-4 shadow-sm`}>
+    <div className={`rounded-xl border ${highlight ? "border-prime-accent/40 bg-prime-accent/10" : "border-slate-200 bg-white"} p-4 shadow-sm`}>
       <div className="text-xs uppercase font-bold text-slate-500">{title}</div>
-      <div className={`text-lg font-extrabold ${highlight ? "text-emerald-700" : "text-slate-900"}`}>{value}</div>
+      <div className={`text-lg font-extrabold ${highlight ? "text-prime" : "text-slate-900"}`}>{value}</div>
       <div className="text-[11px] text-slate-500 mt-1">{caption}</div>
     </div>
   );

@@ -27,8 +27,8 @@ const benefitsData = {
     description: "Automatize a recepção e qualificação de pacientes 24/7.",
     tagline: "O agente que nunca dorme",
     investment: {
-      setup: 45000,
-      monthly: 5000,
+      setup: 20000,
+      monthly: 2200,
     },
     roi: {
       metric: "+40%",
@@ -36,34 +36,34 @@ const benefitsData = {
       description: "Aumento médio na taxa de conversão de leads",
     },
     kpis: [
-      { value: "0s", label: "Tempo de Resposta" },
-      { value: "24/7", label: "Disponibilidade" },
-      { value: "100%", label: "Leads Atendidos" },
+      { value: "Imediato", label: "Primeira resposta" },
+      { value: "24/7", label: "Cobertura" },
+      { value: "Roteamento", label: "Convênio x particular" },
     ],
     benefits: [
       {
         icon: Clock,
-        title: "Atendimento Imediato (0s)",
+        title: "Atendimento imediato",
         desc: "Elimine o tempo de espera. O paciente é atendido no momento em que envia a mensagem, aumentando a conversão.",
-        impact: "Reduz abandono em 70%",
+        impact: "Menos abandono no primeiro contato",
       },
       {
         icon: TrendingUp,
         title: "Aumento de 40% na Conversão",
         desc: "Captura leads fora do horário comercial e garante que nenhuma oportunidade seja perdida por demora na resposta.",
-        impact: "+500 leads/mês recuperados",
+        impact: "Mais oportunidades recuperadas",
       },
       {
         icon: DollarSign,
         title: "Qualificação Automática",
         desc: "Separa convênio de particular e prioriza tickets altos, otimizando a agenda dos médicos.",
-        impact: "Ticket médio +25%",
+        impact: "Prioridade por intenção e ticket",
       },
       {
         icon: Zap,
-        title: "Integração ERP Completa",
-        desc: "Agenda unificada com seu sistema atual. Sem retrabalho, sem duplicação de dados.",
-        impact: "Zero entrada manual",
+        title: "Integração Tasy (leitura/escrita)",
+        desc: "Agenda unificada com seu sistema atual. Menos retrabalho e mais confiabilidade no agendamento.",
+        impact: "Agenda sem retrabalho",
       },
     ],
     calculations: {
@@ -78,8 +78,8 @@ const benefitsData = {
     description: "Tire dúvidas instantaneamente e reduza a carga operacional.",
     tagline: "Base de conhecimento que aprende",
     investment: {
-      setup: 15000,
-      monthly: 2000,
+      setup: 10000,
+      monthly: 800,
     },
     roi: {
       metric: "-80%",
@@ -87,34 +87,34 @@ const benefitsData = {
       description: "Redução nas dúvidas repetitivas para equipe",
     },
     kpis: [
-      { value: "80%", label: "Dúvidas Resolvidas" },
-      { value: "<3s", label: "Tempo de Resposta" },
+      { value: "Autoatendimento", label: "Dúvidas frequentes" },
+      { value: "Base treinada", label: "Conteúdo da clínica" },
       { value: "24/7", label: "Disponível" },
     ],
     benefits: [
       {
         icon: ShieldCheck,
-        title: "Redução de 80% no Suporte",
+        title: "Menos dúvidas repetidas",
         desc: "A IA responde dúvidas repetitivas (preparo, endereço, valores) liberando a equipe para casos complexos.",
-        impact: "4h/dia economizadas",
+        impact: "Menos ruído para equipe",
       },
       {
         icon: CheckCircle2,
         title: "Precisão na Informação",
         desc: "Base de conhecimento treinada com os protocolos da clínica, garantindo respostas padronizadas e corretas.",
-        impact: "Zero erro humano",
+        impact: "Respostas padronizadas",
       },
       {
         icon: Clock,
         title: "Disponibilidade 24h",
         desc: "Pacientes tiram dúvidas a qualquer hora, reduzindo a ansiedade e aumentando a confiança na clínica.",
-        impact: "NPS +15 pontos",
+        impact: "Experiência mais consistente",
       },
       {
         icon: Target,
-        title: "OCR para Documentos",
-        desc: "Leitura automática de carteirinhas, pedidos médicos e documentos para agilizar o atendimento.",
-        impact: "Atendimento 3x mais rápido",
+        title: "Conteúdo educacional por etapa",
+        desc: "Orienta preparo, exames e próximos passos de forma automática, reduzindo retrabalho e dúvidas no atendimento.",
+        impact: "Mais clareza na jornada",
       },
     ],
     calculations: {
@@ -125,12 +125,12 @@ const benefitsData = {
     },
   },
   "triagem-noshow": {
-    title: "Pré-triagem & Anti No-Show",
-    description: "Garanta que o paciente compareça à consulta agendada.",
-    tagline: "Cada horário vago é receita perdida",
+    title: "Anti No-Show",
+    description: "Confirmação ativa e gestão de fila de espera para reduzir lacunas na agenda.",
+    tagline: "Proteja a agenda e recupere horários",
     investment: {
-      setup: 15000,
-      monthly: 2000,
+      setup: 10000,
+      monthly: 1000,
     },
     roi: {
       metric: "-60%",
@@ -138,34 +138,34 @@ const benefitsData = {
       description: "Redução média na taxa de faltas",
     },
     kpis: [
-      { value: "95%", label: "Taxa de Confirmação" },
-      { value: "D-2/D-1", label: "Lembretes" },
-      { value: "Auto", label: "Fila de Espera" },
+      { value: "D-2/D-1", label: "Confirmação" },
+      { value: "Fila", label: "Espera ativa" },
+      { value: "Remarcação", label: "Guia por intenção" },
     ],
     benefits: [
       {
         icon: TrendingUp,
-        title: "Redução de 60% no No-Show",
+        title: "Confirmação ativa D-2/D-1",
         desc: "Confirmações automáticas em D-2 e D-1 com reengajamento inteligente via WhatsApp.",
-        impact: "De 20% para 8% de faltas",
+        impact: "Menos faltas e lacunas",
       },
       {
         icon: DollarSign,
         title: "Recuperação de Receita",
         desc: "Preenche horários vagos automaticamente com lista de espera, evitando buracos na agenda.",
-        impact: "+12 consultas/mês recuperadas",
+        impact: "Aproveitamento de agenda",
       },
       {
         icon: CheckCircle2,
-        title: "Triagem Clínica Prévia",
-        desc: "Coleta informações essenciais antes da consulta, agilizando o atendimento médico.",
-        impact: "-10min por consulta",
+        title: "Gestão de fila de espera",
+        desc: "Aciona pacientes elegíveis quando abre espaço na agenda, com confirmação guiada e registro do status.",
+        impact: "Reposição mais rápida",
       },
       {
         icon: BarChart3,
-        title: "Dashboard de Confirmações",
+        title: "Visão de confirmações",
         desc: "Visualize em tempo real quem confirmou, quem precisa de follow-up e slots disponíveis.",
-        impact: "100% de visibilidade",
+        impact: "Controle diário da agenda",
       },
     ],
     calculations: {
@@ -312,7 +312,7 @@ export default function SolutionBenefitsModalContent({ solution }: Props) {
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-4">
                     <h3 className="text-lg font-bold text-slate-900">{benefit.title}</h3>
-                    <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">
+                    <span className="inline-flex items-center gap-1 bg-prime-accent/10 text-prime text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">
                       <TrendingUp className="w-3 h-3" />
                       {benefit.impact}
                     </span>
@@ -356,7 +356,10 @@ export default function SolutionBenefitsModalContent({ solution }: Props) {
                     <div key={key} className="flex justify-between items-center">
                       <span className="text-slate-300 text-sm capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
                       <span className="font-semibold text-white">
-                        {typeof value === "number" && key.toLowerCase().includes("revenue") || key.toLowerCase().includes("cost") || key.toLowerCase().includes("lost")
+                        {typeof value === "number" &&
+                        (key.toLowerCase().includes("revenue") ||
+                          key.toLowerCase().includes("cost") ||
+                          key.toLowerCase().includes("lost"))
                           ? formatCurrency(value)
                           : value}
                         {key.toLowerCase().includes("utilization") && "%"}
@@ -367,8 +370,8 @@ export default function SolutionBenefitsModalContent({ solution }: Props) {
               </div>
 
               {/* After */}
-              <div className="bg-emerald-500/10 rounded-xl p-5 border border-emerald-500/20">
-                <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <div className="bg-prime-accent/10 rounded-xl p-5 border border-prime-accent/30">
+                <div className="text-xs font-semibold text-prime-accent uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Sparkles className="w-3 h-3" />
                   Com a Solução
                 </div>
@@ -376,8 +379,11 @@ export default function SolutionBenefitsModalContent({ solution }: Props) {
                   {Object.entries(data.calculations.after).map(([key, value]) => (
                     <div key={key} className="flex justify-between items-center">
                       <span className="text-slate-300 text-sm capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                      <span className="font-semibold text-emerald-400">
-                        {typeof value === "number" && key.toLowerCase().includes("revenue") || key.toLowerCase().includes("cost") || key.toLowerCase().includes("lost")
+                      <span className="font-semibold text-prime-accent">
+                        {typeof value === "number" &&
+                        (key.toLowerCase().includes("revenue") ||
+                          key.toLowerCase().includes("cost") ||
+                          key.toLowerCase().includes("lost"))
                           ? formatCurrency(value)
                           : value}
                         {key.toLowerCase().includes("utilization") && "%"}
@@ -389,15 +395,15 @@ export default function SolutionBenefitsModalContent({ solution }: Props) {
             </div>
 
             {/* Monthly Gain */}
-            <div className="mt-6 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 rounded-xl p-5 border border-emerald-500/30">
+            <div className="mt-6 bg-gradient-to-r from-prime-accent/20 to-prime/10 rounded-xl p-5 border border-prime-accent/30">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-emerald-300 mb-1">Ganho Mensal Estimado</div>
+                  <div className="text-sm text-slate-300 mb-1">Ganho mensal estimado</div>
                   <div className="text-3xl font-bold text-white">{formatCurrency(data.calculations.monthlyGain)}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-emerald-300 mb-1">ROI em</div>
-                  <div className="text-2xl font-bold text-emerald-400">
+                  <div className="text-sm text-slate-300 mb-1">Payback em</div>
+                  <div className="text-2xl font-bold text-prime-accent">
                     {Math.ceil(data.investment.setup / data.calculations.monthlyGain)} meses
                   </div>
                 </div>
@@ -433,27 +439,27 @@ export default function SolutionBenefitsModalContent({ solution }: Props) {
           {/* CTA */}
           <div className="mt-6 pt-6 border-t border-slate-100">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-600">
-                <span className="font-semibold text-emerald-600">Dica:</span> Contrate o Ecossistema Full e economize até R$ 24.000
-              </div>
-              <div className="flex items-center gap-2 text-prime font-semibold text-sm">
-                Ver pacote completo
-                <ArrowRight className="w-4 h-4" />
-              </div>
+                  <div className="text-sm text-slate-600">
+                    <span className="font-semibold text-prime">Dica:</span> O pacote completo reduz setup e mensalidade com governança de ponta a ponta.
+                  </div>
+                  <div className="flex items-center gap-2 text-prime font-semibold text-sm">
+                    Ver pacote completo
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
             </div>
           </div>
         </motion.div>
 
         {/* Bottom CTA */}
         <motion.div
-          className="mt-8 bg-gradient-to-r from-emerald-50 to-emerald-100/50 border border-emerald-200 rounded-2xl p-6 text-center"
+          className="mt-8 bg-gradient-to-r from-prime-accent/10 to-white border border-prime-accent/30 rounded-2xl p-6 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          <div className="flex items-center justify-center gap-2 text-emerald-700 font-semibold">
+          <div className="flex items-center justify-center gap-2 text-prime font-semibold">
             <CheckCircle2 className="w-5 h-5" />
-            Essa solução se paga sozinha apenas com a recuperação de oportunidades perdidas.
+            Em muitos cenários, a recuperação de oportunidades já cobre o investimento.
           </div>
         </motion.div>
       </div>

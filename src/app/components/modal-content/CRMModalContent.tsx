@@ -1,6 +1,18 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  DndContext,
+  PointerSensor,
+  closestCorners,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   BarChart3,
   BellRing,
@@ -103,28 +115,28 @@ const managementNavItems: NavItem[] = [
   { id: "reports", label: "Reports", icon: <FileBarChart size={16} />, view: "analytics" },
 ];
 
-const pipelineInfo: Record<PipelineKey, { label: string; desc: string }> = {
-  ia: { label: "Atendimento IA", desc: "SDR e triagem automatizada" },
-  humano: { label: "Atendimento humano", desc: "Time comercial e negociacao" },
-  followup: { label: "Follow-up", desc: "Reativacao e recuperacao" },
+const pipelineInfo: Record<PipelineKey, { label: string }> = {
+  ia: { label: "Atendimento IA" },
+  humano: { label: "Atendimento humano" },
+  followup: { label: "Follow-up" },
 };
 
 const pipelineStages: Record<PipelineKey, { key: string; label: string; tone: string; hint: string }[]> = {
   ia: [
     { key: "novo", label: "Novo", tone: "bg-prime", hint: "Entrada 24/7" },
-    { key: "triagem", label: "Triagem IA", tone: "bg-prime-accent", hint: "Qualificacao rapida" },
+    { key: "triagem", label: "Triagem IA", tone: "bg-prime-accent", hint: "Qualificação rápida" },
     { key: "qualificado", label: "Qualificado", tone: "bg-prime-dark", hint: "Lead aprovado" },
     { key: "agendado", label: "Agendamento", tone: "bg-prime/80", hint: "Agenda integrada" },
   ],
   humano: [
     { key: "repasse", label: "Repasse", tone: "bg-prime", hint: "Lead escalado" },
-    { key: "diagnostico", label: "Diagnostico", tone: "bg-prime-accent", hint: "Descoberta" },
+    { key: "diagnostico", label: "Diagnóstico", tone: "bg-prime-accent", hint: "Descoberta" },
     { key: "proposta", label: "Proposta", tone: "bg-prime-dark", hint: "Negociacao" },
     { key: "fechamento", label: "Fechamento", tone: "bg-prime/80", hint: "Deal fechado" },
   ],
   followup: [
     { key: "sem-resposta", label: "Sem resposta", tone: "bg-prime", hint: "Sem retorno" },
-    { key: "reativacao", label: "Reativacao", tone: "bg-prime-accent", hint: "Sequencia IA" },
+    { key: "reativacao", label: "Reativação", tone: "bg-prime-accent", hint: "Sequência IA" },
     { key: "recuperado", label: "Recuperado", tone: "bg-prime-dark", hint: "Voltou ao funil" },
     { key: "perdido", label: "Perdido", tone: "bg-prime/80", hint: "Registrar motivo" },
   ],
@@ -564,8 +576,8 @@ const contacts: Contact[] = [
 
 const overviewKpis = [
   { label: "Conversas ativas", value: "284", meta: "Inbox unificado", tone: "positive" },
-  { label: "Agendamentos ativos", value: "126", meta: "Proximos 7 dias", tone: "positive" },
-  { label: "Deals em negociacao", value: "412", meta: "Pipelines", tone: "positive" },
+  { label: "Agendamentos ativos", value: "126", meta: "Próximos 7 dias", tone: "positive" },
+  { label: "Deals em negociação", value: "412", meta: "Pipelines", tone: "positive" },
   { label: "Receita em pipeline", value: "R$ 1,9M", meta: "Prox. 30 dias", tone: "positive" },
 ];
 
@@ -643,6 +655,98 @@ const temperatureStyles: Record<Deal["temperatura"], string> = {
 
 const contactSegments = ["Todos", "Qualificados", "Alta prioridade", "Agendados", "Sem resposta"];
 
+function SortableDealCard({ deal }: { deal: Deal }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: deal.id });
+  const style: CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md touch-none cursor-grab active:cursor-grabbing ${
+        isDragging ? "opacity-70 ring-2 ring-prime-accent/25" : ""
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="truncate text-base font-semibold text-slate-900">{deal.nome}</div>
+            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${temperatureStyles[deal.temperatura]}`}>
+              {deal.temperatura}
+            </span>
+          </div>
+          <div className="text-xs text-slate-500">{deal.interesse}</div>
+        </div>
+        <div className="shrink-0 text-sm font-bold text-prime">R$ {deal.valor.toLocaleString("pt-BR")}</div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
+        <span className="rounded-full bg-slate-100 px-2 py-1">Origem: {deal.origem}</span>
+        <span className="rounded-full bg-slate-100 px-2 py-1">Há {deal.tempo}</span>
+        <span className="rounded-full bg-slate-100 px-2 py-1">Canal: {deal.canal}</span>
+      </div>
+
+      <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-slate-700">Próximo passo</span>
+          <span className="text-slate-500">Score {deal.score}</span>
+        </div>
+        <div className="mt-1 text-slate-800">{deal.proximoPasso}</div>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+        <span>Responsável: {deal.responsavel}</span>
+        <span className="tracking-[0.2em]">::</span>
+      </div>
+    </div>
+  );
+}
+
+function PipelineStageColumn({
+  stage,
+  deals,
+}: {
+  stage: { key: string; label: string; tone: string; hint: string };
+  deals: Deal[];
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: stage.key });
+  const items = useMemo(() => deals.map((deal) => deal.id), [deals]);
+
+  return (
+    <div className="w-80 flex-shrink-0">
+      <div className={`${stage.tone} rounded-t-2xl px-4 py-3 text-white`}>
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-semibold">{stage.label}</div>
+          <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-semibold">{deals.length}</span>
+        </div>
+        <div className="text-xs text-white/80">{stage.hint}</div>
+      </div>
+
+      <div
+        ref={setNodeRef}
+        className={`space-y-3 rounded-b-2xl border border-slate-200 bg-white p-3 shadow-sm min-h-[480px] ${
+          isOver ? "ring-2 ring-prime-accent/20" : ""
+        }`}
+      >
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+          {deals.map((deal) => (
+            <SortableDealCard key={deal.id} deal={deal} />
+          ))}
+        </SortableContext>
+
+        <button className="w-full rounded-xl border-2 border-dashed border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500 hover:border-prime hover:text-prime">
+          + Adicionar deal
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function CRMModalContent() {
   const [view, setView] = useState<ViewKey>("overview");
   const [pipeline, setPipeline] = useState<PipelineKey>("ia");
@@ -652,13 +756,76 @@ export default function CRMModalContent() {
   const [rightOpen, setRightOpen] = useState(true);
   const [segment, setSegment] = useState(contactSegments[0]);
   const [selectedContactId, setSelectedContactId] = useState<number>(contacts[0].id);
+  const [activeDealId, setActiveDealId] = useState<number | null>(null);
+  const [dealStateByPipeline, setDealStateByPipeline] = useState<typeof dealsByPipeline>(() => {
+    return JSON.parse(JSON.stringify(dealsByPipeline)) as typeof dealsByPipeline;
+  });
 
   const activeStages = pipelineStages[pipeline];
-  const activeDeals = dealsByPipeline[pipeline];
+  const activeDeals = dealStateByPipeline[pipeline];
+  const stageKeys = useMemo(() => activeStages.map((stage) => stage.key), [activeStages]);
   const selectedConversation = conversations.find((item) => item.id === selectedConversationId) ?? conversations[0];
   const messages = messagesByConversation[selectedConversationId] ?? [];
   const leadDetails = leadDetailsByConversation[selectedConversationId];
   const selectedContact = contacts.find((item) => item.id === selectedContactId) ?? contacts[0];
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  const findStageForDeal = (pipelineKey: PipelineKey, dealId: number) => {
+    const stages = pipelineStages[pipelineKey];
+    return stages.find((stage) => (dealStateByPipeline[pipelineKey][stage.key] ?? []).some((deal) => deal.id === dealId))?.key ?? null;
+  };
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    if (view !== "pipelines") return;
+    if (typeof active.id === "number") setActiveDealId(active.id);
+  };
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    setActiveDealId(null);
+    if (view !== "pipelines") return;
+    if (!over) return;
+    if (typeof active.id !== "number") return;
+
+    const activeId = active.id;
+    const overId = over.id;
+    const sourceStage = findStageForDeal(pipeline, activeId);
+    if (!sourceStage) return;
+
+    const targetStage =
+      typeof overId === "string" && stageKeys.includes(overId)
+        ? overId
+        : typeof overId === "number"
+          ? findStageForDeal(pipeline, overId)
+          : null;
+
+    if (!targetStage) return;
+
+    setDealStateByPipeline((prev) => {
+      const next = { ...prev, [pipeline]: { ...prev[pipeline] } };
+      const sourceList = [...(next[pipeline][sourceStage] ?? [])];
+      const activeIndex = sourceList.findIndex((deal) => deal.id === activeId);
+      if (activeIndex < 0) return prev;
+
+      if (sourceStage === targetStage) {
+        const targetIndex =
+          typeof overId === "number" ? sourceList.findIndex((deal) => deal.id === overId) : sourceList.length - 1;
+
+        if (targetIndex < 0 || targetIndex === activeIndex) return prev;
+        next[pipeline][sourceStage] = arrayMove(sourceList, activeIndex, targetIndex);
+        return next;
+      }
+
+      const targetList = [...(next[pipeline][targetStage] ?? [])];
+      const [moved] = sourceList.splice(activeIndex, 1);
+      const insertIndex =
+        typeof overId === "number" ? targetList.findIndex((deal) => deal.id === overId) : targetList.length;
+
+      targetList.splice(insertIndex >= 0 ? insertIndex : targetList.length, 0, moved);
+      next[pipeline][sourceStage] = sourceList;
+      next[pipeline][targetStage] = targetList;
+      return next;
+    });
+  };
 
   return (
     <div className="h-full flex flex-col bg-slate-50">
@@ -666,13 +833,13 @@ export default function CRMModalContent() {
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-prime">CRM Comercial</p>
-            <div className="text-2xl font-bold text-slate-900">Central unica de atendimento e vendas</div>
-            <div className="text-sm text-slate-600">Pipelines multiplos, inbox unificado e analytics em tempo real</div>
+            <div className="text-2xl font-bold text-slate-900">Central única de atendimento e vendas</div>
+            <div className="text-sm text-slate-600">Pipelines múltiplos, inbox unificado e analytics em tempo real</div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
               <Clock3 size={14} />
-              Ultimos 30 dias
+              Últimos 30 dias
             </button>
             <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
               <Target size={14} />
@@ -794,7 +961,7 @@ export default function CRMModalContent() {
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div className="text-lg font-bold text-slate-900">Volume de leads e agendamentos</div>
-                    <div className="text-xs text-slate-500">Ultima semana</div>
+                    <div className="text-xs text-slate-500">Última semana</div>
                   </div>
                   <div className="mt-4">
                     <ChartContainer config={volumeChartConfig} className="h-52 w-full">
@@ -841,7 +1008,6 @@ export default function CRMModalContent() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="text-xl font-bold text-slate-900">{pipelineInfo[pipeline].label}</div>
-                  <p className="text-sm text-slate-600">{pipelineInfo[pipeline].desc}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {(Object.keys(pipelineInfo) as PipelineKey[]).map((key) => (
@@ -860,61 +1026,20 @@ export default function CRMModalContent() {
                 </div>
               </div>
 
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                {activeStages.map((stage) => (
-                  <div key={stage.key} className="w-80 flex-shrink-0">
-                    <div className={`${stage.tone} rounded-t-2xl px-4 py-3 text-white`}>
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm font-semibold">{stage.label}</div>
-                        <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-semibold">
-                          {activeDeals[stage.key]?.length ?? 0}
-                        </span>
-                      </div>
-                      <div className="text-xs text-white/80">{stage.hint}</div>
-                    </div>
-                    <div className="space-y-3 rounded-b-2xl border border-slate-200 bg-white p-3 shadow-sm min-h-[480px]">
-                      {(activeDeals[stage.key] ?? []).map((deal) => (
-                        <div
-                          key={deal.id}
-                          draggable
-                          className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <div className="text-base font-semibold text-slate-900">{deal.nome}</div>
-                                <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${temperatureStyles[deal.temperatura]}`}>
-                                  {deal.temperatura}
-                                </span>
-                              </div>
-                              <div className="text-xs text-slate-500">{deal.interesse}</div>
-                            </div>
-                            <div className="text-sm font-bold text-prime">R$ {deal.valor.toLocaleString("pt-BR")}</div>
-                          </div>
-                          <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
-                            <span className="rounded-full bg-slate-100 px-2 py-1">Origem: {deal.origem}</span>
-                            <span className="rounded-full bg-slate-100 px-2 py-1">Há {deal.tempo}</span>
-                            <span className="rounded-full bg-slate-100 px-2 py-1">Canal: {deal.canal}</span>
-                          </div>
-                          <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                            <div className="flex items-center justify-between">
-                              <span className="font-semibold text-slate-700">Proximo passo</span>
-                              <span className="text-slate-500">Score {deal.score}</span>
-                            </div>
-                            <div className="mt-1 text-slate-800">{deal.proximoPasso}</div>
-                          </div>
-                          <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                            <span>Responsavel: {deal.responsavel}</span>
-                            <span className="tracking-[0.2em]">::</span>
-                          </div>
-                        </div>
-                      ))}
-                      <button className="w-full rounded-xl border-2 border-dashed border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500 hover:border-prime hover:text-prime">
-                        + Adicionar deal
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCorners}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="flex gap-4 overflow-x-auto pb-2">
+                  {activeStages.map((stage) => (
+                    <PipelineStageColumn key={stage.key} stage={stage} deals={activeDeals[stage.key] ?? []} />
+                  ))}
+                </div>
+              </DndContext>
+              <div className="text-xs text-slate-500">
+                {activeDealId ? "Solte para mover o deal." : "Arraste e solte deals entre etapas (drag-and-drop)."}
               </div>
             </div>
           )}
@@ -924,7 +1049,7 @@ export default function CRMModalContent() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="text-xl font-bold text-slate-900">Inbox unificado</div>
-                  <div className="text-sm text-slate-600">WhatsApp, Instagram e Google em uma unica timeline</div>
+                  <div className="text-sm text-slate-600">WhatsApp, Instagram e Google em uma única timeline</div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <button
@@ -1008,7 +1133,7 @@ export default function CRMModalContent() {
                     ))}
                   </div>
                   <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-500">
-                    Campo de resposta inteligente com sugestoes de roteiro e CTA de agendamento.
+                    Campo de resposta inteligente com sugestões de roteiro e CTA de agendamento.
                   </div>
                 </section>
 
@@ -1035,7 +1160,7 @@ export default function CRMModalContent() {
                       ))}
                     </div>
                     <div className="mt-4 rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2 text-xs text-prime">
-                      Proximo passo sugerido: confirmar agenda e disparar lembrete anti no-show.
+                      Próximo passo sugerido: confirmar agenda e disparar lembrete anti no-show.
                     </div>
                   </aside>
                 )}
@@ -1045,11 +1170,11 @@ export default function CRMModalContent() {
 
           {view === "contacts" && (
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <div className="text-xl font-bold text-slate-900">Gestao de contatos</div>
-                  <div className="text-sm text-slate-600">Leads qualificados com tags e segmentacao inteligente</div>
-                </div>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                  <div className="text-xl font-bold text-slate-900">Gestão de contatos</div>
+                  <div className="text-sm text-slate-600">Leads qualificados com tags e segmentação inteligente</div>
+                  </div>
                 <div className="flex flex-wrap gap-2">
                   {contactSegments.map((item) => (
                     <button
@@ -1114,11 +1239,11 @@ export default function CRMModalContent() {
                   <div className="text-sm font-semibold text-slate-900">Resumo do contato</div>
                   <div className="mt-3 space-y-2 text-sm text-slate-600">
                     <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                      <div className="text-xs uppercase tracking-wide text-slate-500">Responsavel</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500">Responsável</div>
                       <div className="font-semibold text-slate-900">{selectedContact.responsavel}</div>
                     </div>
                     <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                      <div className="text-xs uppercase tracking-wide text-slate-500">Ultima interacao</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500">Última interação</div>
                       <div className="font-semibold text-slate-900">{selectedContact.ultimaInteracao}</div>
                     </div>
                     <div className="rounded-lg border border-prime-accent/40 bg-prime-accent/10 px-3 py-2">
@@ -1138,7 +1263,7 @@ export default function CRMModalContent() {
                     </div>
                   </div>
                   <div className="mt-4 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
-                    Acionamentos automaticos baseados em score e etapa do funil.
+                    Acionamentos automáticos baseados em score e etapa do funil.
                   </div>
                 </div>
               </div>

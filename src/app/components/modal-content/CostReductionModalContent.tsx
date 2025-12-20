@@ -111,7 +111,7 @@ export default function CostReductionModalContent() {
                 className="w-full h-2 rounded-full appearance-none focus:outline-none focus:ring-2 focus:ring-prime/20"
                 style={{ accentColor: "var(--prime-primary)", background: sliderFill(inputs.automacao, 10, 80) }}
               />
-              <div className="mt-3 text-2xl font-extrabold text-emerald-700">{inputs.automacao}% cobertos</div>
+              <div className="mt-3 text-2xl font-extrabold text-prime">{inputs.automacao}% cobertos</div>
               <p className="text-xs text-slate-500">Considera requalificação e realocação para casos críticos.</p>
             </div>
           </div>
@@ -127,12 +127,12 @@ export default function CostReductionModalContent() {
             <div>
               <div className="text-sm text-slate-500 font-medium uppercase tracking-wide">Economia Líquida Estimada</div>
               <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-4xl md:text-5xl font-extrabold text-emerald-600">
+                <span className="text-4xl md:text-5xl font-extrabold text-prime">
                   +{formatCurrency(resultado.economiaLiquidaMensal)}
                 </span>
                 <span className="text-slate-500 font-medium">/mês</span>
               </div>
-              <p className="text-sm text-emerald-700 mt-2 font-medium bg-emerald-50 inline-block px-3 py-1 rounded-full border border-emerald-100">
+              <p className="text-sm text-prime mt-2 font-medium bg-prime-accent/10 inline-block px-3 py-1 rounded-full border border-prime-accent/20">
                 {Math.round((resultado.economiaLiquidaMensal / resultado.custoAtualMensal) * 100)}% de redução líquida na folha operacional
               </p>
             </div>
@@ -154,7 +154,7 @@ export default function CostReductionModalContent() {
                 O restante representa a redução líquida recorrente, sem abrir mão de segurança e compliance.
               </p>
               <div className="flex items-center gap-2 text-slate-700 font-medium">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                <ShieldCheck className="h-4 w-4 text-prime-accent" />
                 IA + protocolos humanos = fila atendida, menor ociosidade e menos horas extras.
               </div>
             </div>
