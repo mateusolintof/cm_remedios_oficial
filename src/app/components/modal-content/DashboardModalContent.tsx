@@ -10,12 +10,14 @@ import {
   Clock3,
   Gauge,
   Lightbulb,
+  Menu,
   MessageSquare,
   ShieldCheck,
   Sparkles,
   Target,
   Trophy,
   UserRound,
+  X,
 } from "lucide-react";
 import {
   Area,
@@ -323,59 +325,99 @@ const insightChartConfig = {
 export default function DashboardModalContent() {
   const [tab, setTab] = useState<TabKey>("geral");
   const [range, setRange] = useState<keyof typeof rangeOptions>("30d");
+  const [navOpen, setNavOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<number>(clients[0].id);
 
   const selectedClient = clients.find((client) => client.id === selectedClientId) ?? clients[0];
 
   return (
-    <div className="h-full flex flex-col bg-slate-50">
-      <header className="border-b border-slate-200 bg-white px-6 py-4">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-prime">Dashboard executivo</p>
-            <div className="text-2xl font-bold text-slate-900">Visão completa do atendimento comercial</div>
-            <div className="text-sm text-slate-600">KPIs, funis e insights com suporte de IA</div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {(Object.keys(rangeOptions) as Array<keyof typeof rangeOptions>).map((key) => (
+    <div className="relative h-full flex flex-col bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="px-4 py-3 lg:px-6 lg:py-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start gap-3">
               <button
-                key={key}
-                onClick={() => setRange(key)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  range === key
-                    ? "bg-prime text-white shadow"
-                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                }`}
+                type="button"
+                onClick={() => setNavOpen(true)}
+                aria-label="Abrir menu"
+                className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 lg:hidden"
               >
-                <Clock3 size={14} />
-                {rangeOptions[key]}
+                <Menu className="h-5 w-5" />
               </button>
-            ))}
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-prime">Dashboard executivo</p>
+                <div className="text-xl font-bold text-slate-900 lg:text-2xl">Visão completa do atendimento comercial</div>
+                <div className="text-sm text-slate-600">KPIs, funis e insights com suporte de IA</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:justify-end lg:overflow-visible lg:pb-0">
+              {(Object.keys(rangeOptions) as Array<keyof typeof rangeOptions>).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setRange(key)}
+                  className={`inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition lg:px-4 ${
+                    range === key
+                      ? "bg-prime text-white shadow"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  <Clock3 size={14} />
+                  {rangeOptions[key]}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="flex flex-1 min-h-0 flex-col lg:flex-row">
-        <aside className="w-full border-b border-prime/30 bg-prime px-5 py-6 text-white lg:w-72 lg:border-b-0 lg:border-r lg:overflow-y-auto">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">AI</div>
-            <div>
-              <div className="text-sm font-semibold">Dashboard</div>
-              <div className="text-xs text-white/60">Menu principal</div>
+      <div className="relative flex flex-1 min-h-0">
+        <button
+          type="button"
+          aria-label="Fechar menu"
+          onClick={() => setNavOpen(false)}
+          className={`absolute inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] transition lg:hidden ${
+            navOpen ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        />
+
+        <aside
+          className={`absolute inset-y-0 left-0 z-50 w-72 max-w-[85vw] border-r border-prime/30 bg-prime px-5 py-6 text-white shadow-2xl transition-transform duration-200 lg:static lg:z-auto lg:w-72 lg:max-w-none lg:translate-x-0 lg:border-r lg:shadow-none lg:overflow-y-auto ${
+            navOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">AI</div>
+              <div>
+                <div className="text-sm font-semibold">Dashboard</div>
+                <div className="text-xs text-white/60">Menu principal</div>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setNavOpen(false)}
+              aria-label="Fechar menu"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/15 lg:hidden"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
           <div className="mt-6">
             <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Main</div>
-            <div className="mt-3 space-y-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => setTab(item.key)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    tab === item.key ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
-                  }`}
-                >
+	            <div className="mt-3 space-y-1">
+	              {navItems.map((item) => (
+	                <button
+	                  key={item.key}
+	                  onClick={() => {
+	                    setTab(item.key);
+	                    setNavOpen(false);
+	                  }}
+	                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+	                    tab === item.key ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+	                  }`}
+	                >
                   {item.icon}
                   <span>{item.label}</span>
                 </button>
@@ -387,7 +429,7 @@ export default function DashboardModalContent() {
           </div>
         </aside>
 
-        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
+	        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 lg:p-6">
         {tab === "geral" && (
           <div className="space-y-6">
 	            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

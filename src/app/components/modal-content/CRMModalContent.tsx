@@ -24,12 +24,14 @@ import {
   Gauge,
   GripVertical,
   KanbanSquare,
+  Menu,
   MessageSquare,
   PanelsTopLeft,
   Sparkles,
   Stethoscope,
   Target,
   UserRound,
+  X,
   Zap,
 } from "lucide-react";
 import {
@@ -731,7 +733,7 @@ function PipelineStageColumn({
   const items = useMemo(() => deals.map((deal) => deal.id), [deals]);
 
   return (
-    <div className="w-80 flex-shrink-0">
+    <div className="w-80 flex-shrink-0 snap-start">
       <div className={`${stage.tone} rounded-t-2xl px-4 py-3 text-white`}>
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold">{stage.label}</div>
@@ -764,6 +766,7 @@ export default function CRMModalContent() {
   const [view, setView] = useState<ViewKey>("overview");
   const [pipeline, setPipeline] = useState<PipelineKey>("ia");
   const [pipelineMenuOpen, setPipelineMenuOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
   const [selectedConversationId, setSelectedConversationId] = useState<number>(conversations[0].id);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
@@ -841,53 +844,92 @@ export default function CRMModalContent() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-slate-50">
-      <header className="border-b border-slate-200 bg-white px-6 py-4">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-prime">CRM Comercial</p>
-            <div className="text-2xl font-bold text-slate-900">Central única de atendimento e vendas</div>
-            <div className="text-sm text-slate-600">Pipelines múltiplos, inbox unificado e analytics em tempo real</div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-              <Clock3 size={14} />
-              Últimos 30 dias
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
-              <Target size={14} />
-              Segmento: ortopedia
-            </button>
-            <span className="inline-flex items-center gap-2 rounded-full bg-prime-accent/15 px-4 py-2 text-sm font-semibold text-prime">
-              <Sparkles size={14} />
-              IA ativa e treinada
-            </span>
+    <div className="relative h-full flex flex-col bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="px-4 py-3 lg:px-6 lg:py-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start gap-3">
+              <button
+                type="button"
+                onClick={() => setNavOpen(true)}
+                aria-label="Abrir menu"
+                className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 lg:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-prime">CRM Comercial</p>
+                <div className="text-xl font-bold text-slate-900 lg:text-2xl">Central única de atendimento e vendas</div>
+                <div className="text-sm text-slate-600">Pipelines múltiplos, inbox unificado e analytics em tempo real</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:justify-end lg:overflow-visible lg:pb-0">
+              <button className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 lg:px-4">
+                <Clock3 size={14} />
+                Últimos 30 dias
+              </button>
+              <button className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 lg:px-4">
+                <Target size={14} />
+                Segmento: ortopedia
+              </button>
+              <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-prime-accent/15 px-3 py-2 text-sm font-semibold text-prime lg:px-4">
+                <Sparkles size={14} />
+                IA ativa e treinada
+              </span>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="flex flex-1 min-h-0 flex-col lg:flex-row">
-        <aside className="w-full border-b border-prime/30 bg-prime px-5 py-6 text-white lg:w-72 lg:border-b-0 lg:border-r lg:overflow-y-auto">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">AI</div>
-            <div>
-              <div className="text-sm font-semibold">CRM Comercial</div>
-              <div className="text-xs text-white/60">Menu principal</div>
+      <div className="relative flex flex-1 min-h-0">
+        <button
+          type="button"
+          aria-label="Fechar menu"
+          onClick={() => setNavOpen(false)}
+          className={`absolute inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] transition lg:hidden ${
+            navOpen ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        />
+
+        <aside
+          className={`absolute inset-y-0 left-0 z-50 w-72 max-w-[85vw] border-r border-prime/30 bg-prime px-5 py-6 text-white shadow-2xl transition-transform duration-200 lg:static lg:z-auto lg:w-72 lg:max-w-none lg:translate-x-0 lg:border-r lg:shadow-none lg:overflow-y-auto ${
+            navOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-sm font-semibold">AI</div>
+              <div>
+                <div className="text-sm font-semibold">CRM Comercial</div>
+                <div className="text-xs text-white/60">Menu principal</div>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setNavOpen(false)}
+              aria-label="Fechar menu"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/15 lg:hidden"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
           <div className="mt-6 space-y-6">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Main</div>
-              <div className="mt-3 space-y-1">
-                {mainNavItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => item.view && setView(item.view)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                      view === item.view ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
+	              <div className="mt-3 space-y-1">
+	                {mainNavItems.map((item) => (
+	                  <button
+	                    key={item.id}
+	                    onClick={() => {
+	                      if (item.view) setView(item.view);
+	                      setNavOpen(false);
+	                    }}
+	                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+	                      view === item.view ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+	                    }`}
+	                  >
                     {item.icon}
                     <span>{item.label}</span>
                   </button>
@@ -906,18 +948,19 @@ export default function CRMModalContent() {
                   <span className="flex-1 text-left">Pipeline</span>
                   <ChevronDown size={16} className={`transition-transform ${pipelineMenuOpen ? "rotate-180" : ""}`} />
                 </button>
-                {pipelineMenuOpen && (
-                  <div className="ml-9 mt-2 space-y-1">
-                    {(Object.keys(pipelineInfo) as PipelineKey[]).map((key) => (
-                      <button
-                        key={key}
-                        onClick={() => {
-                          setPipeline(key);
-                          setView("pipelines");
-                        }}
-                        className={`flex w-full items-center truncate rounded-md px-2 py-1 text-xs font-semibold transition ${
-                          pipeline === key && view === "pipelines"
-                            ? "bg-white/15 text-white"
+	                {pipelineMenuOpen && (
+	                  <div className="ml-9 mt-2 space-y-1">
+	                    {(Object.keys(pipelineInfo) as PipelineKey[]).map((key) => (
+	                      <button
+	                        key={key}
+	                        onClick={() => {
+	                          setPipeline(key);
+	                          setView("pipelines");
+	                          setNavOpen(false);
+	                        }}
+	                        className={`flex w-full items-center truncate rounded-md px-2 py-1 text-xs font-semibold transition ${
+	                          pipeline === key && view === "pipelines"
+	                            ? "bg-white/15 text-white"
                             : "text-white/60 hover:bg-white/10 hover:text-white"
                         }`}
                       >
@@ -932,17 +975,20 @@ export default function CRMModalContent() {
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Management</div>
               <div className="mt-3 space-y-1">
-                {managementNavItems.map((item) => {
-                  const isActive = item.view ? view === item.view : false;
-                  return (
-                    <button
+	                {managementNavItems.map((item) => {
+	                  const isActive = item.view ? view === item.view : false;
+	                  return (
+	                    <button
                       key={item.id}
                       type="button"
-                      onClick={() => item.view && setView(item.view)}
-                      disabled={item.disabled}
-                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                        isActive ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
-                      } ${item.disabled ? "cursor-not-allowed opacity-60 hover:bg-transparent hover:text-white/60" : ""}`}
+	                      onClick={() => {
+	                        if (item.view) setView(item.view);
+	                        setNavOpen(false);
+	                      }}
+	                      disabled={item.disabled}
+	                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+	                        isActive ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10 hover:text-white"
+	                      } ${item.disabled ? "cursor-not-allowed opacity-60 hover:bg-transparent hover:text-white/60" : ""}`}
                     >
                       {item.icon}
                       <span>{item.label}</span>
@@ -954,7 +1000,7 @@ export default function CRMModalContent() {
           </div>
         </aside>
 
-        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
+        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 lg:p-6">
           {view === "overview" && (
             <div className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -1045,7 +1091,7 @@ export default function CRMModalContent() {
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
               >
-                <div className="flex gap-4 overflow-x-auto pb-2">
+                <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
                   {activeStages.map((stage) => (
                     <PipelineStageColumn key={stage.key} stage={stage} deals={activeDeals[stage.key] ?? []} />
                   ))}
@@ -1181,72 +1227,122 @@ export default function CRMModalContent() {
             </div>
           )}
 
-          {view === "contacts" && (
-            <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                  <div className="text-xl font-bold text-slate-900">Gestão de contatos</div>
-                  <div className="text-sm text-slate-600">Leads qualificados com tags e segmentação inteligente</div>
-                  </div>
-                <div className="flex flex-wrap gap-2">
-                  {contactSegments.map((item) => (
-                    <button
-                      key={item}
-                      onClick={() => setSegment(item)}
-                      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                        segment === item
-                          ? "bg-prime text-white"
-                          : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                      }`}
-                    >
+	          {view === "contacts" && (
+	            <div className="space-y-4">
+	                <div className="flex flex-wrap items-center justify-between gap-3">
+	                  <div>
+	                  <div className="text-xl font-bold text-slate-900">Gestão de contatos</div>
+	                  <div className="text-sm text-slate-600">Leads qualificados com tags e segmentação inteligente</div>
+	                  </div>
+	                <div className="flex items-center gap-2 overflow-x-auto pb-1">
+	                  {contactSegments.map((item) => (
+	                    <button
+	                      key={item}
+	                      onClick={() => setSegment(item)}
+	                      className={`shrink-0 rounded-full px-3 py-2 text-sm font-semibold transition lg:px-4 ${
+	                        segment === item
+	                          ? "bg-prime text-white"
+	                          : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+	                      }`}
+	                    >
                       {item}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)]">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="grid grid-cols-[1.2fr_1fr_1fr_1fr_0.8fr] gap-3 border-b border-slate-200 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <div>Lead</div>
-                    <div>Etapa</div>
-                    <div>Canal</div>
-                    <div>Tags</div>
-                    <div>Score</div>
-                  </div>
-                  <div className="mt-3 space-y-2">
-                    {contacts.map((contact) => (
-                      <button
-                        key={contact.id}
-                        onClick={() => setSelectedContactId(contact.id)}
-                        className={`grid w-full grid-cols-[1.2fr_1fr_1fr_1fr_0.8fr] items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition ${
-                          contact.id === selectedContactId
-                            ? "border-prime bg-prime/5"
-                            : "border-slate-200 bg-white hover:bg-slate-50"
-                        }`}
-                      >
-                        <div>
-                          <div className="font-semibold text-slate-900">{contact.nome}</div>
-                          <div className="text-xs text-slate-500">{contact.especialidade}</div>
-                        </div>
-                        <div className="text-slate-700">{contact.etapa}</div>
-                        <div className="text-slate-600">{contact.canal}</div>
-                        <div className="flex flex-wrap gap-1">
-                          {contact.tags.map((tag) => (
-                            <span key={tag} className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <div>
-                          <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${temperatureStyles[contact.temperatura]}`}>
-                            {contact.score}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+	              <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)]">
+	                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+	                  <div className="hidden lg:block">
+	                    <div className="grid grid-cols-[1.2fr_1fr_1fr_1fr_0.8fr] gap-3 border-b border-slate-200 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+	                      <div>Lead</div>
+	                      <div>Etapa</div>
+	                      <div>Canal</div>
+	                      <div>Tags</div>
+	                      <div>Score</div>
+	                    </div>
+	                    <div className="mt-3 space-y-2">
+	                      {contacts.map((contact) => (
+	                        <button
+	                          key={contact.id}
+	                          onClick={() => setSelectedContactId(contact.id)}
+	                          className={`grid w-full grid-cols-[1.2fr_1fr_1fr_1fr_0.8fr] items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition ${
+	                            contact.id === selectedContactId
+	                              ? "border-prime bg-prime/5"
+	                              : "border-slate-200 bg-white hover:bg-slate-50"
+	                          }`}
+	                        >
+	                          <div>
+	                            <div className="font-semibold text-slate-900">{contact.nome}</div>
+	                            <div className="text-xs text-slate-500">{contact.especialidade}</div>
+	                          </div>
+	                          <div className="text-slate-700">{contact.etapa}</div>
+	                          <div className="text-slate-600">{contact.canal}</div>
+	                          <div className="flex flex-wrap gap-1">
+	                            {contact.tags.map((tag) => (
+	                              <span key={tag} className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">
+	                                {tag}
+	                              </span>
+	                            ))}
+	                          </div>
+	                          <div>
+	                            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${temperatureStyles[contact.temperatura]}`}>
+	                              {contact.score}
+	                            </span>
+	                          </div>
+	                        </button>
+	                      ))}
+	                    </div>
+	                  </div>
+
+	                  <div className="lg:hidden space-y-2">
+	                    {contacts.map((contact) => {
+	                      const isActive = contact.id === selectedContactId;
+	                      return (
+	                        <button
+	                          key={contact.id}
+	                          onClick={() => setSelectedContactId(contact.id)}
+	                          className={`w-full rounded-2xl border p-4 text-left shadow-sm transition ${
+	                            isActive ? "border-prime bg-prime/5" : "border-slate-200 bg-white hover:bg-slate-50"
+	                          }`}
+	                        >
+	                          <div className="flex items-start justify-between gap-3">
+	                            <div className="min-w-0">
+	                              <div className="flex items-center gap-2">
+	                                <div className="truncate text-base font-semibold text-slate-900">{contact.nome}</div>
+	                                <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${temperatureStyles[contact.temperatura]}`}>
+	                                  {contact.score}
+	                                </span>
+	                              </div>
+	                              <div className="mt-0.5 text-xs text-slate-500">{contact.especialidade}</div>
+	                            </div>
+	                            <div className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
+	                              {contact.etapa}
+	                            </div>
+	                          </div>
+
+	                          <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
+	                            <span className="rounded-full bg-slate-100 px-2 py-1">Canal: {contact.canal}</span>
+	                            <span className="rounded-full bg-slate-100 px-2 py-1">Última: {contact.ultimaInteracao}</span>
+	                          </div>
+
+	                          <div className="mt-3 flex flex-wrap gap-2">
+	                            {contact.tags.slice(0, 3).map((tag) => (
+	                              <span key={tag} className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-600">
+	                                {tag}
+	                              </span>
+	                            ))}
+	                            {contact.tags.length > 3 ? (
+	                              <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-500">
+	                                +{contact.tags.length - 3}
+	                              </span>
+	                            ) : null}
+	                          </div>
+	                        </button>
+	                      );
+	                    })}
+	                  </div>
+	                </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                   <div className="text-sm font-semibold text-slate-900">Resumo do contato</div>
